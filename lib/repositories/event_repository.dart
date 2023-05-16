@@ -31,4 +31,24 @@ class EventRepository {
       return null;
     }
   }
+
+  Future<EventDetail?> fetchDetailEvent({required String eventId}) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/event/get_event/$eventId');
+
+    var token = await Token.getToken();
+
+    final response = await http.get(url, headers: {
+      HttpHeaders.authorizationHeader: token,
+    });
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body) as Map<String, dynamic>;
+      final eventDetail = EventDetail.fromJson(body['data']);
+      return eventDetail;
+    } else if (response.statusCode == 400) {
+      return null;
+    } else {
+      return null;
+    }
+  }
 }

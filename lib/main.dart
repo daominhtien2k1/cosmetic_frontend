@@ -1,4 +1,5 @@
 import 'package:cosmetic_frontend/blocs/event/event_bloc.dart';
+import 'package:cosmetic_frontend/blocs/event_detail/event_detail_bloc.dart';
 import 'package:cosmetic_frontend/blocs/product_carousel/product_carousel_bloc.dart';
 import 'package:cosmetic_frontend/screens/onboard/onboard_screen.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
     VideoRepository videoRepository = VideoRepository();
     SignupRepository signupRepository = SignupRepository();
     FriendRequestReceivedRepository friendRequestReceivedRepository = FriendRequestReceivedRepository();
+    EventRepository eventRepository = EventRepository();
 
     final theme = CosmeticTheme();
 
@@ -102,7 +104,11 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<EventBloc>(
           lazy: false,
-          create: (_) => EventBloc(),
+          create: (_) => EventBloc(eventRepository: eventRepository),
+        ),
+        BlocProvider<EventDetailBloc>(
+          lazy: false,
+          create: (_) => EventDetailBloc(eventRepository: eventRepository),
         )
       ],
       child: MaterialApp(
@@ -162,6 +168,10 @@ class MyApp extends StatelessWidget {
               }
               case Routes.unknow_people_screen: {
                 return MaterialPageRoute(builder: (_) => UnknowPeopleScreen());
+              }
+              case Routes.event_detail_screen: {
+                final String eventId = settings.arguments as String;
+                return MaterialPageRoute(builder: (_) => EventDetailScreen(eventId: eventId));
               }
               default:
                 return MaterialPageRoute(builder: (_) => NavScreen());

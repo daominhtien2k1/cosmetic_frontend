@@ -6,9 +6,8 @@ import '../../models/models.dart';
 import '../../repositories/repositories.dart';
 
 class EventBloc extends Bloc<EventEvent, EventState> {
-  late EventRepository eventRepository;
-  EventBloc(): super(EventState.initial()) {
-    eventRepository = EventRepository();
+  final EventRepository eventRepository;
+  EventBloc({required this.eventRepository}): super(EventState.initial()) {
 
     on<EventFetch>(_onEventFetched);
   }

@@ -14,3 +14,4 @@ export 'user_chat_model.dart';
 export 'video_model.dart';
 export 'carousel_model.dart';
 export 'event_model.dart';
+export 'event_detail_model.dart';
