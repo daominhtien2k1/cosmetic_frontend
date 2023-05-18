@@ -13,3 +13,4 @@ export 'request_received_friend/request_received_friend_screen.dart';
 export 'request_received_friend/sub_screens/friend_subscreens.dart';
 export 'event/event_screen.dart';
 export 'event/event_detail_screen.dart';
+export 'product_detail/product_detail_screen.dart';

@@ -1,5 +1,6 @@
 import 'package:cosmetic_frontend/blocs/event/event_bloc.dart';
 import 'package:cosmetic_frontend/blocs/event_detail/event_detail_bloc.dart';
+import 'package:cosmetic_frontend/blocs/product/product_bloc.dart';
 import 'package:cosmetic_frontend/blocs/product_carousel/product_carousel_bloc.dart';
 import 'package:cosmetic_frontend/screens/onboard/onboard_screen.dart';
 import 'package:flutter/material.dart';
@@ -45,6 +46,7 @@ class MyApp extends StatelessWidget {
     SignupRepository signupRepository = SignupRepository();
     FriendRequestReceivedRepository friendRequestReceivedRepository = FriendRequestReceivedRepository();
     EventRepository eventRepository = EventRepository();
+    ProductRepository productRepository = ProductRepository();
 
     final theme = CosmeticTheme();
 
@@ -100,7 +102,7 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<ProductCarouselBloc>(
           lazy: false,
-          create: (_) => ProductCarouselBloc(),
+          create: (_) => ProductCarouselBloc(productRepository: productRepository),
         ),
         BlocProvider<EventBloc>(
           lazy: false,
@@ -109,6 +111,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<EventDetailBloc>(
           lazy: false,
           create: (_) => EventDetailBloc(eventRepository: eventRepository),
+        ),
+        BlocProvider<ProductBloc>(
+          lazy: false,
+          create: (_) => ProductBloc(productRepository: productRepository)
         )
       ],
       child: MaterialApp(
@@ -172,6 +178,11 @@ class MyApp extends StatelessWidget {
               case Routes.event_detail_screen: {
                 final String eventId = settings.arguments as String;
                 return MaterialPageRoute(builder: (_) => EventDetailScreen(eventId: eventId));
+              }
+              case Routes.product_detail_screen: {
+                // return MaterialPageRoute(builder: (_) => PostDetailScreen()); // null arguments ???
+                final productId = settings.arguments as String;
+                return MaterialPageRoute(builder: (_) => ProductDetailScreen(productId: productId));
               }
               default:
                 return MaterialPageRoute(builder: (_) => NavScreen());

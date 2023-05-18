@@ -5,7 +5,7 @@ class Configuration {
   static const port = '5001';
   // chỉ hoạt động với web, đối với physical device phải dùng ip
   static const String baseUrlWeb = 'localhost:5001'; //web
-  static const String baseUrlPhysicalDevice = '192.168.1.2:5001'; //mobile
+  static const String baseUrlPhysicalDevice = '192.168.1.7:5001'; //mobile
   static const String baseUrlPhysicalDevice2 = '10.0.2.2:5001'; //mobile
   // để nguyên 3 cái trên, nếu muốn đổi thiết bị thì đổi cái dưới
   static const String baseUrlConnect = baseUrlPhysicalDevice;

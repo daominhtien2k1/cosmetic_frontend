@@ -29,4 +29,25 @@ class ProductRepository {
     }
   }
 
+  Future<List<Product>?> fetchPopularProducts() async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/product/get_popular_products');
+
+    var token = await Token.getToken();
+
+    final response = await http.get(url,
+        headers: {
+          HttpHeaders.authorizationHeader: token,
+        }
+    );
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body) as Map<String, dynamic>;
+      final popularProductsData = body["data"] as List<dynamic>?;
+      List<Product>? popularProducts = popularProductsData?.map((p) => Product.fromJson(p)).toList();
+      return popularProducts;
+    } else if (response.statusCode == 400) {
+      return null;
+    } else {
+      return null;
+    }
+  }
 }

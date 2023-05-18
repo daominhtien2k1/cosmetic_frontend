@@ -7,9 +7,8 @@ import 'product_carousel_event.dart';
 import 'product_carousel_state.dart';
 
 class ProductCarouselBloc extends Bloc<ProductCarouselEvent, ProductCarouselState> {
-  late ProductRepository productRepository;
-  ProductCarouselBloc(): super(ProductCarouselState.initial()) {
-    productRepository = ProductRepository();
+  final ProductRepository productRepository;
+  ProductCarouselBloc({required this.productRepository}): super(ProductCarouselState.initial()) {
     
     on<ProductCarouselFetch>(_onProductCarouselFetched);
   }
