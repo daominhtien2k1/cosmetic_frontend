@@ -17,3 +17,4 @@ export 'event_model.dart';
 export 'event_detail_model.dart';
 export 'product_model.dart';
 export 'review_model.dart';
+export 'product_item_search.dart';

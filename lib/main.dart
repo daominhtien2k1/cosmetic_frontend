@@ -2,7 +2,9 @@ import 'package:cosmetic_frontend/blocs/event/event_bloc.dart';
 import 'package:cosmetic_frontend/blocs/event_detail/event_detail_bloc.dart';
 import 'package:cosmetic_frontend/blocs/product/product_bloc.dart';
 import 'package:cosmetic_frontend/blocs/product_carousel/product_carousel_bloc.dart';
+import 'package:cosmetic_frontend/models/models.dart';
 import 'package:cosmetic_frontend/screens/onboard/onboard_screen.dart';
+import 'package:cosmetic_frontend/screens/review/creat_review_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -29,9 +31,14 @@ import 'routes.dart';
 import 'simple_bloc_observer.dart';
 import 'constants/material/theme.dart';
 
+
 void main() async{
   // debug global BLOC, suggesting turn off, please override in debug local BLOC
   Bloc.observer = SimpleBlocObserver();
+  WidgetsFlutterBinding.ensureInitialized();
+  ErrorWidget.builder = (FlutterErrorDetails details) {
+    return ErrorWidget(details.exception);
+  };
   runApp(MyApp());
 }
 
@@ -184,6 +191,10 @@ class MyApp extends StatelessWidget {
                 final productId = settings.arguments as String;
                 return MaterialPageRoute(builder: (_) => ProductDetailScreen(productId: productId));
               }
+              case Routes.create_review_screen: {
+                final Product? product = settings.arguments as Product?;
+                return MaterialPageRoute(builder: (_) => CreateReviewScreen());
+              }
               default:
                 return MaterialPageRoute(builder: (_) => NavScreen());
             }
@@ -192,4 +203,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-

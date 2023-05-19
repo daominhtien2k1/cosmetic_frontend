@@ -13,5 +13,6 @@ class Routes {
   static const String search_post_sreen = "/search_post_sreen";
   static const String event_detail_screen = "/event_detail_screen";
   static const String product_detail_screen = "/product_detail_screen";
+  static const String create_review_screen = "/create_review_screen";
 }
 

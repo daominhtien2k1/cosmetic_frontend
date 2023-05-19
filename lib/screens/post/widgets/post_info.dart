@@ -36,16 +36,16 @@ class PostInfo extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis
                   ),
-                  OutlinedButton.icon(
+                  SizedBox(height: 8),
+                  TextButton(
                       style: OutlinedButton.styleFrom(
                         side: const BorderSide(color: Colors.black45),
                         foregroundColor: Colors.black45,
                         splashFactory: NoSplash.splashFactory,
-                        padding: EdgeInsets.all(8)
+                        padding: EdgeInsets.all(12)
                       ),
                       onPressed: () {},
-                      icon: const Icon(Icons.people, size: 16),
-                      label: Text('Bạn bè')
+                      child: Text('Góc hỏi đáp')
                   )
                 ],
               ),

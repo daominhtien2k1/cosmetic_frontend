@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../routes.dart';
+
 class FancyFab extends StatefulWidget {
   @override
   _FancyFabState createState() => _FancyFabState();
@@ -71,6 +73,7 @@ class _FancyFabState extends State<FancyFab>
       backgroundColor: _buttonColor.value,
       onPressed: animate,
       tooltip: 'Mở',
+      heroTag: "primary",
       child: AnimatedIcon(
         icon: AnimatedIcons.menu_close,
         progress: _animateIcon,
@@ -97,8 +100,11 @@ class _FancyFabState extends State<FancyFab>
               if(isOpened) Chip(label: Text('Đánh giá sản phẩm')),
               if(isOpened) SizedBox(width: 8),
               FloatingActionButton(
+                heroTag: "btn1",
                 elevation: 0,
-                onPressed: null,
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.create_review_screen);
+                },
                 tooltip: 'Đánh giá sản phẩm',
                 child: Icon(Icons.reviews_outlined),
               ),
@@ -117,6 +123,7 @@ class _FancyFabState extends State<FancyFab>
               if(isOpened) Chip(label: Text('Tạo bài viết')),
               if(isOpened) SizedBox(width: 8),
               FloatingActionButton(
+                heroTag: "btn2",
                 elevation: 0,
                 onPressed: null,
                 tooltip: 'Tạo bài viết',

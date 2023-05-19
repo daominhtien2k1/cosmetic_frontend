@@ -68,7 +68,7 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin{
       body: TabBarView(
         controller: _tabController,
         children: _screens,
-        // physics: NeverScrollableScrollPhysics()
+        physics: NeverScrollableScrollPhysics()
       ),
       drawer: NavigationDrawerSection(destination: _selectedScreenDestination),
       bottomNavigationBar: TabBar(

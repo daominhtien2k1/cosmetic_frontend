@@ -79,18 +79,67 @@ class ProductDetailScreen extends StatelessWidget {
         ),
       ),
       bottomNavigationBar: BottomAppBar(
-        child: Container(
-          child: Column(
+        child: FavouriteAndReviewContainer(isLoved: false),
+      ),
+      floatingActionButton: FancyFab(),
+    );
+  }
+}
+
+class FavouriteAndReviewContainer extends StatefulWidget {
+  final bool isLoved;
+
+  FavouriteAndReviewContainer({
+    super.key,
+    required this.isLoved
+  });
+
+  @override
+  State<FavouriteAndReviewContainer> createState() => _FavouriteAndReviewContainerState();
+}
+
+class _FavouriteAndReviewContainerState extends State<FavouriteAndReviewContainer> {
+  late bool isLoved;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    isLoved = widget.isLoved;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Container(
+      child: Row(
+        children: [
+          isLoved ?
+          IconButton.filledTonal(onPressed: (){
+            setState(() {
+              isLoved = false;
+            });
+            print(isLoved);
+          }, icon: Icon(Icons.favorite_outlined))
+          :
+          IconButton.filledTonal(onPressed: (){
+            setState(() {
+              isLoved = true;
+            });
+            print(isLoved);
+
+          }, icon: Icon(Icons.favorite_border)),
+          SizedBox(width: 20),
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text("Đánh giá ngay", style: Theme.of(context).textTheme.titleMedium),
               StarList(rating: 0, size: 24)
             ],
-            
+
           ),
-        ),
+        ],
       ),
-      floatingActionButton: FancyFab(),
     );
   }
 }
