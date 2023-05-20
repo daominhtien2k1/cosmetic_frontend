@@ -39,6 +39,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     on<PostReport>(_onReportPost);
 
     on<PostDelete>(_onDeletePost);
+
   }
 
   void _onPostReload(PostReload event, Emitter<PostState> emit) {

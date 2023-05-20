@@ -56,7 +56,7 @@ class PostContainer extends StatelessWidget {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                 _PostHeader(avtUrl: post.author.avatar, name: post.author.name, timeAgo: timeAgo, status: post.status, onHandleOtherPostEvent: (event) => handleOtherPostEvent(event), extras: {'postId': post.id, 'authorId': post.author.id}),
+                 _PostHeader(avtUrl: post.author.avatar, name: post.author.name, timeAgo: timeAgo, status: post.status, classification: post.classification, onHandleOtherPostEvent: (event) => handleOtherPostEvent(event), extras: {'postId': post.id, 'authorId': post.author.id}),
                   const SizedBox(height: 4),
                   Text(post.described)
                 ]
@@ -104,12 +104,29 @@ class _PostHeader extends StatelessWidget {
   final String name;
   final String timeAgo;
   final String? status;
+  final String classification;
   final Function(Map event)? onHandleOtherPostEvent;
   final Map? extras;
-  const _PostHeader({Key? key, required this.avtUrl, required this.name, required this.timeAgo, this.status, this.onHandleOtherPostEvent, this.extras}) : super(key: key);
+  const _PostHeader({Key? key, required this.avtUrl, required this.name, required this.timeAgo, this.status, required this.classification, this.onHandleOtherPostEvent, this.extras}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String classificationGroup;
+    switch (classification) {
+      case "General":
+        classificationGroup = "Chung";
+        break;
+      case "Question":
+        classificationGroup = "Góc hỏi đáp";
+        break;
+      case "Share experience":
+        classificationGroup = "Chia sẻ kinh nghiệm";
+        break;
+      default:
+        classificationGroup = "Chung";
+        break;
+    }
+
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -149,7 +166,17 @@ class _PostHeader extends StatelessWidget {
               Row(
                 children: [
                   Text('$timeAgo \u00B7 ', style: TextStyle(color: Colors.grey[600], fontSize: 12)),
-                  Icon(Icons.public,color: Colors.grey[600], size: 12)
+                  RichText(
+                      text: TextSpan(
+                        style: DefaultTextStyle.of(context).style,
+                        children: <TextSpan>[
+                          TextSpan(text: 'đăng trên ',  style: TextStyle(color: Colors.black, fontSize: 12)),
+                          TextSpan(text: '$classificationGroup', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 12)),
+                        ],
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis
+                  ),
                 ],
               )
             ],

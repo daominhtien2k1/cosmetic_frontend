@@ -62,9 +62,10 @@ class Post extends Equatable {
   final bool canComment;
   final bool canEdit;
   final bool banned;
+  final String classification;
 
   Post(
-      {required this.id, required this.described, required this.createdAt, required this.updatedAt, this.images, this.video, required this.likes, required this.comments, required this.author, required this.isLiked, required this.isBlocked, this.status, required this.canComment, required this.canEdit, required this.banned});
+      {required this.id, required this.described, required this.createdAt, required this.updatedAt, this.images, this.video, required this.likes, required this.comments, required this.author, required this.isLiked, required this.isBlocked, this.status, required this.canComment, required this.canEdit, required this.banned, required this.classification});
 
   factory Post.fromJson(Map<String, dynamic> json) {
     final imagesData = json["images"] as List<dynamic>?;
@@ -90,6 +91,7 @@ class Post extends Equatable {
       canEdit: json["can_edit"] as bool,
       banned: json["banned"] as bool,
       canComment: json["can_comment"] as bool,
+      classification: json["classification"] as String
     );
   }
 
@@ -110,6 +112,7 @@ class Post extends Equatable {
       "can_edit": canEdit,
       "banned": banned,
       "can_comment": canComment,
+      "classification": classification
     };
   }
 
@@ -127,6 +130,7 @@ class Post extends Equatable {
     bool? canEdit,
     bool? banned,
     bool? canComment,
+    String? classification,
     List<AttachedImage>? images,
     AttachedVideo? video
   }) {
@@ -144,6 +148,7 @@ class Post extends Equatable {
         canEdit: canEdit ?? this.canEdit,
         banned: banned ?? this.banned,
         canComment: canComment ?? this.canComment,
+        classification: classification ?? this.classification,
         images: images ?? this.images,
         video: video ?? this.video
       );
@@ -152,7 +157,7 @@ class Post extends Equatable {
   @override
   List<Object?> get props {
     return [id, described, createdAt, updatedAt, images, video, likes, comments, author,
-      isLiked, isBlocked, status, canComment, canEdit, banned];
+      isLiked, isBlocked, status, canComment, canEdit, banned, classification];
   }
 
   @override

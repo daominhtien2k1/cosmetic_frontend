@@ -1,4 +1,5 @@
 import 'package:cosmetic_frontend/screens/newsfeed/newsfeed_question_screen_content.dart';
+import 'package:cosmetic_frontend/screens/newsfeed/newsfeed_share_screen_content.dart';
 import 'package:flutter/material.dart';
 import 'package:cosmetic_frontend/screens/newsfeed/newsfeed_general_screen_content.dart';
 
@@ -38,9 +39,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
             children: <Widget>[
               NewsfeedGeneralScreenContent(),
               NewsfeedQuestionScreenContent(),
-              Center(
-                child: Text("It's sunny here"),
-              ),
+              NewsfeedShareScreenContent()
             ],
           ),
         ),

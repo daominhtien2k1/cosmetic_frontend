@@ -8,16 +8,16 @@ import '../../blocs/post/post_state.dart';
 import '../../models/models.dart';
 import 'widgets/newsfeed_widgets.dart';
 
-class NewsfeedQuestionScreenContent extends StatefulWidget {
-  const NewsfeedQuestionScreenContent({
+class NewsfeedShareScreenContent extends StatefulWidget {
+  const NewsfeedShareScreenContent({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<NewsfeedQuestionScreenContent> createState() => _NewsfeedQuestionScreenContentState();
+  State<NewsfeedShareScreenContent> createState() => _NewsfeedShareScreenContentState();
 }
 
-class _NewsfeedQuestionScreenContentState extends State<NewsfeedQuestionScreenContent> {
+class _NewsfeedShareScreenContentState extends State<NewsfeedShareScreenContent> {
   final _scrollController = ScrollController();
   @override
   void initState() {
@@ -104,7 +104,7 @@ class _PostListState extends State<PostList> {
               return const SliverToBoxAdapter(child: Center(child: Text('Failed to fetch posts')));
             case PostStatus.success:{
                 final mustFilteredQuestionPosts = [...state.postList.posts];
-                mustFilteredQuestionPosts.retainWhere((p) => p.classification == "Question");
+                mustFilteredQuestionPosts.retainWhere((p) => p.classification == "Share experience");
                 return SliverList(
                     delegate: SliverChildBuilderDelegate((context, index) {
                       return index >= mustFilteredQuestionPosts.length

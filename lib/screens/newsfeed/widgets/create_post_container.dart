@@ -21,7 +21,6 @@ class CreatePostContainer extends StatelessWidget {
         children: [
           Row(
             children: [
-              Avatar(),
               const SizedBox(width: 10.0),
               Expanded(
                 child: InkWell(
