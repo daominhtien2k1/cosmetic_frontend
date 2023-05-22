@@ -9,7 +9,8 @@ class Routes {
   static const String messenger_screen = "/home_screen/messenger_screen";
   static const String personal_screen = "/personal_screen";
   static const String friend_screen = "/friend_screen";
-  static const String unknow_people_screen = "/unknow_people_screen";
+  static const String unknown_people_screen = "/unknown_people_screen";
+  static const String request_friend_screen = "request_friend_screen";
   static const String search_post_sreen = "/search_post_sreen";
   static const String event_detail_screen = "/event_detail_screen";
   static const String product_detail_screen = "/product_detail_screen";

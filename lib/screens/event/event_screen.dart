@@ -80,7 +80,7 @@ class _EventScreenContentState extends State<EventScreenContent> {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<EventBloc>(context).add(EventFetch(searchBy: searchBy));
+    BlocProvider.of<EventBloc>(context).add(EventsFetched(searchBy: searchBy));
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -152,15 +152,15 @@ class _EventScreenContentState extends State<EventScreenContent> {
           builder: (context, state) {
             switch (state.eventStatus) {
               case EventStatus.initial:
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               case EventStatus.loading:
-                return CircularProgressIndicator();
+                return Center(child: CircularProgressIndicator());
               case EventStatus.failure:
-                return Text("Failed");
+                return Center(child: Text("Failed"));
               case EventStatus.success: {
                 final EventList eventList = state.eventList;
-                final List<Event>? happeningEventList = eventList.happeningEventList;
-                final List<Event>? endedEventList = eventList.endedEventList;
+                final List<Event>? happeningEvents = eventList.happeningEvents;
+                final List<Event>? endedEvents = eventList.endedEvents;
                 return Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -179,7 +179,7 @@ class _EventScreenContentState extends State<EventScreenContent> {
                                 children: [
                                   Text("Đang diễn ra", style: Theme.of(context).textTheme.titleMedium),
                                   SizedBox(height: 12),
-                                  HappeningEventList(happeningEventList: happeningEventList),
+                                  HappeningEventList(happeningEvents: happeningEvents),
 
                                 ],
                               ),
@@ -200,7 +200,7 @@ class _EventScreenContentState extends State<EventScreenContent> {
                                 children: [
                                   Text("Đã kết thúc", style: Theme.of(context).textTheme.titleMedium),
                                   SizedBox(height: 12),
-                                  EndedEventList(endedEventList: endedEventList)
+                                  EndedEventList(endedEvents: endedEvents)
 
                                 ],
                               ),
@@ -223,18 +223,19 @@ class _EventScreenContentState extends State<EventScreenContent> {
 }
 
 class HappeningEventList extends StatelessWidget {
-  List<Event>? happeningEventList;
+  List<Event>? happeningEvents;
 
-  HappeningEventList({Key? key, this.happeningEventList}) : super(key: key);
+  HappeningEventList({Key? key, this.happeningEvents}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return happeningEventList != null ?
-    ListView.builder(
-      itemCount: happeningEventList!.length,
+    return happeningEvents != null ?
+    ListView.separated(
+      itemCount: happeningEvents!.length,
+      separatorBuilder: (context, index) => SizedBox(height: 12), // Khoảng cách giữa các phần tử
       shrinkWrap: true,
       itemBuilder: (ctx, index) {
-        final Event event = happeningEventList![index];
+        final Event event = happeningEvents![index];
         return EventContainer(event: event);
       }
     )
@@ -243,18 +244,19 @@ class HappeningEventList extends StatelessWidget {
 }
 
 class EndedEventList extends StatelessWidget {
-  List<Event>? endedEventList;
+  List<Event>? endedEvents;
 
-  EndedEventList({Key? key, this.endedEventList}) : super(key: key);
+  EndedEventList({Key? key, this.endedEvents}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return endedEventList != null ?
-    ListView.builder(
-        itemCount: endedEventList!.length,
+    return endedEvents != null ?
+    ListView.separated(
+        itemCount: endedEvents!.length,
+        separatorBuilder: (context, index) => SizedBox(height: 12), // Khoảng cách giữa các phần tử
         shrinkWrap: true,
         itemBuilder: (ctx, index) {
-          final Event event = endedEventList![index];
+          final Event event = endedEvents![index];
           return EventContainer(event: event);
         }
     )

@@ -1,7 +1,3 @@
-import 'package:cosmetic_frontend/blocs/event/event_bloc.dart';
-import 'package:cosmetic_frontend/blocs/event_detail/event_detail_bloc.dart';
-import 'package:cosmetic_frontend/blocs/product/product_bloc.dart';
-import 'package:cosmetic_frontend/blocs/product_carousel/product_carousel_bloc.dart';
 import 'package:cosmetic_frontend/models/models.dart';
 import 'package:cosmetic_frontend/screens/onboard/onboard_screen.dart';
 import 'package:cosmetic_frontend/screens/review/creat_review_screen.dart';
@@ -12,16 +8,20 @@ import '../blocs/auth/auth_bloc.dart';
 import '../blocs/auth/auth_event.dart';
 import './blocs/auth/auth_state.dart';
 import './blocs/comment/comment_bloc.dart';
-import './blocs/friend/friend_bloc.dart';
 import './blocs/list_video/list_video_bloc.dart';
 import './blocs/personal_info/personal_info_bloc.dart';
 import './blocs/personal_post/personal_post_bloc.dart';
 import './blocs/post/post_bloc.dart';
 import './blocs/post_detail/post_detail_bloc.dart';
-import './blocs/request_received_friend/request_received_friend_bloc.dart';
 import './blocs/search/search_bloc.dart';
 import './blocs/signup/signup_bloc.dart';
-import './blocs/unknow_people/unknow_people_bloc.dart';
+import './blocs/friend/friend_bloc.dart';
+import './blocs/unknown_people/unknown_people_bloc.dart';
+import './blocs/friend_request_received/friend_request_received_bloc.dart';
+import './blocs/event/event_bloc.dart';
+import './blocs/event_detail/event_detail_bloc.dart';
+import './blocs/product/product_bloc.dart';
+import './blocs/product_carousel/product_carousel_bloc.dart';
 
 import 'screens/nav_screen.dart';
 import 'screens/screens.dart';
@@ -83,9 +83,9 @@ class MyApp extends StatelessWidget {
             lazy: false,
             create: (_) => ListVideoBloc(videoRepository: videoRepository)
         ),
-        BlocProvider<RequestReceivedFriendBloc>(
+        BlocProvider<FriendRequestReceivedBloc>(
             lazy: false,
-            create: (_) => RequestReceivedFriendBloc()
+            create: (_) => FriendRequestReceivedBloc()
         ),
         BlocProvider<PersonalInfoBloc>(
           lazy: false,
@@ -99,9 +99,9 @@ class MyApp extends StatelessWidget {
           lazy: false,
           create: (_) => SignupBloc(signupRepository: signupRepository),
         ),
-        BlocProvider<ListUnknownPeopleBloc>(
+        BlocProvider<UnknownPeopleBloc>(
           lazy: false,
-          create: (_) => ListUnknownPeopleBloc(),
+          create: (_) => UnknownPeopleBloc(),
         ),
         BlocProvider<SearchBloc>(
           lazy: false,
@@ -179,8 +179,11 @@ class MyApp extends StatelessWidget {
               case Routes.friend_screen: {
                 return MaterialPageRoute(builder: (_) => FriendScreen());
               }
-              case Routes.unknow_people_screen: {
-                return MaterialPageRoute(builder: (_) => UnknowPeopleScreen());
+              case Routes.unknown_people_screen: {
+                return MaterialPageRoute(builder: (_) => UnknownPeopleScreen());
+              }
+              case Routes.request_friend_screen: {
+                return MaterialPageRoute(builder: (_) => RequestFriendScreen());
               }
               case Routes.event_detail_screen: {
                 final String eventId = settings.arguments as String;

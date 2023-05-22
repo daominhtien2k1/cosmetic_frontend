@@ -83,19 +83,14 @@ class _PersonalScreenState extends State<PersonalScreen> {
       print("#!#1Bắt đầu gọi bất đồng bộ");
       context.read<PersonalInfoBloc>().add(PersonalInfoFetched());
       print("#!#2Chưa thực hiện xong PersonalInfoFetched() mà gọi tiếp FriendFetched()");
-      context.read<FriendBloc>().add(FriendFetched());
+      context.read<FriendBloc>().add(FriendsFetched());
     } else {
-      context
-          .read<PersonalInfoBloc>()
-          .add(PersonalInfoOfAnotherUserFerched(id: accountId.toString()));
-      context
-          .read<FriendBloc>()
-          .add(FriendOfAnotherUserFetched(id: accountId.toString()));
+      context.read<PersonalInfoBloc>().add(PersonalInfoOfAnotherUserFetched(id: accountId.toString()));
+      context.read<FriendBloc>().add(FriendsOfAnotherUserFetched(id: accountId.toString()));
     }
     print("#!#3Bắt đầu render UI");
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.white,
           automaticallyImplyLeading: false,
           leading: Builder(
             builder: (context) {
@@ -104,7 +99,6 @@ class _PersonalScreenState extends State<PersonalScreen> {
                   : IconButton(
                       onPressed: () {
                         Navigator.of(context).pop();
-                        context.read<PersonalInfoBloc>().add(PersonalInfoFetched());
                       },
                       icon: Icon(Icons.arrow_back_ios, color: Colors.black));
             },
@@ -151,7 +145,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                     UserName(),
                     Description(),
                     const SizedBox(height: 15.0),
-                    GestureDetector(
+                    if (isMe) GestureDetector(
                       onTap: () {
                         Navigator.push(
                             context,
@@ -172,6 +166,21 @@ class _PersonalScreenState extends State<PersonalScreen> {
                                   fontWeight: FontWeight.bold, fontSize: 18.0),
                             )),
                       ),
+                    ),
+                    if (!isMe) Row(
+                      children: [
+                        FilledButton.tonalIcon(
+                            onPressed: () {},
+                            icon: Icon(Icons.person_2),
+                            label: Text("Bạn bè")
+                        ),
+                        SizedBox(width: 8),
+                        FilledButton.tonalIcon(
+                            onPressed: () {},
+                            icon: Icon(Icons.send),
+                            label: Text("Nhắn tin")
+                        )
+                      ],
                     ),
                     const SizedBox(height: 5.0),
                     const Divider(height: 10.0, thickness: 2),
@@ -194,30 +203,28 @@ class _PersonalScreenState extends State<PersonalScreen> {
                           style: TextStyle(
                               fontSize: 22.0, fontWeight: FontWeight.bold),
                         )),
-                        Text(
-                          "Xem thêm>>",
-                          style: TextStyle(
-                              fontSize: 17.0, color: Colors.blue),
-                        ),
-                        SizedBox(height: 10.0),
+                        Text("Xem thêm>>"),
                       ],
                     ),
                     NumberOfFriend(),
                     const SizedBox(
-                      height: 10.0,
+                      height: 8.0,
                     ),
-                    Container(height: 150.0, child: ListFriendCompact())
+                    Container(
+                        height: 150.0,
+                        child: ListFriendCompact()
+                    )
                   ],
                 ),
               ),
             ),
-            if(isMe) SliverToBoxAdapter(
+            SliverToBoxAdapter(
               child: Container(
                 color: Colors.white,
                 padding: EdgeInsets.symmetric(horizontal: 13),
-                child: Text(
-                  "Bài viết của bạn", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-                )
+                child: isMe ? Text(
+                  "Bài viết của bạn", style: Theme.of(context).textTheme.titleLarge,
+                ) : Text("Bài viết", style: Theme.of(context).textTheme.titleLarge)
               ),
             ),
             if(isMe) SliverToBoxAdapter(
@@ -350,11 +357,13 @@ class LocationText extends StatelessWidget {
 class NumberOfFriend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FriendBloc, FriendState>(builder: (context, state) {
-      final listFriend = state.listFriendState;
-      return Text("${listFriend.listFriend.length.toString()} người bạn",
-          style: TextStyle(fontSize: 17.0, color: Colors.grey[700]));
-    });
+    return BlocBuilder<FriendBloc, FriendState>(
+        builder: (context, state) {
+          final friendList = state.friendList;
+          return Text("${friendList.friends.length.toString()} người bạn",
+              style: TextStyle(fontSize: 17.0, color: Colors.grey[700]));
+        }
+    );
   }
 }
 
@@ -362,21 +371,21 @@ class ListFriendCompact extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<FriendBloc, FriendState>(builder: (context, state) {
-      final listFriend = state.listFriendState;
+      final friendList = state.friendList;
       return GridView.builder(
         itemCount: 3,
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
+            crossAxisSpacing: 4,
             childAspectRatio: MediaQuery.of(context).size.width /
                 (MediaQuery.of(context).size.height / 1.5)),
         itemBuilder: (context, index) {
-          return index >= listFriend.listFriend.length
-              ? const GridTile(
-                  child: Padding(padding: EdgeInsets.fromLTRB(150, 150, 0, 0)))
+          return index >= friendList.friends.length
+              ? SizedBox()
               : GridTile(
                   child: Friend(
-                    friendName: listFriend.listFriend[index].name,
-                    imageUrl: listFriend.listFriend[index].avatar,
+                    friendName: friendList.friends[index].name,
+                    imageUrl: friendList.friends[index].avatar,
                   ),
                 );
         },

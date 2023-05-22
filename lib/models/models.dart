@@ -2,7 +2,7 @@ export 'auth_user_model.dart';
 export 'comment_model.dart';
 export 'like_post_model.dart';
 export 'like_video_model.dart';
-export 'list_friend_model.dart';
+export 'friend_list_model.dart';
 export 'list_unknown_people_model.dart';
 export 'personal_modal.dart';
 export 'post_detail_model.dart';

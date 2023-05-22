@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:cosmetic_frontend/utils/token.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -13,25 +14,18 @@ class UserInfoRepository {
     final url =
         Uri.http(Configuration.baseUrlConnect, '/account/get_user_info');
 
-    // get token from local storage/cache
-    final prefs = await SharedPreferences.getInstance();
-    String userPref = prefs.getString('user') ?? '{"token": "No userdata"}';
-    Map<String, dynamic> userMap = jsonDecode(userPref) as Map<String, dynamic>;
-    final token = userMap['token'] != 'No userdata'
-        ? userMap['token']
-        : Configuration.token;
+    var token = await Token.getToken();
 
     final response = await http.get(url, headers: {
       HttpHeaders.authorizationHeader: token,
     });
     switch (response.statusCode) {
-      case 200:
-        {
+      case 200: {
           final body = json.decode(response.body) as Map<String, dynamic>;
           final userInfo = UserInfo.fromJson(body);
           print("#!#7Kết thúc thực hiện xong fetchPersonalInfo()");
           return userInfo;
-        }
+      }
       case 400:
         return UserInfo.initial();
       default:
@@ -45,24 +39,18 @@ class UserInfoRepository {
       'user_id': id,
     });
 
-    final prefs = await SharedPreferences.getInstance();
-    String userPref = prefs.getString('user') ?? '{"token": "No userdata"}';
-    Map<String, dynamic> userMap = jsonDecode(userPref) as Map<String, dynamic>;
-    final token = userMap['token'] != 'No userdata'
-        ? userMap['token']
-        : Configuration.token;
+    var token = await Token.getToken();
 
     final response = await http.get(url, headers: <String, String>{
       HttpHeaders.authorizationHeader: token,
       'Content-Type': 'application/json; charset=UTF-8',
     });
     switch (response.statusCode) {
-      case 200:
-        {
+      case 200: {
           final body = json.decode(response.body) as Map<String, dynamic>;
           final userInfo = UserInfo.fromJson(body);
           return userInfo;
-        }
+      }
       case 400:
         return UserInfo.initial();
       default:

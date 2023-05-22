@@ -2,17 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../../../../blocs/unknow_people/unknow_people_bloc.dart';
-import '../../../../blocs/unknow_people/unknow_people_event.dart';
-import '../../../../models/models.dart';
+import '../../../blocs/friend/friend_bloc.dart';
+import '../../../blocs/friend/friend_event.dart';
+import '../../../models/models.dart';
 
-class UnknownPersonContainer extends StatelessWidget {
-  final UnknownPerson unknownPerson;
-  const UnknownPersonContainer({Key? key, required this.unknownPerson})
+class FriendContainer extends StatelessWidget {
+  final Friend friend;
+  const FriendContainer({Key? key, required this.friend})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    DateTime dt1 = DateTime.now();
+    DateTime dt2 = DateTime.parse(friend.createdAt);
+    final Duration diff = dt1.difference(dt2);
+    final String timeAgo =
+    diff.inDays == 0 ? "${diff.inHours} giờ" : "${diff.inDays} ngày";
     return Container(
       // color: Colors.white,
       height: 100,
@@ -26,7 +31,7 @@ class UnknownPersonContainer extends StatelessWidget {
             child: CircleAvatar(
               radius: 50,
               backgroundImage:
-              CachedNetworkImageProvider(unknownPerson.avatar),
+              CachedNetworkImageProvider(friend.avatar),
             ),
           ),
           Expanded(
@@ -42,10 +47,16 @@ class UnknownPersonContainer extends StatelessWidget {
                       children: [
                         Flexible(
                             flex: 5,
-                            child: Text(unknownPerson.name,
+                            child: Text(friend.name,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18))),
+                        Flexible(
+                            flex: 2,
+                            child: Text(timeAgo,
+                                overflow: TextOverflow.clip,
+                                style: const TextStyle(
+                                    fontSize: 13, color: Colors.grey)))
                       ],
                     ),
                   ),
@@ -56,18 +67,11 @@ class UnknownPersonContainer extends StatelessWidget {
                       Expanded(
                           child: Padding(
                               padding: const EdgeInsets.fromLTRB(6, 0, 0, 2),
-                              child: OutlinedButton(
-                                style: ButtonStyle(
-                                    foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.black),
-                                    backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.grey.shade200)),
+                              child: FilledButton.tonal(
                                 onPressed: () {
-                                  sendRequest(context);
+                                  acceptConfirmation(context);
                                 },
-                                child: Text('Thêm bạn'),
+                                child: Text('Hủy kết bạn'),
                               ))),
                     ],
                   )
@@ -78,43 +82,32 @@ class UnknownPersonContainer extends StatelessWidget {
     );
   }
 
-  void sendRequest(BuildContext context) {
-    void handleSendRequest() {
-      BlocProvider.of<ListUnknownPeopleBloc>(context).add(
-          RequestSend(
-              unknownPerson: unknownPerson));
+  void acceptConfirmation(BuildContext context) {
+    void handleRequestReceivedFriendAccept() {
+      BlocProvider.of<FriendBloc>(context).add(FriendDelete(friend: friend));
     }
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Thêm bạn?'),
+            title: const Text('Hủy kết bạn?'),
             actions: [
-              OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white),
-                    backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.blue)),
-                onPressed: () {
-                  Navigator.pop(context);
-                  handleSendRequest();
-                },
-                child: Text('Xác nhận',
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.black),
-                    backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.grey.shade200)),
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 child: Text('Hủy'),
+              ),
+              FilledButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                  handleRequestReceivedFriendAccept();
+                },
+                child: Text('Xác nhận',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
               )
+
             ],
           );
         });

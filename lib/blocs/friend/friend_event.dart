@@ -7,11 +7,11 @@ abstract class FriendEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class FriendFetched extends FriendEvent {}
+class FriendsFetched extends FriendEvent {}
 
-class FriendOfAnotherUserFetched extends FriendEvent {
+class FriendsOfAnotherUserFetched extends FriendEvent {
   final String id;
-  FriendOfAnotherUserFetched({required this.id});
+  FriendsOfAnotherUserFetched({required this.id});
 }
 
 class FriendDelete extends FriendEvent {

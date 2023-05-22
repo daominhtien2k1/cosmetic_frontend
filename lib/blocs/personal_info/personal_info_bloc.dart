@@ -25,7 +25,7 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
       transformer: throttleDroppable(throttleDuration),
     );
 
-    on<PersonalInfoOfAnotherUserFerched>(
+    on<PersonalInfoOfAnotherUserFetched>(
       _onPersonalInfoOfAnotherUserFerched,
       transformer: throttleDroppable(throttleDuration),
     );
@@ -59,7 +59,7 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
   }
 
   Future<void> _onPersonalInfoOfAnotherUserFerched(
-      PersonalInfoOfAnotherUserFerched event,
+      PersonalInfoOfAnotherUserFetched event,
       Emitter<PersonalInfoState> emit) async {
     try {
       final String id = event.id;

@@ -2,27 +2,23 @@ import 'package:equatable/equatable.dart';
 
 import '../../models/models.dart';
 
+enum FriendStatus {initial, loading, success, failure }
+
 class FriendState extends Equatable {
-  final ListFriend listFriendState;
+  final FriendList friendList;
+  final FriendStatus status;
 
-  FriendState({required this.listFriendState});
+  FriendState({required this.friendList, required this.status});
 
-  FriendState.initial()
-      : listFriendState = ListFriend.initial();
+  FriendState.initial() : friendList = FriendList.initial(), status = FriendStatus.initial;
 
-  FriendState copyWith({
-    ListFriend? listFriend,
-  }) {
+  FriendState copyWith({FriendList? friendList, FriendStatus? status}) {
     return FriendState(
-      listFriendState: listFriendState,
+      friendList: friendList ?? this.friendList,
+      status: status ?? this.status
     );
   }
 
   @override
-  String toString() {
-    return 'RequestReceivedFriendState{RequestReceivedFriendList: $listFriendState}';
-  }
-
-  @override
-  List<Object> get props => [listFriendState];
+  List<Object> get props => [friendList];
 }

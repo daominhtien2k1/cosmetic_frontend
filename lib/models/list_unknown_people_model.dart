@@ -1,28 +1,28 @@
 import 'package:equatable/equatable.dart';
 
-class ListUnknownPeople {
-  List<UnknownPerson> listUnknownPeople;
+class UnknownPeopleList {
+  List<UnknownPerson> unknownPeople;
 
-  ListUnknownPeople({
-    required this.listUnknownPeople,
+  UnknownPeopleList({
+    required this.unknownPeople,
   });
 
 
-  ListUnknownPeople.initial() : listUnknownPeople = List<UnknownPerson>.empty(growable: true);
+  UnknownPeopleList.initial() : unknownPeople = List<UnknownPerson>.empty(growable: true);
 
-  ListUnknownPeople copyWith({
+  UnknownPeopleList copyWith({
     List<UnknownPerson>? listUnknownPeople,
   }) =>
-      ListUnknownPeople(
-        listUnknownPeople: listUnknownPeople ?? this.listUnknownPeople,
+      UnknownPeopleList(
+        unknownPeople: listUnknownPeople ?? this.unknownPeople,
       );
 
-  factory ListUnknownPeople.fromJson(Map<String, dynamic> json) => ListUnknownPeople(
-    listUnknownPeople: List<UnknownPerson>.from(json["ListUnknownPeople"].map((x) => UnknownPerson.fromJson(x))),
+  factory UnknownPeopleList.fromJson(Map<String, dynamic> json) => UnknownPeopleList(
+    unknownPeople: List<UnknownPerson>.from(json["data"]["listUnknownPeople"].map((x) => UnknownPerson.fromJson(x))),
   );
 
   Map<String, dynamic> toJson() => {
-    "ListUnknownPeople": List<dynamic>.from(listUnknownPeople.map((x) => x.toJson())),
+    "ListUnknownPeople": List<dynamic>.from(unknownPeople.map((x) => x.toJson())),
   };
 }
 

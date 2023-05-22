@@ -2,22 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../../../../blocs/friend/friend_bloc.dart';
-import '../../../../blocs/friend/friend_event.dart';
-import '../../../../models/models.dart';
+import '../../../blocs/unknown_people/unknown_people_bloc.dart';
+import '../../../blocs/unknown_people/unknown_people_event.dart';
+import '../../../models/models.dart';
 
-class FriendContainer extends StatelessWidget {
-  final Friend friend;
-  const FriendContainer({Key? key, required this.friend})
+class UnknownPersonContainer extends StatelessWidget {
+  final UnknownPerson unknownPerson;
+  const UnknownPersonContainer({Key? key, required this.unknownPerson})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    DateTime dt1 = DateTime.now();
-    DateTime dt2 = DateTime.parse(friend.createdAt);
-    final Duration diff = dt1.difference(dt2);
-    final String timeAgo =
-    diff.inDays == 0 ? "${diff.inHours}h" : "${diff.inDays}d";
     return Container(
       // color: Colors.white,
       height: 100,
@@ -31,7 +26,7 @@ class FriendContainer extends StatelessWidget {
             child: CircleAvatar(
               radius: 50,
               backgroundImage:
-              CachedNetworkImageProvider(friend.avatar),
+              CachedNetworkImageProvider(unknownPerson.avatar),
             ),
           ),
           Expanded(
@@ -47,16 +42,10 @@ class FriendContainer extends StatelessWidget {
                       children: [
                         Flexible(
                             flex: 5,
-                            child: Text(friend.name,
+                            child: Text(unknownPerson.name,
                                 overflow: TextOverflow.ellipsis,
                                 style: const TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 18))),
-                        Flexible(
-                            flex: 2,
-                            child: Text(timeAgo,
-                                overflow: TextOverflow.clip,
-                                style: const TextStyle(
-                                    fontSize: 13, color: Colors.grey)))
                       ],
                     ),
                   ),
@@ -67,18 +56,11 @@ class FriendContainer extends StatelessWidget {
                       Expanded(
                           child: Padding(
                               padding: const EdgeInsets.fromLTRB(6, 0, 0, 2),
-                              child: OutlinedButton(
-                                style: ButtonStyle(
-                                    foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.black),
-                                    backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.grey.shade200)),
+                              child: FilledButton.tonal(
                                 onPressed: () {
-                                  acceptConfirmation(context);
+                                  sendRequest(context);
                                 },
-                                child: Text('Hủy kết bạn'),
+                                child: Text('Thêm bạn'),
                               ))),
                     ],
                   )
@@ -89,41 +71,27 @@ class FriendContainer extends StatelessWidget {
     );
   }
 
-  void acceptConfirmation(BuildContext context) {
-    void handleRequestReceivedFriendAccept() {
-      BlocProvider.of<FriendBloc>(context).add(
-          FriendDelete(
-              friend: friend));
+  void sendRequest(BuildContext context) {
+    void handleSendRequest() {
+      BlocProvider.of<UnknownPeopleBloc>(context).add(FriendRequestSend(unknownPerson: unknownPerson));
     }
 
     showDialog(
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Hủy kết bạn?'),
+            title: const Text('Thêm bạn?'),
             actions: [
-              OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.white),
-                    backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.grey)),
+              FilledButton(
                 onPressed: () {
-                  //TODO: Xử lý sau
                   Navigator.pop(context);
-                  handleRequestReceivedFriendAccept();
+                  handleSendRequest();
                 },
                 child: Text('Xác nhận',
                     style: TextStyle(fontWeight: FontWeight.bold)),
               ),
               OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor:
-                    MaterialStateProperty.all<Color>(Colors.black),
-                    backgroundColor:
-                    MaterialStateProperty.all<Color>(Colors.grey.shade200)),
                 onPressed: () {
-                  //TODO: Xử lý sau
                   Navigator.pop(context);
                 },
                 child: Text('Hủy'),
@@ -132,6 +100,5 @@ class FriendContainer extends StatelessWidget {
           );
         });
   }
-
 
 }

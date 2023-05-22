@@ -1,33 +1,33 @@
 import 'package:equatable/equatable.dart';
 
 class EventList {
-  final List<Event>? happeningEventList;
-  final List<Event>? endedEventList;
+  final List<Event>? happeningEvents;
+  final List<Event>? endedEvents;
 
-  EventList({this.happeningEventList, this.endedEventList});
+  EventList({this.happeningEvents, this.endedEvents});
 
-  EventList.initial(): happeningEventList = List<Event>.empty(growable: true), endedEventList = List<Event>.empty(growable: true);
+  EventList.initial(): happeningEvents = List<Event>.empty(growable: true), endedEvents = List<Event>.empty(growable: true);
 
-  EventList copyWith({List<Event>? happeningEventList, List<Event>? endedEventList,}) {
+  EventList copyWith({List<Event>? happeningEvents, List<Event>? endedEvents,}) {
     return EventList(
-      happeningEventList: happeningEventList ?? this.happeningEventList,
-      endedEventList: endedEventList ?? this.endedEventList,
+      happeningEvents: happeningEvents ?? this.happeningEvents,
+      endedEvents: endedEvents ?? this.endedEvents,
     );
   }
 
   factory EventList.fromJson(Map<String, dynamic> json) {
-    final happeningEventListData = json["data"]["happeningEventList"] as List<dynamic>?;
-    final endedEventListData = json["data"]["endedEventList"] as List<dynamic>?;
+    final happeningEventsData = json["data"]["happeningEvents"] as List<dynamic>?;
+    final endedEventsData = json["data"]["endedEvents"] as List<dynamic>?;
     return EventList(
-      happeningEventList: happeningEventListData?.map((hpe) => Event.fromJson(hpe)).toList(),
-      endedEventList: endedEventListData?.map((ee) => Event.fromJson(ee)).toList(),
+      happeningEvents: happeningEventsData?.map((hpe) => Event.fromJson(hpe)).toList(),
+      endedEvents: endedEventsData?.map((ee) => Event.fromJson(ee)).toList(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      if (happeningEventList != null) "happeningEventList": happeningEventList!.map((hpe) => hpe.toJson()).toList(),
-      if (endedEventList != null) "endedEventList": endedEventList!.map((ee) => ee.toJson()).toList(),
+      if (happeningEvents != null) "happeningEvents": happeningEvents!.map((hpe) => hpe.toJson()).toList(),
+      if (endedEvents != null) "endedEvents": endedEvents!.map((ee) => ee.toJson()).toList(),
     };
   }
 

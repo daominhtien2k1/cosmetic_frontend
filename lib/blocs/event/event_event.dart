@@ -6,8 +6,8 @@ abstract class EventEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class EventFetch extends EventEvent {
+class EventsFetched extends EventEvent {
   final String searchBy;
 
-  EventFetch({required this.searchBy});
+  EventsFetched({required this.searchBy});
 }

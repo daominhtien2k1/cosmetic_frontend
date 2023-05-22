@@ -17,6 +17,7 @@ class PostDetail {
   final bool canComment;
   final List<Image>? images;
   final Video? video;
+  final String classification;
 
   PostDetail({
     required this.id,
@@ -34,7 +35,8 @@ class PostDetail {
     required this.banned,
     required this.canComment,
     this.images,
-    this.video
+    this.video,
+    required this.classification
   });
 
   PostDetail copyWith({
@@ -52,6 +54,7 @@ class PostDetail {
     bool? canEdit,
     bool? banned,
     bool? canComment,
+    String? classification,
     List<Image>? images,
     Video? video
   }) =>
@@ -70,6 +73,7 @@ class PostDetail {
         canEdit: canEdit ?? this.canEdit,
         banned: banned ?? this.banned,
         canComment: canComment ?? this.canComment,
+        classification: classification ?? this.classification,
         images: images ?? this.images,
         video: video ?? this.video
       );
@@ -96,6 +100,7 @@ class PostDetail {
         canEdit: json["can_edit"] as bool,
         banned: json["banned"] as bool,
         canComment: json["can_comment"] as bool,
+        classification: json["classification"] as String,
         images: images,
         video: video
     );
@@ -118,6 +123,7 @@ class PostDetail {
     "can_comment": canComment,
     if(images != null) "images": images!.map((image) => image.toJson()).toList(),
     if(video != null) "video": video!.toJson(),
+    "classification": classification
   };
 
   @override

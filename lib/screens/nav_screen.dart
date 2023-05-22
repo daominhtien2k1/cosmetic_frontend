@@ -32,12 +32,13 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin{
 
 
   static final List<IconData> _icons = [
-    Icons.home, Icons.feed, Icons.ondemand_video, FontAwesomeIcons.gift, Icons.account_circle
+    Icons.home, Icons.feed, Icons.people, FontAwesomeIcons.gift, Icons.account_circle
   ];
   static final List<Widget> _screens = [
     HomeScreen(),
     NewsFeedScreen(),
-    WatchTab(),
+    // WatchTab(),
+    FriendScreen(),
     EventScreen(),
     PersonalScreen(),
   ];

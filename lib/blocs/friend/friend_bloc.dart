@@ -21,13 +21,13 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
 
   FriendBloc() : super(FriendState.initial()) {
     friendRepository = FriendRepository();
-    on<FriendFetched>(
-      _onFriendFetched,
+    on<FriendsFetched>(
+      _onFriendsFetched,
       transformer: throttleDroppable(throttleDuration),
     );
 
-    on<FriendOfAnotherUserFetched>(
-      _onFriendOfAnotherUserFetched,
+    on<FriendsOfAnotherUserFetched>(
+      _onFriendsOfAnotherUserFetched,
       transformer: throttleDroppable(throttleDuration),
     );
 
@@ -37,45 +37,42 @@ class FriendBloc extends Bloc<FriendEvent, FriendState> {
     );
   }
 
-  Future<void> _onFriendFetched(
-      FriendFetched event, Emitter<FriendState> emit) async {
+  Future<void> _onFriendsFetched(
+      FriendsFetched event, Emitter<FriendState> emit) async {
     try {
-      final friendListData = await friendRepository.friendsFetch();
-      state.listFriendState.listFriend = friendListData.listFriend;
-      emit(state.copyWith(
-          listFriend: friendListData));
+      emit(state.copyWith(status: FriendStatus.loading));
+      final friendListData = await friendRepository.fetchFriends();
+      emit(state.copyWith(status: FriendStatus.success, friendList: friendListData));
+
     } catch (_) {
-      emit(state.copyWith());
+      emit(state.copyWith(status: FriendStatus.failure));
+
     }
   }
 
-  Future<void> _onFriendOfAnotherUserFetched(
-      FriendOfAnotherUserFetched event, Emitter<FriendState> emit) async {
+  Future<void> _onFriendsOfAnotherUserFetched(
+      FriendsOfAnotherUserFetched event, Emitter<FriendState> emit) async {
     try {
       final String id = event.id;
-      final friendListData = await friendRepository.friendOfAnotherUserFetched(id);
-      state.listFriendState.listFriend = friendListData.listFriend;
-      emit(state.copyWith(
-          listFriend: state.listFriendState));
+      final friendListData = await friendRepository.fetchFriendsOfAnotherUser(user_id: id);
+      emit(state.copyWith(status: FriendStatus.success, friendList: friendListData));
     } catch (_) {
       emit(state.copyWith());
     }
   }
 
-  Future<void> _onFriendDelete(FriendDelete event,
-      Emitter<FriendState> emit) async {
+  Future<void> _onFriendDelete(FriendDelete event, Emitter<FriendState> emit) async {
     try {
-      final Friend friend =
-          event.friend;
-      final friendListData =
-      await friendRepository
-          .deleteFriends(friend.friend);
-
-      final listFriendState = state.listFriendState;
-      final listFriend = listFriendState.listFriend;
-      int index = listFriend.indexOf(friend);
-      state.listFriendState.listFriend.removeAt(index);
-      emit(FriendState(listFriendState: ListFriend(listFriend: listFriend)));
+      final Friend friend = event.friend;
+      final isDeleted = await friendRepository.deleteFriend(personId: friend.friend);
+      if(isDeleted) {
+        final friendList = state.friendList;
+        final friends = friendList.friends;
+        int index = friends.indexOf(friend);
+        state.friendList.friends.removeAt(index);
+        int count = friends.length;
+        emit(state.copyWith(friendList: FriendList(friends: friends, count: count)));
+      }
     } catch (_) {
       emit(state.copyWith());
     }

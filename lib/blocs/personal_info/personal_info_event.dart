@@ -7,9 +7,9 @@ abstract class PersonalInfoEvent extends Equatable {
 
 class PersonalInfoFetched extends PersonalInfoEvent {}
 
-class PersonalInfoOfAnotherUserFerched extends PersonalInfoEvent {
+class PersonalInfoOfAnotherUserFetched extends PersonalInfoEvent {
   final String id;
-  PersonalInfoOfAnotherUserFerched({required this.id});
+  PersonalInfoOfAnotherUserFetched({required this.id});
 }
 
 class SetNameUser extends PersonalInfoEvent {

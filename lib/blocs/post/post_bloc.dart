@@ -22,27 +22,27 @@ class PostBloc extends Bloc<PostEvent, PostState> {
 
   PostBloc({required this.postRepository}) : super(PostState.initial()) {
 
-    on<PostReload>(
-      _onPostReload,
+    on<PostsReload>(
+      _onPostsReload,
       transformer: throttleDroppable(throttleDuration),
     );
 
-    on<PostFetched>(
-      _onPostFetched,
+    on<PostsFetched>(
+      _onPostsFetched,
       transformer: throttleDroppable(throttleDuration),
     );
 
-    on<PostLike>(_onLikePost);
+    on<PostLike>(_onPostLike);
 
-    on<PostAdd>(_onAddPost);
+    on<PostAdd>(_onPostAdd);
 
-    on<PostReport>(_onReportPost);
+    on<PostReport>(_onPostReport);
 
-    on<PostDelete>(_onDeletePost);
+    on<PostDelete>(_onPostDelete);
 
   }
 
-  void _onPostReload(PostReload event, Emitter<PostState> emit) {
+  void _onPostsReload(PostsReload event, Emitter<PostState> emit) {
     try {
       return emit(
         state.copyWith(
@@ -56,7 +56,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
-  Future<void> _onPostFetched(PostFetched event, Emitter<PostState> emit) async {
+  Future<void> _onPostsFetched(PostsFetched event, Emitter<PostState> emit) async {
     if (state.hasReachedMax) return;
     try {
       if (state.status == PostStatus.initial) {
@@ -102,7 +102,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
   }
 
   // không có cách nào show toast message mà không đọc state
-  Future<void> _onLikePost(PostLike event, Emitter<PostState> emit) async {
+  Future<void> _onPostLike(PostLike event, Emitter<PostState> emit) async {
     final mustUpdatePost = event.post;
     final posts = state.postList.posts as List<Post>;
     print("#PostBloc: when like in person screen: $posts");
@@ -153,7 +153,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
-  Future<void> _onAddPost(PostAdd event, Emitter<PostState> emit) async {
+  Future<void> _onPostAdd(PostAdd event, Emitter<PostState> emit) async {
     final String described = event.described;
     final String? status = event.status;
     final List<XFile>? imageFileList = event.imageFileList;
@@ -190,7 +190,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
-  Future<void> _onReportPost(PostReport event, Emitter<PostState> emit) async {
+  Future<void> _onPostReport(PostReport event, Emitter<PostState> emit) async {
     final String postId = event.postId;
     final String subject = event.subject;
     final String details = event.details;
@@ -201,7 +201,7 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     }
   }
 
-  Future<void> _onDeletePost(PostDelete event, Emitter<PostState> emit) async {
+  Future<void> _onPostDelete(PostDelete event, Emitter<PostState> emit) async {
     final String postId = event.postId;
     try {
       final isDeleted = await postRepository.deletePost(postId: postId);

@@ -22,7 +22,7 @@ class _NewsfeedGeneralScreenContentState extends State<NewsfeedGeneralScreenCont
   @override
   void initState() {
     super.initState();
-    BlocProvider.of<PostBloc>(context).add(PostFetched());
+    BlocProvider.of<PostBloc>(context).add(PostsFetched());
     _scrollController.addListener(_onScroll);
   }
 
@@ -36,7 +36,7 @@ class _NewsfeedGeneralScreenContentState extends State<NewsfeedGeneralScreenCont
 
   void _onScroll() {
     if (_isBottom){
-      context.read<PostBloc>().add(PostFetched());
+      context.read<PostBloc>().add(PostsFetched());
     }
   }
 
@@ -55,8 +55,8 @@ class _NewsfeedGeneralScreenContentState extends State<NewsfeedGeneralScreenCont
       color: Colors.blue,
       backgroundColor: Colors.white,
       onRefresh: () async {
-        context.read<PostBloc>().add(PostReload());
-        context.read<PostBloc>().add(PostFetched());
+        context.read<PostBloc>().add(PostsReload());
+        context.read<PostBloc>().add(PostsFetched());
         return Future<void>.delayed(const Duration(seconds: 2));
       },
       child: CustomScrollView(

@@ -2,19 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
-import '../../../blocs/request_received_friend/request_received_friend_bloc.dart';
-import '../../../blocs/request_received_friend/request_received_friend_event.dart';
+import '../../../blocs/friend_request_received/friend_request_received_bloc.dart';
+import '../../../blocs/friend_request_received/friend_request_received_event.dart';
 import '../../../models/models.dart';
 
-class RequestContainer extends StatelessWidget {
-  final RequestReceivedFriend requestReceivedFriend;
-  const RequestContainer({Key? key, required this.requestReceivedFriend})
+class FriendRequestReceivedContainer extends StatelessWidget {
+  final FriendRequestReceived friendRequestReceived;
+  const FriendRequestReceivedContainer({Key? key, required this.friendRequestReceived})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     DateTime dt1 = DateTime.now();
-    DateTime dt2 = DateTime.parse(requestReceivedFriend.createdAt);
+    DateTime dt2 = DateTime.parse(friendRequestReceived.createdAt);
     final Duration diff = dt1.difference(dt2);
     final String timeAgo =
         diff.inDays == 0 ? "${diff.inHours}h" : "${diff.inDays}d";
@@ -31,7 +31,7 @@ class RequestContainer extends StatelessWidget {
             child: CircleAvatar(
               radius: 50,
               backgroundImage:
-                  CachedNetworkImageProvider(requestReceivedFriend.avatar),
+                  CachedNetworkImageProvider(friendRequestReceived.avatar),
             ),
           ),
           Expanded(
@@ -47,7 +47,7 @@ class RequestContainer extends StatelessWidget {
                   children: [
                     Flexible(
                         flex: 5,
-                        child: Text(requestReceivedFriend.name,
+                        child: Text(friendRequestReceived.name,
                             overflow: TextOverflow.ellipsis,
                             style: const TextStyle(
                                 fontWeight: FontWeight.bold, fontSize: 18))),
@@ -67,46 +67,18 @@ class RequestContainer extends StatelessWidget {
                   Expanded(
                       child: Padding(
                           padding: const EdgeInsets.fromLTRB(0, 0, 6, 2),
-                          child: OutlinedButton(
-                            style: ButtonStyle(
-                                foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.white),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.grey)),
+                          child: FilledButton(
                             onPressed: () {
                               acceptConfirmation(context);
                             },
                             child: Text('Chấp nhận',
                                 style: TextStyle(fontWeight: FontWeight.bold)),
                           ))
-                      // OutlinedButton(
-                      //   style: ButtonStyle(
-                      //       foregroundColor:
-                      //           MaterialStateProperty.all<Color>(
-                      //               Colors.white),
-                      //       backgroundColor:
-                      //           MaterialStateProperty.all<Color>(
-                      //               Palette.facebookBlue)),
-                      //   onPressed: () {
-                      //     acceptConfirmation(context);
-                      //   },
-                      //   child: Text('Chấp nhận',
-                      //       style: TextStyle(fontWeight: FontWeight.bold)),
-                      // ))
                       ),
                   Expanded(
                       child: Padding(
                           padding: const EdgeInsets.fromLTRB(6, 0, 0, 2),
                           child: OutlinedButton(
-                            style: ButtonStyle(
-                                foregroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.black),
-                                backgroundColor:
-                                    MaterialStateProperty.all<Color>(
-                                        Colors.grey.shade200)),
                             onPressed: () {
                               rejectConfirmation(context);
                             },
@@ -123,9 +95,7 @@ class RequestContainer extends StatelessWidget {
 
   void acceptConfirmation(BuildContext context) {
     void handleRequestReceivedFriendAccept() {
-      BlocProvider.of<RequestReceivedFriendBloc>(context).add(
-          RequestReceivedFriendAccept(
-              requestReceivedFriend: requestReceivedFriend));
+      BlocProvider.of<FriendRequestReceivedBloc>(context).add(FriendRequestReceivedAccept(friendRequestReceived: friendRequestReceived));
     }
 
     showDialog(
@@ -134,14 +104,8 @@ class RequestContainer extends StatelessWidget {
           return AlertDialog(
             title: const Text('Chấp nhận lời mời kết bạn?'),
             actions: [
-              OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.white),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.grey)),
+              FilledButton(
                 onPressed: () {
-                  //TODO: Xử lý sau
                   Navigator.pop(context);
                   handleRequestReceivedFriendAccept();
                 },
@@ -149,13 +113,7 @@ class RequestContainer extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold)),
               ),
               OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.grey.shade200)),
                 onPressed: () {
-                  //TODO: Xử lý sau
                   Navigator.pop(context);
                 },
                 child: Text('Hủy'),
@@ -167,9 +125,7 @@ class RequestContainer extends StatelessWidget {
 
   void rejectConfirmation(BuildContext context) {
     void handleRequestReceivedFriendDelete() {
-      BlocProvider.of<RequestReceivedFriendBloc>(context).add(
-          RequestReceivedFriendDelete(
-              requestReceivedFriend: requestReceivedFriend));
+      BlocProvider.of<FriendRequestReceivedBloc>(context).add(FriendRequestReceivedDelete(friendRequestReceived: friendRequestReceived));
     }
 
     showDialog(
@@ -178,12 +134,7 @@ class RequestContainer extends StatelessWidget {
           return AlertDialog(
             title: const Text('Xóa lời mời kết bạn?'),
             actions: [
-              OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.grey.shade200)),
+              FilledButton(
                 onPressed: () {
                   Navigator.pop(context);
                   handleRequestReceivedFriendDelete();
@@ -192,11 +143,6 @@ class RequestContainer extends StatelessWidget {
                     style: TextStyle(fontWeight: FontWeight.bold)),
               ),
               OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor:
-                        MaterialStateProperty.all<Color>(Colors.black),
-                    backgroundColor:
-                        MaterialStateProperty.all<Color>(Colors.grey.shade200)),
                 onPressed: () {
                   Navigator.pop(context);
                 },
