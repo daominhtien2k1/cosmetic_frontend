@@ -1,6 +1,14 @@
 import 'dart:convert';
 
+import 'package:cosmetic_frontend/blocs/product_detail/product_detail_bloc.dart';
+import 'package:cosmetic_frontend/blocs/product_detail/product_detail_event.dart';
+import 'package:cosmetic_frontend/blocs/product_detail/product_detail_state.dart';
+import 'package:cosmetic_frontend/blocs/review/review_bloc.dart';
+import 'package:cosmetic_frontend/blocs/review/review_event.dart';
+import 'package:cosmetic_frontend/blocs/review/review_state.dart';
 import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
+import 'package:cosmetic_frontend/constants/assets/placeholder.dart';
+import 'package:cosmetic_frontend/routes.dart';
 import 'package:cosmetic_frontend/screens/home/home_screen.dart';
 import 'package:cosmetic_frontend/screens/newsfeed/widgets/newsfeed_widgets.dart';
 import 'package:cosmetic_frontend/screens/product_detail/widgets/product_detail_image_carousel.dart';
@@ -9,6 +17,7 @@ import 'package:cosmetic_frontend/screens/product_detail/widgets/review_containe
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:intl/intl.dart';
 
 import '../../models/models.dart' hide Image;
 
@@ -18,6 +27,11 @@ class ProductDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    BlocProvider.of<ProductDetailBloc>(context).add(ProductDetailFetched(productId: productId));
+    BlocProvider.of<ReviewBloc>(context).add(ReviewsFetched(productId: productId));
+    BlocProvider.of<ReviewBloc>(context).add(StatisticStarReviewFetched(productId: productId));
+    BlocProvider.of<ProductDetailBloc>(context).add(RelateProductsFetched(productId: productId));
+    BlocProvider.of<ProductDetailBloc>(context).add(ProductCharacteristicsFetched(productId: productId));
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(),
@@ -27,119 +41,127 @@ class ProductDetailScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Stack(
-                alignment: Alignment.bottomCenter,
-                clipBehavior: Clip.none,
-                children: [
-                  ProductImage(),
-                  Positioned(
-                    bottom: -24,
-                    left: 0,
-                    right: 0,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16),
-                      child: BrandAndInfo(),
-                    ),
-                  )
-                ],
-              ),
-              SizedBox(height: 40),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: ProductInfo(),
-              ),
-              Divider(),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: AvailableInStore(),
-              ),
-              Divider(thickness: 8, color: Colors.black12),
-              ProductDetailDescription(),
-              Divider(thickness: 8, color: Colors.black12),
-              // Trong backend model Product có mảng link các sản phẩm liên quan. Lúc render ra UI thì là danh sách sản phẩm liên quan của hãng + sản phẩm liên quan đến tìm kiếm search của mk + sản phẩm liên quan đến tình trạng hiện tại của mình
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: RelateProduct(),
-              ),
-              Divider(thickness: 8, color: Colors.black12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: RelatePostList(),
-              ),
-              Divider(thickness: 8, color: Colors.black12),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                child: ProductReviewList(),
-              )
-            ],
-          ),
-        ),
+        child: ProductDetailContent(),
       ),
       bottomNavigationBar: BottomAppBar(
-        child: FavouriteAndReviewContainer(isLoved: false),
+        child: FavouriteAndReviewContainer(),
       ),
       floatingActionButton: FancyFab(),
     );
   }
 }
 
-class FavouriteAndReviewContainer extends StatefulWidget {
-  final bool isLoved;
-
-  FavouriteAndReviewContainer({
+class ProductDetailContent extends StatelessWidget {
+  const ProductDetailContent({
     super.key,
-    required this.isLoved
   });
 
   @override
-  State<FavouriteAndReviewContainer> createState() => _FavouriteAndReviewContainerState();
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProductDetailBloc, ProductDetailState>(
+      builder: (context, state) {
+        switch (state.productDetailStatus) {
+          case ProductDetailStatus.initial:
+            return Center(child: CircularProgressIndicator());
+          case ProductDetailStatus.loading:
+            return Center(child: CircularProgressIndicator());
+          case ProductDetailStatus.failure:
+            return Center(child: Text("Failed"));
+          case ProductDetailStatus.success: {
+            return SingleChildScrollView(
+              child: Column(
+                children: [
+                  Stack(
+                    alignment: Alignment.bottomCenter,
+                    clipBehavior: Clip.none,
+                    children: [
+                      ProductImage(),
+                      Positioned(
+                        bottom: -24,
+                        left: 0,
+                        right: 0,
+                        child: Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          child: BrandAndInfo(),
+                        ),
+                      )
+                    ],
+                  ),
+                  SizedBox(height: 40),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: ProductInfo(),
+                  ),
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: Characteristic(),
+                  ),
+                  Divider(thickness: 8, color: Colors.black12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: AvailableInStore(),
+                  ),
+                  Divider(thickness: 8, color: Colors.black12),
+                  ProductDetailDescription(),
+                  Divider(thickness: 8, color: Colors.black12),
+                  // Trong backend model Product có mảng link các sản phẩm liên quan. Lúc render ra UI thì là danh sách sản phẩm liên quan của hãng + sản phẩm liên quan đến tìm kiếm search của mk + sản phẩm liên quan đến tình trạng hiện tại của mình
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: RelateProductList(),
+                  ),
+                  Divider(thickness: 8, color: Colors.black12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: RelatePostList(),
+                  ),
+                  Divider(thickness: 8, color: Colors.black12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: ProductReviewList(),
+                  )
+                ],
+              ),
+            );
+          }
+        }
+      },
+
+    );
+  }
 }
 
-class _FavouriteAndReviewContainerState extends State<FavouriteAndReviewContainer> {
-  late bool isLoved;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    isLoved = widget.isLoved;
-  }
+class FavouriteAndReviewContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return BlocBuilder<ProductDetailBloc, ProductDetailState>(
+        builder: (context, state) {
+          final isLoved = state.productDetail?.isLoved ?? false;
+          return Container(
+            child: Row(
+              children: [
+                isLoved ?
+                IconButton.filledTonal(onPressed: (){
 
-    return Container(
-      child: Row(
-        children: [
-          isLoved ?
-          IconButton.filledTonal(onPressed: (){
-            setState(() {
-              isLoved = false;
-            });
-            print(isLoved);
-          }, icon: Icon(Icons.favorite_outlined))
-          :
-          IconButton.filledTonal(onPressed: (){
-            setState(() {
-              isLoved = true;
-            });
-            print(isLoved);
+                }, icon: Icon(Icons.favorite_outlined))
+                :
+                IconButton.filledTonal(onPressed: (){
 
-          }, icon: Icon(Icons.favorite_border)),
-          SizedBox(width: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Đánh giá ngay", style: Theme.of(context).textTheme.titleMedium),
-              StarList(rating: 0, size: 24)
-            ],
+                }, icon: Icon(Icons.favorite_border)),
+                SizedBox(width: 20),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Đánh giá ngay", style: Theme.of(context).textTheme.titleMedium),
+                    StarList(rating: 0, size: 24)
+                  ],
 
-          ),
-        ],
-      ),
+                ),
+              ],
+            ),
+          );
+      }
     );
   }
 }
@@ -147,15 +169,21 @@ class _FavouriteAndReviewContainerState extends State<FavouriteAndReviewContaine
 class ProductImage extends StatelessWidget {
   ProductImage({Key? key}) : super(key: key);
 
+  List<Carousel> carousels = [
+    Carousel(url: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcT3OuIQxdI2ustrh-aekGmKfkTVE3ewuPQYCgLWt_kEpgP5a46eH3TEtGxX7lpNMxVyHxRtzvpQviCQP_aHuiZ25wkhLNarrdv7-kqZ7A3ffTwDnW3jdwn3eMqmDOgHWoS2Njo&usqp=CAc"),
+    Carousel(url: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTIwL4xUx-Ek5W8eeVkYgX7Na0DpaAZObJDxsHZQwAPe_T4TYA-UStoMWRzd7NYPUXqt1wZo0E5ONyk9Toi0uGDsf0SOTnu629-VUaOXjlVy7GJ_iATVVR5ov7MwzEkYloiC6s&usqp=CAc"),
+  ];
+
   @override
   Widget build(BuildContext context) {
-    final List<Carousel> carousels = [
-      Carousel(url: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcT3OuIQxdI2ustrh-aekGmKfkTVE3ewuPQYCgLWt_kEpgP5a46eH3TEtGxX7lpNMxVyHxRtzvpQviCQP_aHuiZ25wkhLNarrdv7-kqZ7A3ffTwDnW3jdwn3eMqmDOgHWoS2Njo&usqp=CAc"),
-      Carousel(url: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTIwL4xUx-Ek5W8eeVkYgX7Na0DpaAZObJDxsHZQwAPe_T4TYA-UStoMWRzd7NYPUXqt1wZo0E5ONyk9Toi0uGDsf0SOTnu629-VUaOXjlVy7GJ_iATVVR5ov7MwzEkYloiC6s&usqp=CAc"),
-      Carousel(url: "https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS0lxE3eUOzeSXuy0mBYUlSirTz9Empm5TeZ5Jwta78aOMWft-qJibo3wLwKjctPgcUoFczneiyd4iVgmcuUfJioraVqrttEOdqJufKaWHNw3Pa-IAlE2vKyXWOkFY-njpUhw&usqp=CAc")
-    ];
+    return BlocBuilder<ProductDetailBloc, ProductDetailState>(
+        builder: (context, state) {
+          final images = state.productDetail?.images;
+          carousels = images?.map((e) => Carousel(url: e.url)).toList() ?? carousels;
+          return ProductDetailImageCarouselSlider(carouselList: carousels);
+        }
+    );
 
-    return ProductDetailImageCarouselSlider(carouselList: carousels);
   }
 }
 
@@ -164,36 +192,50 @@ class BrandAndInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Container(
-          child: Row(
-            children: [
-              Container(
-                width: 124,
-                height: 48,
-                padding: EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                    border: Border.all(width: 1, color: Colors.black12),
-                    borderRadius: BorderRadius.all(Radius.circular(16))
+    return BlocBuilder<ProductDetailBloc, ProductDetailState>(
+        builder: (context, state) {
+          final product = state.productDetail;
+          return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 124,
+                        height: 48,
+                        padding: EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            border: Border.all(width: 1, color: Colors.black12),
+                            borderRadius: BorderRadius.all(Radius.circular(16))
+                        ),
+                        child: GestureDetector(
+                          onTap: (){
+                            // navigate to brand
+                          },
+                          child: Row(
+                            children: [
+                              Image.network(
+                                  product?.brand.image.url ?? ImagePlaceHolder.imagePlaceHolderOnline,
+                                  width: 32, height: 32),
+                              SizedBox(width: 6),
+                              Text(product?.brand.name ?? "Brand"),
+                              Spacer(),
+                              Icon(Icons.navigate_next_outlined)
+                            ],
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    Image.network("https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS0lxE3eUOzeSXuy0mBYUlSirTz9Empm5TeZ5Jwta78aOMWft-qJibo3wLwKjctPgcUoFczneiyd4iVgmcuUfJioraVqrttEOdqJufKaWHNw3Pa-IAlE2vKyXWOkFY-njpUhw&usqp=CAc",
-                        width: 32, height: 32),
-                    SizedBox(width: 6),
-                    Text("Kiehl"),
-                    Spacer(),
-                    Icon(Icons.navigate_next_outlined)
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-        IconButton(onPressed: () {}, icon: Icon(Icons.info_outline), iconSize: 32, color: Colors.black26)
-      ]
+                IconButton(onPressed: () {},
+                    icon: Icon(Icons.info_outline),
+                    iconSize: 32,
+                    color: Colors.black26)
+              ]
+          );
+        }
     );
   }
 }
@@ -203,54 +245,99 @@ class ProductInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Mặt nạ dưỡng trắng da chiết xuất quả thanh yên Yuzu Nhật Bản Bio-essense (20ml)",
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            SizedBox(height: 8),
-            Row(
+    return BlocBuilder<ProductDetailBloc, ProductDetailState>(
+      builder: (context, state) {
+        final product = state.productDetail;
+        return Container(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                product?.name ?? "",
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
+              SizedBox(height: 8),
+              Row(
+                children: [
+                  StarList(rating: product?.rating ?? 0),
+                  SizedBox(width: 8),
+                  Text("${product?.rating.toStringAsFixed(2)}"),
+                  SizedBox(width: 4),
+                  Text("(${product?.reviews} đánh giá)"),
+                  SizedBox(width: 8),
+                  Text("|"),
+                  SizedBox(width: 8),
+                  Icon(Icons.favorite),
+                  SizedBox(width: 4),
+                  Text("${product?.loves} yêu thích")
+                ],
+              ),
+              SizedBox(height: 8),
+              Row(
+                children: [
+                  Text("${NumberFormat('#,##0').format(product?.lowPrice ?? 0)} đ", style: Theme.of(context).textTheme.headlineSmall),
+                  SizedBox(width: 16),
+                  Text("~", style: Theme.of(context).textTheme.headlineSmall),
+                  SizedBox(width: 16),
+                  Text("${NumberFormat('#,##0').format(product?.highPrice ?? 0)} đ", style: Theme.of(context).textTheme.headlineSmall),
+                ],
+              )
+            ],
+          ),
+        );
+      }
+    );
+  }
+}
+
+class Characteristic extends StatelessWidget {
+  const Characteristic({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProductDetailBloc, ProductDetailState>(
+        builder: (context, state) {
+          final characteristics = state.characteristics as List<String>?;
+          final productId = state.productDetail?.id;
+          return Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                StarList(rating: 4.4),
-                SizedBox(width: 8),
-                Text("4.42"),
-                SizedBox(width: 4),
-                Text("(130 đánh giá)"),
-              ],
-            ),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                Text("Đã bán 938"),
-                SizedBox(width: 8),
-                Text("|"),
-                SizedBox(width: 8),
-                Icon(Icons.favorite),
-                SizedBox(width: 4),
-                Text("24 yêu thích")
-              ],
-            ),
-            SizedBox(height: 8),
-            Row(
-              children: [
-                Text("28.000 đ", style: Theme.of(context).textTheme.headlineSmall),
-                SizedBox(width: 16),
-                Text(
-                  '29.500 đ',
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    decoration: TextDecoration.lineThrough,
-                    decorationStyle: TextDecorationStyle.solid,
+                GestureDetector(
+                  onTap: () {
+                    print("AA");
+                    Navigator.pushNamed(context, Routes.product_characteristic_screen, arguments: productId);
+                  },
+                  child: Row(
+                    children: [
+                      Text("Đặc trưng của sản phẩm", style: Theme.of(context).textTheme.titleMedium),
+                      Spacer(),
+                      Icon(Icons.navigate_next)
+                    ],
+                  ),
+                ),
+                SizedBox(height: 8),
+                characteristics?.length != 0 ? Container(
+                  height: 48,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        ...?characteristics?.map((c) =>
+                            Container(
+                              margin: EdgeInsets.only(right: 8),
+                              child: Chip(label: Text(c))
+                            )
+                        ).toList()
+                      ],
+                    ),
                   ),
                 )
+                : SizedBox()
               ],
-            )
-          ],
-        ),
-      ),
+            ),
+          );
+      }
     );
   }
 }
@@ -279,49 +366,52 @@ class ProductDetailDescription extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.bottomCenter,
-      clipBehavior: Clip.none,
-      children: [
-        Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text("Thông tin sản phẩm", style: Theme.of(context).textTheme.titleMedium),
-              SizedBox(height: 16),
-              Text("Tóc xoăn phồng mượt gấp 18 lần chất liệu gồm phủ Tourr kết hợp 4 cồng phát "
-                  "ion âm giúp sản xuất ra hàng triệu ion âm giúp tóc trở nên bóng mượt, óng ả hơn gấp 18"
-                  " lần. Chất liệu đặc biệt này còn hỗ trợ tỏa nhiệt đều, giúp tạo kiểu nhanh chóng",
-                 maxLines: 4,
-               overflow: TextOverflow.ellipsis,
+    return BlocBuilder<ProductDetailBloc, ProductDetailState>(
+        builder: (context, state) {
+          final product = state.productDetail;
+        return Stack(
+          alignment: Alignment.bottomCenter,
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text("Thông tin sản phẩm", style: Theme.of(context).textTheme.titleMedium),
+                  SizedBox(height: 16),
+                  Text(product?.description ?? "",
+                     maxLines: 4,
+                   overflow: TextOverflow.ellipsis,
+                  ),
+                  SizedBox(height: 8),
+                  BrandInfo()
+                ],
               ),
-              SizedBox(height: 8),
-              BrandInfo()
-            ],
-          ),
-        ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.2), // Đặt màu nền là màu trắng
-            boxShadow: [
-              BoxShadow(
-                color: Colors.white, // Đặt màu shadow
-                offset: Offset(0, -4), // Đặt hướng shadow (0,-4) để đổ ngược lên trên
-                blurRadius: 16, // Đặt bán kính blur cho shadow
-                spreadRadius: 8, // Đặt bán kính mở rộng của shadow
+            ),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.2), // Đặt màu nền là màu trắng
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.white, // Đặt màu shadow
+                    offset: Offset(0, -4), // Đặt hướng shadow (0,-4) để đổ ngược lên trên
+                    blurRadius: 16, // Đặt bán kính blur cho shadow
+                    spreadRadius: 8, // Đặt bán kính mở rộng của shadow
+                  ),
+                ],
               ),
-            ],
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text("Xem tất cả", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.blueAccent)),
-              Icon(Icons.navigate_next)
-            ],
-          ),
-        )
-      ],
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text("Xem tất cả", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.blueAccent)),
+                  Icon(Icons.navigate_next)
+                ],
+              ),
+            )
+          ],
+        );
+      }
     );
   }
 }
@@ -331,45 +421,50 @@ class BrandInfo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: Row(
-        children: [
-          Image.network("https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcS0lxE3eUOzeSXuy0mBYUlSirTz9Empm5TeZ5Jwta78aOMWft-qJibo3wLwKjctPgcUoFczneiyd4iVgmcuUfJioraVqrttEOdqJufKaWHNw3Pa-IAlE2vKyXWOkFY-njpUhw&usqp=CAc",
-              width: 72, height: 72),
-          SizedBox(width: 16),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+    return BlocBuilder<ProductDetailBloc, ProductDetailState>(
+        builder: (context, state) {
+          final product = state.productDetail;
+        return Container(
+          child: Row(
             children: [
-              Row(
-                children: [
-                  Text("Thương hiệu:"),
-                  SizedBox(width: 16),
-                  Text("Halio")
-                ],
-              ),
-              Row(
-                children: [
-                  Text("Sản xuất tại:"),
-                  SizedBox(width: 16),
-                  Text("Hàn Quốc")
-                ],
-              ),
-              Row(
+              Image.network(product?.brand.image.url ?? ImagePlaceHolder.imagePlaceHolderOnline,
+                  width: 72, height: 72),
+              SizedBox(width: 16),
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("Mô tả:"),
-                  SizedBox(width: 16),
-                  SizedBox(
-                      width: 232,
-                      child: Text("Halio là thương hiệu chăm sóc da và nha khoa đến từ Hàn Quốc",
-                          overflow: TextOverflow.clip, maxLines: 2)
+                  Row(
+                    children: [
+                      Text("Thương hiệu:"),
+                      SizedBox(width: 16),
+                      Text(product?.brand.name ?? "")
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      Text("Sản xuất tại:"),
+                      SizedBox(width: 16),
+                      Text(product?.brand.origin ?? "")
+                    ],
+                  ),
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("Mô tả:"),
+                      SizedBox(width: 16),
+                      SizedBox(
+                          width: 232,
+                          child: Text(product?.brand.description ?? "",
+                              overflow: TextOverflow.clip, maxLines: 2)
+                      )
+                    ],
                   )
                 ],
               )
             ],
-          )
-        ],
-      ),
+          ),
+        );
+      }
     );
   }
 }
@@ -379,154 +474,143 @@ class ProductReviewList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 440,
-      child: Column(
-        children: [
-          Container(
-            child: Row(
-              children: [
-                Text("Người dùng đánh giá", style: Theme.of(context).textTheme.titleMedium),
-                Spacer(),
-                Text("Xem thêm"),
-                Icon(Icons.navigate_next)
-              ],
-            ),
-          ),
-          StatisticStar(),
-          Expanded(
-            child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: 3,
-                itemBuilder: (context, index) {
-                  const jsonString = '''
-                  {
-                "id": "6465eaca7372cc1938755da1",
-                "rating": 2,
-                "title": "Tệ",
-                "content": "Fusce congue, diam id ornare imperdiet, sapien urna pretium nisl, ut volutpat sapien arcu sed augue.",
-                "createdAt": "2023-05-18T12:18:21.617Z",
-                "updatedAt": "2023-05-18T12:18:21.617Z",
-                "usefuls": 7,
-                "replies": 0,
-                "author": {
-                    "id": "63bbff18fc13ae6493000831",
-                    "name": "Saul Wibrow",
-                    "avatar": "http://dummyimage.com/100x100.png/ff4444/ffffff"
-                },
-                "is_setted_useful": true,
-                "is_blocked": false,
-                "can_edit": false,
-                "banned": false,
-                "can_reply": false,
-                "images": [
-                    {
-                        "url": "http://dummyimage.com/273x271.png/2016da/ffffff",
-                        "publicId": ""
-                    }
-                ]
+    return BlocBuilder<ReviewBloc, ReviewState>(
+      builder: (context, state) {
+        switch (state.reviewStatus) {
+          case ReviewStatus.initial:
+            return Center(child: CircularProgressIndicator());
+          case ReviewStatus.loading:
+            return Center(child: CircularProgressIndicator());
+          case ReviewStatus.failure:
+            return Center(child: Text("Failed"));
+          case ReviewStatus.success: {
+            final reviews = state.reviews;
+              return Column(
+                children: [
+                  Container(
+                    child: Row(
+                      children: [
+                        Text("Người dùng đánh giá", style: Theme
+                            .of(context)
+                            .textTheme
+                            .titleMedium),
+                        Spacer(),
+                        Text("Xem thêm"),
+                        Icon(Icons.navigate_next)
+                      ],
+                    ),
+                  ),
+                  StatisticStar(),
+                  if(reviews!= null) ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: reviews?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final Review review = reviews![index];
+                        return ReviewContainer(review: review);
+                      }
+                  ),
+                ],
+              );
             }
-                  ''';
-                  Map<String, dynamic> data = jsonDecode(jsonString);
-                  final Review review = Review.fromJson(data);
-                  return ReviewContainer(review: review);
-                }
-            ),
-          ),
-        ],
-      ),
+        }
+      }
     );
   }
 }
 
-class RelateProduct extends StatelessWidget {
-  const RelateProduct({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    // ở màn home thì chỉ dựa trên tìm kiếm và tình trạng da của mình thôi, ko có dựa trên sản phẩm gốc
-    return RelateProductList(relateProducts: []);
-  }
-}
-
 class RelateProductList extends StatelessWidget {
-  List<Product>? relateProducts;
-  RelateProductList({Key? key, required this.relateProducts}) : super(key: key);
+  RelateProductList({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("Có thể bạn sẽ thích", style: Theme.of(context).textTheme.titleMedium),
-            Icon(Icons.navigate_next)
-          ],
-        ),
-        SizedBox(height: 16),
-        Container(
-          height: 232,
-          child: ListView.separated(
-            separatorBuilder: (context, index) => SizedBox(
-              width: 16,
-            ),
-            shrinkWrap: true,
-            scrollDirection: Axis.horizontal,
-            itemCount: 5,
-            itemBuilder: (BuildContext context, int index) {
-              return Card(
-                margin: EdgeInsets.all(0),
-                elevation: 0,
-                color: Colors.white,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(0),
+    return BlocBuilder<ProductDetailBloc, ProductDetailState>(
+        builder: (context, state) {
+          final List<RelateProduct>? relateProducts = state.relateProducts;
+          if (relateProducts != null && relateProducts.isNotEmpty) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text("Có thể bạn sẽ thích", style: Theme.of(context).textTheme.titleMedium),
+                    Icon(Icons.navigate_next)
+                  ],
                 ),
-                child: Container(
-                  width: 144,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      ClipRRect(
+                SizedBox(height: 16),
+                Container(
+                  height: 232,
+                  child: ListView.separated(
+                    separatorBuilder: (context, index) => SizedBox(
+                      width: 16,
+                    ),
+                    shrinkWrap: true,
+                    scrollDirection: Axis.horizontal,
+                    itemCount: relateProducts?.length ?? 0,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        margin: EdgeInsets.all(0),
+                        elevation: 0,
+                        color: Colors.white,
+                        shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(0),
-                          child: Image.network(
-                              "https://media.hasaki.vn/catalog/product/f/a/facebook-dynamic-nuoc-hoa-hong-khong-mui-klairs-danh-cho-da-nhay-cam-180ml-1681723574_img_380x380_64adc6_fit_center.jpg",
-                              width: 144,
-                              height: 100,
-                              fit: BoxFit.fitWidth
-                          )
-                      ),
-                      Padding(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: 2),
-                            Text("Klairs", style: Theme.of(context).textTheme.titleSmall),
-                            Text('Nước cân bằng da Klairs supple preparation', style: Theme.of(context).textTheme.bodyMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
-                            SizedBox(height: 2),
-                            Row(
-                              children: [
-                                StarList(rating: 4.4),
-                                SizedBox(width: 8),
-                                Text("(3)")
-                              ],
-                            ),
-                            SizedBox(height: 0),
-                            Text("200.000 đ", style: Theme.of(context).textTheme.titleLarge),
-                          ],
                         ),
-                      ),
+                        child: Container(
+                          width: 144,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ClipRRect(
+                                  borderRadius: BorderRadius.circular(0),
+                                  child: Image.network(
+                                      relateProducts?[index].image.url ?? ImagePlaceHolder.imagePlaceHolderOnline,
+                                      width: 144,
+                                      height: 100,
+                                      fit: BoxFit.fitWidth
+                                  )
+                              ),
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 8),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(height: 2),
+                                    Text("${relateProducts?[index].brandName}", style: Theme.of(context).textTheme.titleSmall),
+                                    Text('${relateProducts?[index].name}', style: Theme.of(context).textTheme.bodyMedium, maxLines: 2, overflow: TextOverflow.ellipsis),
+                                    SizedBox(height: 2),
+                                    Row(
+                                      children: [
+                                        StarList(rating: relateProducts?[index].rating ?? 0),
+                                        SizedBox(width: 8),
+                                        Text("${relateProducts?[index].reviews}")
+                                      ],
+                                    ),
+                                    Row(
+                                      children: [
+                                        Icon(Icons.favorite_outlined),
+                                        SizedBox(width: 4),
+                                        Text("${relateProducts?[index].loves} yêu thích"),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              ),
 
-                    ],
+                            ],
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                ),
-              );
-            },
-          ),
-        )
-      ],
+                )
+              ],
+            );
+          } else {
+            return SizedBox();
+          }
+
+      }
     );
   }
 }
@@ -556,7 +640,7 @@ class RelatePostList extends StatelessWidget {
                 itemCount: 3,
                 itemBuilder: (context, index) {
                   const jsonString =
-                      '{ "id": "63ddd33e5fa9cf5634bb2820",  "described": "The rough duck calmly ran because some teacher humbly rolled below a dumb hamster which, became a vibrating, lazy hamster.",  "createdAt": "2023-02-04T03:38:38.608Z", "updatedAt": "2023-02-04T03:38:38.608Z", "likes": 0, "comments": 5, "author": {  "id": "63bbff18fc13ae649300082b", "name": "Gussi Waterhouse",  "avatar": "http://dummyimage.com/100x100.png/cc0000/ffffff" }, "is_liked": false, "status": "trống vắng", "is_blocked": false, "can_edit": false, "banned": false,  "can_comment": false }';
+                      '{ "id": "63ddd33e5fa9cf5634bb2820",  "described": "The rough duck calmly ran because some teacher humbly rolled below a dumb hamster which, became a vibrating, lazy hamster.",  "createdAt": "2023-02-04T03:38:38.608Z", "updatedAt": "2023-02-04T03:38:38.608Z", "likes": 0, "comments": 5, "author": {  "id": "63bbff18fc13ae649300082b", "name": "Gussi Waterhouse",  "avatar": "http://dummyimage.com/100x100.png/cc0000/ffffff" }, "is_liked": false, "status": "trống vắng", "is_blocked": false, "can_edit": false, "banned": false,  "can_comment": false, "classification": "General" }';
                   Map<String, dynamic> data = jsonDecode(jsonString);
                   final Post post = Post.fromJson(data);
                   return PostContainer(post: post);
@@ -574,58 +658,78 @@ class StatisticStar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 24, right: 40, bottom: 8, top: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Column(
-            children: [
-              Text("4.15", style: Theme.of(context).textTheme.displaySmall),
-              StarList(rating: 4.15)
-            ],
-          ),
-          Column(
-            children: [
-              Row(
+    return BlocBuilder<ReviewBloc, ReviewState>(
+      builder: (context, state) {
+        switch (state.reviewStatus) {
+          case ReviewStatus.initial:
+            return Center(child: CircularProgressIndicator());
+          case ReviewStatus.loading:
+            return Center(child: CircularProgressIndicator());
+          case ReviewStatus.failure:
+            return Center(child: Text("Failed"));
+          case ReviewStatus.success: {
+            final statisticStar = state.statisticStar;
+            return Container(
+              padding: const EdgeInsets.only(
+                  left: 24, right: 40, bottom: 8, top: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  StarList(rating: 5),
-                  SizedBox(width: 24),
-                  Text("87 đánh giá")
+                  Column(
+                    children: [
+                      Text("${statisticStar?.rating}", style: Theme
+                          .of(context)
+                          .textTheme
+                          .displaySmall),
+                      StarList(rating: statisticStar?.rating ?? 0)
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      Row(
+                        children: [
+                          StarList(rating: 5),
+                          SizedBox(width: 24),
+                          Text("${statisticStar?.the5StarRatings} đánh giá")
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          StarList(rating: 4),
+                          SizedBox(width: 24),
+                          Text("${statisticStar?.the4StarRatings} đánh giá")
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          StarList(rating: 3),
+                          SizedBox(width: 24),
+                          Text("${statisticStar?.the3StarRatings} đánh giá")
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          StarList(rating: 2),
+                          SizedBox(width: 24),
+                          Text("${statisticStar?.the2StarRatings} đánh giá")
+                        ],
+                      ),
+                      Row(
+                        children: [
+                          StarList(rating: 1),
+                          SizedBox(width: 24),
+                          Text("${statisticStar?.the1StarRatings} đánh giá")
+                        ],
+                      )
+                    ],
+                  )
                 ],
               ),
-              Row(
-                children: [
-                  StarList(rating: 4),
-                  SizedBox(width: 24),
-                  Text("87 đánh giá")
-                ],
-              ),
-              Row(
-                children: [
-                  StarList(rating: 3),
-                  SizedBox(width: 24),
-                  Text("87 đánh giá")
-                ],
-              ),
-              Row(
-                children: [
-                  StarList(rating: 2),
-                  SizedBox(width: 24),
-                  Text("87 đánh giá")
-                ],
-              ),
-              Row(
-                children: [
-                  StarList(rating: 1),
-                  SizedBox(width: 24),
-                  Text("87 đánh giá")
-                ],
-              )
-            ],
-          )
-        ],
-      ),
+            );
+          }
+        }
+
+      }
     );
   }
 }

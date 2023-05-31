@@ -19,7 +19,12 @@ class ReviewContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // print("#ReviewContainer: Rebuild ${review.id}");
+    String characteristicReviewsText = "";
+
+    review.characteristicReviews?.forEach((element) {
+      characteristicReviewsText += " - ${element.characteristic} (${element.point})";
+    });
+    if(characteristicReviewsText.isNotEmpty) characteristicReviewsText = characteristicReviewsText.substring(3);
 
     // tính timeAgo
     DateTime dt1 = DateTime.now();
@@ -73,8 +78,20 @@ class ReviewContainer extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if(characteristicReviewsText.isNotEmpty) Padding(
+                    padding: const EdgeInsets.only(top: 8, bottom: 8),
+                    child: Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.pinkAccent.shade100,
+                        borderRadius: BorderRadius.circular(4)
+                      ),
+                      child: Text(characteristicReviewsText),
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Text(review.content)
+                  Text("${review.content}")
                 ]
             ),
           ),

@@ -255,12 +255,12 @@ class PopularProductList extends StatelessWidget {
                 ]
               ),
               title: Text(product.name, style: Theme.of(context).textTheme.bodyMedium, overflow: TextOverflow.ellipsis, maxLines: 2),
-              subtitle: Text("Đã bán: ${product.sold}", style: Theme.of(context).textTheme.bodySmall),
+              subtitle: StarList(rating: product.rating),
               trailing: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Icon(Icons.favorite_border),
-                  Text("4526")
+                  Text("${product.loves}")
                 ],
               ),
             );

@@ -15,11 +15,10 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
     try {
       emit(state.copyWith(productStatus: ProductStatus.loading));
       final List<Product>? popularProducts = await productRepository.fetchPopularProducts();
-      final List<Product>? discountProducts = await productRepository.fetchPopularProducts();
       final List<Product>? exclusiveProducts = await productRepository.fetchPopularProducts();
       final List<Product>? upcomingProducts = await productRepository.fetchPopularProducts();
       final List<Product>? newProducts = await productRepository.fetchPopularProducts();
-      emit(state.copyWith(productStatus: ProductStatus.success, popularProducts: popularProducts, discountProducts: discountProducts, exclusiveProducts: exclusiveProducts, upcomingProducts: upcomingProducts, newProducts: newProducts));
+      emit(state.copyWith(productStatus: ProductStatus.success, popularProducts: popularProducts, exclusiveProducts: exclusiveProducts, upcomingProducts: upcomingProducts, newProducts: newProducts));
     } catch (err) {
       emit(state.copyWith(productStatus: ProductStatus.failure));
     }

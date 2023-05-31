@@ -8,9 +8,11 @@ import 'dart:convert';
 
 class Review {
   final String id;
-  final int rating;
-  final String title;
-  final String content;
+  final String classification;
+  final List<CharacteristicReviewCriteria>? characteristicReviews;
+  final int? rating;
+  final String? title;
+  final String? content;
   final String createdAt;
   final String updatedAt;
   final int usefuls;
@@ -26,9 +28,11 @@ class Review {
 
   Review({
     required this.id,
-    required this.rating,
-    required this.title,
-    required this.content,
+    required this.classification,
+    this.characteristicReviews,
+    this.rating,
+    this.title,
+    this.content,
     required this.createdAt,
     required this.updatedAt,
     required this.usefuls,
@@ -45,6 +49,8 @@ class Review {
 
   Review copyWith({
     String? id,
+    String? classification,
+    List<CharacteristicReviewCriteria>? characteristicReviews,
     int? rating,
     String? title,
     String? content,
@@ -62,6 +68,8 @@ class Review {
   }) {
     return Review(
       id: id ?? this.id,
+      classification: classification ?? this.classification,
+      characteristicReviews: characteristicReviews ?? this.characteristicReviews,
       rating: rating ?? this.rating,
       title: title ?? this.title,
       content: content ?? this.content,
@@ -89,9 +97,11 @@ class Review {
 
     return Review(
       id: json["id"] as String,
-      rating: json["rating"] as int,
-      title: json["title"] as String,
-      content: json["content"] as String,
+      classification: json["classification"] as String,
+      characteristicReviews: json["characteristic_review_results"] != null ? List<CharacteristicReviewCriteria>.from(json["characteristic_review_results"].map((x) => CharacteristicReviewCriteria.fromJson(x))) : null,
+      rating: json["rating"] as int?,
+      title: json["title"] as String?,
+      content: json["content"] as String?,
       createdAt: json["createdAt"] as String,
       updatedAt: json["updatedAt"] as String,
       usefuls: json["usefuls"] as int,
@@ -110,9 +120,11 @@ class Review {
   Map<String, dynamic> toJson() {
     return {
       "id": id,
-      "rating": rating,
-      "title": title,
-      "content": content,
+      "classification": classification,
+      if(characteristicReviews!= null) "characteristic_review_results": List<dynamic>.from(characteristicReviews!.map((x) => x.toJson())),
+      if(rating != null) "rating": rating,
+      if(title != null) "title": title,
+      if(content != null) "content": content,
       "createdAt": createdAt,
       "updatedAt": updatedAt,
       "usefuls": usefuls,
@@ -123,8 +135,7 @@ class Review {
       "can_edit": canEdit,
       "banned": banned,
       "can_reply": canReply,
-      if(images != null) "images": images!.map((image) => image.toJson())
-          .toList(),
+      if(images != null) "images": images!.map((image) => image.toJson()).toList(),
       if(video != null) "video": video!.toJson(),
     };
   }
@@ -169,6 +180,35 @@ class AuthorReview extends Equatable {
   @override
   String toString() => toJson().toString();
 
+}
+
+class CharacteristicReviewCriteria {
+  final String characteristic;
+  final int point;
+
+  CharacteristicReviewCriteria({
+    required this.characteristic,
+    required this.point,
+  });
+
+  CharacteristicReviewCriteria copyWith({
+    String? characteristic,
+    int? point,
+  }) =>
+      CharacteristicReviewCriteria(
+        characteristic: characteristic ?? this.characteristic,
+        point: point ?? this.point,
+      );
+
+  factory CharacteristicReviewCriteria.fromJson(Map<String, dynamic> json) => CharacteristicReviewCriteria(
+    characteristic: json["characteristic"],
+    point: json["point"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "characteristic": characteristic,
+    "point": point,
+  };
 }
 
 class AttachedReviewImage extends Equatable {

@@ -1,37 +1,34 @@
 import 'dart:convert';
 
-// Product ở mục Nhiều người quan tâm, bổ sung loves vào nữa
+// Product ở mục Nhiều người quan tâm,
 class Product {
   final String id;
   final String slug;
   final String name;
   final ProductImage image;
-  final int price;
   final int reviews;
   final double rating;
-  final int sold;
+  final int loves;
 
   Product({
     required this.id,
     required this.slug,
     required this.name,
     required this.image,
-    required this.price,
     required this.reviews,
     required this.rating,
-    required this.sold
+    required this.loves
   });
 
-  Product copyWith({String? id, String? slug, String? name, ProductImage? image, int? price, int? reviews, double? rating, int? sold}) {
+  Product copyWith({String? id, String? slug, String? name, ProductImage? image, int? reviews, double? rating, int? loves}) {
     return Product(
       id: id ?? this.id,
       slug: slug ?? this.slug,
       name: name ?? this.name,
       image: image ?? this.image,
-      price: price ?? this.price,
       reviews: reviews ?? this.reviews,
       rating: rating ?? this.rating,
-      sold: sold ?? this.sold
+      loves: loves ?? this.loves
     );
   }
 
@@ -41,10 +38,9 @@ class Product {
       slug: json["slug"] as String,
       name: json["name"] as String,
       image: ProductImage.fromJson(json["image"]),
-      price: json["price"] as int,
       reviews: json["reviews"] as int,
       rating: json["rating"] as double,
-      sold: json["sold"] as int
+      loves: json["loves"] as int
     );
   }
 
@@ -54,10 +50,9 @@ class Product {
       "slug": slug,
       "name": name,
       "image": image.toJson(),
-      "price": price,
       "reviews": reviews,
       "rating": rating,
-      "sold": sold
+      "loves": loves
     };
   }
 

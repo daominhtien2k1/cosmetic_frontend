@@ -15,3 +15,4 @@ export 'friend/unknown_people_screen.dart';
 export 'event/event_screen.dart';
 export 'event/event_detail_screen.dart';
 export 'product_detail/product_detail_screen.dart';
+export 'product_detail/sub_screens/product_detail_subscreens.dart';

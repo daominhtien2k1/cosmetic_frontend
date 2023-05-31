@@ -15,5 +15,6 @@ class Routes {
   static const String event_detail_screen = "/event_detail_screen";
   static const String product_detail_screen = "/product_detail_screen";
   static const String create_review_screen = "/create_review_screen";
+  static const String product_characteristic_screen = "product_characteristic_screen";
 }
 

@@ -1,3 +1,5 @@
+import 'package:cosmetic_frontend/blocs/product_characteristic/product_characteristic_bloc.dart';
+import 'package:cosmetic_frontend/blocs/review/review_bloc.dart';
 import 'package:cosmetic_frontend/models/models.dart';
 import 'package:cosmetic_frontend/screens/onboard/onboard_screen.dart';
 import 'package:cosmetic_frontend/screens/review/creat_review_screen.dart';
@@ -23,6 +25,7 @@ import './blocs/event_detail/event_detail_bloc.dart';
 import './blocs/product/product_bloc.dart';
 import './blocs/product_carousel/product_carousel_bloc.dart';
 
+import 'blocs/product_detail/product_detail_bloc.dart';
 import 'screens/nav_screen.dart';
 import 'screens/screens.dart';
 import 'repositories/repositories.dart';
@@ -54,6 +57,7 @@ class MyApp extends StatelessWidget {
     FriendRequestReceivedRepository friendRequestReceivedRepository = FriendRequestReceivedRepository();
     EventRepository eventRepository = EventRepository();
     ProductRepository productRepository = ProductRepository();
+    ReviewRepository reviewRepository = ReviewRepository();
 
     final theme = CosmeticTheme();
 
@@ -122,7 +126,20 @@ class MyApp extends StatelessWidget {
         BlocProvider<ProductBloc>(
           lazy: false,
           create: (_) => ProductBloc(productRepository: productRepository)
+        ),
+        BlocProvider<ProductDetailBloc>(
+          lazy: false,
+          create: (_) => ProductDetailBloc(productRepository: productRepository)
+        ),
+        BlocProvider<ReviewBloc>(
+          lazy: false,
+          create: (_) => ReviewBloc(reviewRepository: reviewRepository)
+        ),
+        BlocProvider<ProductCharacteristicBloc>(
+          lazy: false,
+          create: (_) => ProductCharacteristicBloc(reviewRepository: reviewRepository)
         )
+
       ],
       child: MaterialApp(
         title: 'Fakebook',
@@ -197,6 +214,10 @@ class MyApp extends StatelessWidget {
               case Routes.create_review_screen: {
                 final Product? product = settings.arguments as Product?;
                 return MaterialPageRoute(builder: (_) => CreateReviewScreen());
+              }
+              case Routes.product_characteristic_screen: {
+                final String productId = settings.arguments as String;
+                return MaterialPageRoute(builder: (_) => ProductCharacteristicScreen(productId: productId));
               }
               default:
                 return MaterialPageRoute(builder: (_) => NavScreen());
