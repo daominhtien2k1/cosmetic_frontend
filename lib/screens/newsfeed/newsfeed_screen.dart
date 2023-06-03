@@ -36,6 +36,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
             ),
           ),
           body: TabBarView(
+            // physics: NeverScrollableScrollPhysics(),
             children: <Widget>[
               NewsfeedGeneralScreenContent(),
               NewsfeedQuestionScreenContent(),

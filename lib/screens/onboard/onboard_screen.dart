@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final List onboards = [OnboardWelcome(), OnboardStart()];
+
 
 class OnboardScreen extends StatefulWidget {
   const OnboardScreen({Key? key}) : super(key: key);
@@ -16,13 +16,13 @@ class OnboardScreen extends StatefulWidget {
 }
 
 class _OnboardScreenState extends State<OnboardScreen> {
-  late PageController _pageController;
+  late PageController pageController;
   int _pageIndex = 0;
 
   @override
   void initState() {
     // TODO: implement initState
-    _pageController = PageController(initialPage: 0);
+    pageController = PageController(initialPage: 0);
     super.initState();
   }
 
@@ -32,14 +32,19 @@ class _OnboardScreenState extends State<OnboardScreen> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         body: SafeArea(
           child: PageView.builder(
-            itemCount: onboards.length,
-            controller: _pageController,
+            itemCount: 2,
+            controller: pageController,
             onPageChanged: (index) {
               setState(() {
                 _pageIndex = index;
               });
             },
-            itemBuilder: (ctx,index) => onboards[index]
+            itemBuilder: (ctx,index) {
+              if (index == 0)
+                return OnboardWelcome(pageController: pageController);
+              else
+                return OnboardStart();
+            }
           ),
         )
     );
@@ -47,7 +52,9 @@ class _OnboardScreenState extends State<OnboardScreen> {
 }
 
 class OnboardWelcome extends StatelessWidget {
-  const OnboardWelcome({Key? key}) : super(key: key);
+  final PageController pageController;
+
+  OnboardWelcome({Key? key, required this.pageController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -182,7 +189,7 @@ class OnboardWelcome extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: ElevatedButton(
                 onPressed: () {
-                  // _pageController.nextPage(duration: const Duration(microseconds: 300), curve: Curves.ease);
+                  pageController.nextPage(duration: const Duration(microseconds: 300), curve: Curves.ease);
                 },
                 child: Text("Tiếp"),
               ),

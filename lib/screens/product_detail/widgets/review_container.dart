@@ -1,6 +1,8 @@
+import 'package:cosmetic_frontend/common/widgets/expandable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
@@ -12,7 +14,7 @@ import '../../../routes.dart';
 
 import '../../../blocs/auth/auth_bloc.dart';
 
-
+// Standard and Detail
 class ReviewContainer extends StatelessWidget {
   final Review review;
   const ReviewContainer({Key? key, required this.review}) : super(key: key);
@@ -38,8 +40,7 @@ class ReviewContainer extends StatelessWidget {
 
     void handleOtherReviewEvent(Map event) {
       if(event['action'] == 'navigateToDetailReview') {
-        // print(review.id);
-        // Navigator.pushNamed(context, Routes.review_detail_screen, arguments: review.id);
+        Navigator.pushNamed(context, Routes.review_detail_screen, arguments: review.id);
       } else if (event['action'] == 'navigateToPersonalScreen') {
         Navigator.pushNamed(context, Routes.personal_screen, arguments: review.author.id);
       }
@@ -63,16 +64,16 @@ class ReviewContainer extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.baseline,
                       textBaseline: TextBaseline.alphabetic,
                       children: [
-                        Column(
+                        if(review.rating != null) Column(
                           children: [
                             Text("Đánh giá"),
-                            StarList(rating: 4, color: Colors.orangeAccent),
+                            StarList(rating: review.rating?.toDouble() ?? 0, color: Colors.orangeAccent),
                           ],
                         ),
-                        SizedBox(width: 24),
+                        if(review.rating != null) SizedBox(width: 24),
                         Container(
-                          width: 250,
-                          child: Text("Da nhạy cảm sài lên mụn quá trời, mong lần sau không bị",
+                          width: review.rating != null ? 250 : 348,
+                          child: Text("${review.title}",
                           style: Theme.of(context).textTheme.titleMedium)
                         )
                       ],
@@ -91,7 +92,9 @@ class ReviewContainer extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text("${review.content}")
+                  review.classification != "Instruction" ?
+                    Text("${review.content}")
+                      : ExpandableTextWidget(text: "${review.content}", isHtml: true)
                 ]
             ),
           ),

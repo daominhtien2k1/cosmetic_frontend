@@ -68,6 +68,10 @@ dependencies:
   intl: ^0.18.1
   flutter_slidable: ^3.0.0
   flutter_radar_chart: ^0.2.1
+  quill_html_editor: ^2.1.9
+
+
+
 
 dev_dependencies:
   flutter_test:

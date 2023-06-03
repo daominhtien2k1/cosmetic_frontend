@@ -1,8 +1,10 @@
 import 'package:cosmetic_frontend/blocs/product_characteristic/product_characteristic_bloc.dart';
 import 'package:cosmetic_frontend/blocs/review/review_bloc.dart';
+import 'package:cosmetic_frontend/blocs/review_detail/review_detail_bloc.dart';
 import 'package:cosmetic_frontend/models/models.dart';
 import 'package:cosmetic_frontend/screens/onboard/onboard_screen.dart';
-import 'package:cosmetic_frontend/screens/review/creat_review_screen.dart';
+import 'package:cosmetic_frontend/screens/review/create_review_screen.dart';
+import 'package:cosmetic_frontend/screens/review/review_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -138,8 +140,11 @@ class MyApp extends StatelessWidget {
         BlocProvider<ProductCharacteristicBloc>(
           lazy: false,
           create: (_) => ProductCharacteristicBloc(reviewRepository: reviewRepository)
+        ),
+        BlocProvider<ReviewDetailBloc>(
+          lazy: false,
+          create: (_) => ReviewDetailBloc(reviewRepository: reviewRepository)
         )
-
       ],
       child: MaterialApp(
         title: 'Fakebook',
@@ -211,13 +216,43 @@ class MyApp extends StatelessWidget {
                 final productId = settings.arguments as String;
                 return MaterialPageRoute(builder: (_) => ProductDetailScreen(productId: productId));
               }
-              case Routes.create_review_screen: {
-                final Product? product = settings.arguments as Product?;
-                return MaterialPageRoute(builder: (_) => CreateReviewScreen());
+              case Routes.quick_create_review_screen: {
+                final String productId = settings.arguments as String;
+                return MaterialPageRoute(builder: (_) => QuickCreateReviewScreen(productId: productId));
+              }
+              case Routes.standard_create_review_screen: {
+                final args = settings.arguments as Map<String, dynamic>;
+                final String productId = args["productId"];
+                final String productImageUrl = args["productImageUrl"];
+                final String productName = args["productName"];
+                final int rating = args["rating"];
+                return MaterialPageRoute(builder: (_) => StandardCreateReviewScreen(
+                    productId: productId, productImageUrl: productImageUrl,
+                    productName: productName, rating: rating
+                ));
+              }
+              case Routes.detail_create_review_screen: {
+                final args = settings.arguments as Map<String, dynamic>;
+                final String productId = args["productId"];
+                final String productImageUrl = args["productImageUrl"];
+                final String productName = args["productName"];
+                final int rating = args["rating"];
+                return MaterialPageRoute(builder: (_) => DetailCreateReviewScreen(
+                    productId: productId, productImageUrl: productImageUrl,
+                    productName: productName, rating: rating
+                ));
+              }
+              case Routes.instruction_create_review_screen: {
+                final String productId = settings.arguments as String;
+                return MaterialPageRoute(builder: (_) => InstructionCreateReviewScreen(productId: productId));
               }
               case Routes.product_characteristic_screen: {
                 final String productId = settings.arguments as String;
                 return MaterialPageRoute(builder: (_) => ProductCharacteristicScreen(productId: productId));
+              }
+              case Routes.review_detail_screen: {
+                final String reviewId = settings.arguments as String;
+                return MaterialPageRoute(builder: (_) => ReviewDetailScreen(reviewId: reviewId));
               }
               default:
                 return MaterialPageRoute(builder: (_) => NavScreen());

@@ -22,3 +22,5 @@ export 'product_detail_model.dart';
 export 'relate_product_model.dart';
 export 'statistic_star_model.dart';
 export 'product_characteristic.dart';
+export 'review_detail_model.dart';
+export 'review_detail2_model.dart';

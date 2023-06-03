@@ -3,6 +3,10 @@ import 'package:flutter/material.dart';
 import '../../../routes.dart';
 
 class FancyFab extends StatefulWidget {
+  final String productId;
+
+  FancyFab({required this.productId});
+
   @override
   _FancyFabState createState() => _FancyFabState();
 }
@@ -91,6 +95,29 @@ class _FancyFabState extends State<FancyFab>
         Transform(
           transform: Matrix4.translationValues(
             0.0,
+            _translateButton.value * 3,
+            0.0,
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if(isOpened) Chip(label: Text('Hướng dẫn và chia sẻ cảm nhận')),
+              if(isOpened) SizedBox(width: 8),
+              FloatingActionButton(
+                heroTag: "btn3",
+                elevation: 0,
+                onPressed: () {
+                  Navigator.pushNamed(context, Routes.instruction_create_review_screen, arguments: widget.productId);
+                },
+                tooltip: 'Hướng dẫn và chia sẻ cảm nhận',
+                child: Icon(Icons.newspaper),
+              ),
+            ],
+          ),
+        ),
+        Transform(
+          transform: Matrix4.translationValues(
+            0.0,
             _translateButton.value * 2,
             0.0,
           ),
@@ -100,10 +127,10 @@ class _FancyFabState extends State<FancyFab>
               if(isOpened) Chip(label: Text('Đánh giá sản phẩm')),
               if(isOpened) SizedBox(width: 8),
               FloatingActionButton(
-                heroTag: "btn1",
+                heroTag: "btn2",
                 elevation: 0,
                 onPressed: () {
-                  Navigator.pushNamed(context, Routes.create_review_screen);
+                  Navigator.pushNamed(context, Routes.quick_create_review_screen, arguments: widget.productId);
                 },
                 tooltip: 'Đánh giá sản phẩm',
                 child: Icon(Icons.reviews_outlined),
@@ -123,11 +150,11 @@ class _FancyFabState extends State<FancyFab>
               if(isOpened) Chip(label: Text('Tạo bài viết')),
               if(isOpened) SizedBox(width: 8),
               FloatingActionButton(
-                heroTag: "btn2",
+                heroTag: "btn1",
                 elevation: 0,
                 onPressed: null,
                 tooltip: 'Tạo bài viết',
-                child: Icon(Icons.newspaper)
+                child: Icon(Icons.edit_note, size: 30)
               ),
             ],
           ),

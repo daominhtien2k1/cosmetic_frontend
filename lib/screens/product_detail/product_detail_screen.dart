@@ -29,6 +29,7 @@ class ProductDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     BlocProvider.of<ProductDetailBloc>(context).add(ProductDetailFetched(productId: productId));
     BlocProvider.of<ReviewBloc>(context).add(ReviewsFetched(productId: productId));
+    BlocProvider.of<ReviewBloc>(context).add(InstructionReviewsFetched(productId: productId));
     BlocProvider.of<ReviewBloc>(context).add(StatisticStarReviewFetched(productId: productId));
     BlocProvider.of<ProductDetailBloc>(context).add(RelateProductsFetched(productId: productId));
     BlocProvider.of<ProductDetailBloc>(context).add(ProductCharacteristicsFetched(productId: productId));
@@ -46,7 +47,7 @@ class ProductDetailScreen extends StatelessWidget {
       bottomNavigationBar: BottomAppBar(
         child: FavouriteAndReviewContainer(),
       ),
-      floatingActionButton: FancyFab(),
+      floatingActionButton: FancyFab(productId: productId),
     );
   }
 }
@@ -116,6 +117,10 @@ class ProductDetailContent extends StatelessWidget {
                     child: RelatePostList(),
                   ),
                   Divider(thickness: 8, color: Colors.black12),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    child: InstructionReviewList(),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     child: ProductReviewList(),
@@ -730,6 +735,53 @@ class StatisticStar extends StatelessWidget {
         }
 
       }
+    );
+  }
+}
+
+class InstructionReviewList extends StatelessWidget {
+  const InstructionReviewList({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 440,
+      child: Column(
+        children: [
+          Container(
+            child: Row(
+              children: [
+                Text("Hướng dẫn và chia sẻ cảm nhận", style: Theme.of(context).textTheme.titleMedium),
+                Spacer(),
+                Text("Xem thêm"),
+                Icon(Icons.navigate_next)
+              ],
+            ),
+          ),
+          BlocBuilder<ReviewBloc, ReviewState>(builder: (context, state) {
+            switch (state.reviewStatus) {
+              case ReviewStatus.initial:
+                return Center(child: CircularProgressIndicator());
+              case ReviewStatus.loading:
+                return Center(child: CircularProgressIndicator());
+              case ReviewStatus.failure:
+                return Center(child: Text("Failed"));
+              case ReviewStatus.success: {
+                  final instructionReviews = state.instructionReviews;
+                  return Expanded(
+                      child: ListView.builder(
+                          itemCount: instructionReviews!.length,
+                          itemBuilder: (context, index) {
+                            final instructionReview = instructionReviews![index];
+                            return ReviewContainer(review: instructionReview);
+                          }
+                      )
+                  );
+                }
+            }
+          })
+        ],
+      ),
     );
   }
 }
