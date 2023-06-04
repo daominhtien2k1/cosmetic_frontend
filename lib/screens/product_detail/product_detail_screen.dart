@@ -745,8 +745,12 @@ class InstructionReviewList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 440,
+      constraints: BoxConstraints(
+        minHeight: 40,
+        maxHeight: 440, // Set the maximum height here
+      ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
           Container(
             child: Row(
@@ -767,16 +771,17 @@ class InstructionReviewList extends StatelessWidget {
               case ReviewStatus.failure:
                 return Center(child: Text("Failed"));
               case ReviewStatus.success: {
-                  final instructionReviews = state.instructionReviews;
-                  return Expanded(
-                      child: ListView.builder(
-                          itemCount: instructionReviews!.length,
-                          itemBuilder: (context, index) {
-                            final instructionReview = instructionReviews![index];
-                            return ReviewContainer(review: instructionReview);
-                          }
-                      )
-                  );
+                  final instructionReviews = state.instructionReviews!;
+                  return instructionReviews.isNotEmpty ? Expanded(
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: instructionReviews!.length,
+                        itemBuilder: (context, index) {
+                          final instructionReview = instructionReviews![index];
+                          return ReviewContainer(review: instructionReview);
+                        }
+                    ),
+                  ) : SizedBox();
                 }
             }
           })

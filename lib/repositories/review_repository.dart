@@ -191,6 +191,7 @@ class ReviewRepository {
     } else if (response.statusCode == 400) {
       return null;
     } else {
+      print(json.decode(response.body) as Map<String, dynamic>);
       return null;
     }
   }

@@ -623,7 +623,7 @@ class _ContentHtmlEditorState extends State<ContentHtmlEditor> {
               fit: FlexFit.tight,
               child: QuillHtmlEditor(
                 // text: "<h1>Hello</h1>This is a quill html editor example 😊",
-                hintText: 'Nhập nội dung',
+                hintText: '', // có chữ sẽ bị lỗi khi nhập xong
                 controller: controller,
                 isEnabled: true,
                 minHeight: 500,

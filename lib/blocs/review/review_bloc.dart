@@ -16,7 +16,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     on<InstructionReviewAdd>(_onInstructionReviewAdd);
   }
 
-  Future<void> _onStatisticStarReviewFetched(StatisticStarReviewFetched event, Emitter<ReviewState> emitter) async {
+  Future<void> _onStatisticStarReviewFetched(StatisticStarReviewFetched event, Emitter<ReviewState> emit) async {
     try {
       final productId = event.productId;
       emit(state.copyWith(reviewStatus: ReviewStatus.loading));
@@ -27,28 +27,37 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     }
   }
 
-  Future<void> _onReviewFetched(ReviewsFetched event, Emitter<ReviewState> emitter) async {
+  Future<void> _onReviewFetched(ReviewsFetched event, Emitter<ReviewState> emit) async {
     try {
       final productId = event.productId;
       emit(state.copyWith(reviewStatus: ReviewStatus.loading));
-      final reviews = await reviewRepository.fetchReviews(productId: productId);
-      emit(state.copyWith(reviewStatus: ReviewStatus.success, reviews: reviews));
+      final mustFilteredReviews = await reviewRepository.fetchReviews(productId: productId);
+      mustFilteredReviews?.retainWhere((review) => review.banned == false && review.isBlocked == false);
+      if (mustFilteredReviews != null)
+        emit(state.copyWith(reviewStatus: ReviewStatus.success, reviews: mustFilteredReviews));
+      else
+        emit(state.copyWith(reviewStatus: ReviewStatus.success, reviews: []));
     } catch(error) {
       emit(state.copyWith(reviewStatus: ReviewStatus.failure));
     }
   }
 
-  Future<void> _onInstructionReviewsFetched(InstructionReviewsFetched event, Emitter<ReviewState> emitter) async {
+  Future<void> _onInstructionReviewsFetched(InstructionReviewsFetched event, Emitter<ReviewState> emit) async {
     try {
       final productId = event.productId;
-      final instructionReviews = await reviewRepository.fetchInstructionReviews(productId: productId);
-      emit(state.copyWith(reviewStatus: ReviewStatus.success, instructionReviews: instructionReviews));
+      final mustFilteredInstructionReviews = await reviewRepository.fetchInstructionReviews(productId: productId);
+      mustFilteredInstructionReviews?.retainWhere((review) => review.banned == false && review.isBlocked == false);
+      if (mustFilteredInstructionReviews != null) {
+        emit(state.copyWith(reviewStatus: ReviewStatus.success, instructionReviews: mustFilteredInstructionReviews));
+      } else {
+        emit(state.copyWith(reviewStatus: ReviewStatus.success, instructionReviews: []));
+      }
     } catch(error) {
       // emit(state.copyWith(reviewStatus: ReviewStatus.failure));
     }
   }
 
-  Future<void> _onQuickReviewAdd(QuickReviewAdd event, Emitter<ReviewState> emitter) async {
+  Future<void> _onQuickReviewAdd(QuickReviewAdd event, Emitter<ReviewState> emit) async {
     try {
       final String productId = event.productId;
       final String classification = event.classification;
@@ -60,7 +69,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     }
   }
 
-  Future<void> _onStandardReviewAdd(StandardReviewAdd event, Emitter<ReviewState> emitter) async {
+  Future<void> _onStandardReviewAdd(StandardReviewAdd event, Emitter<ReviewState> emit) async {
     try {
       final String productId = event.productId;
       final String classification = event.classification;
@@ -75,7 +84,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     }
   }
 
-  Future<void> _onInstructionReviewAdd(InstructionReviewAdd event, Emitter<ReviewState> emitter) async {
+  Future<void> _onInstructionReviewAdd(InstructionReviewAdd event, Emitter<ReviewState> emit) async {
     try {
       final String productId = event.productId;
       final String classification = event.classification;

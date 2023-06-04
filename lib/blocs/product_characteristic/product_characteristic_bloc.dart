@@ -11,7 +11,7 @@ class ProductCharacteristicBloc extends Bloc<ProductCharacteristicEvent, Product
     on<ProductCharacteristicFetched>(_onProductCharacteristicFetched);
   }
 
-  Future<void> _onProductCharacteristicFetched(ProductCharacteristicFetched event, Emitter<ProductCharacteristicState> emitter) async {
+  Future<void> _onProductCharacteristicFetched(ProductCharacteristicFetched event, Emitter<ProductCharacteristicState> emit) async {
     try {
       final productId = event.productId;
       emit(state.copyWith(productCharacteristicStatus: ProductCharacteristicStatus.loading));

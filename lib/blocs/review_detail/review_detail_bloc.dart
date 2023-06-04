@@ -12,7 +12,7 @@ class ReviewDetailBloc extends Bloc<ReviewDetailEvent, ReviewDetailState> {
     on<ReviewDetailFetched>(_onReviewDetailFetched);
   }
 
-  Future<void> _onReviewDetailFetched(ReviewDetailFetched event, Emitter<ReviewDetailState> emitter) async {
+  Future<void> _onReviewDetailFetched(ReviewDetailFetched event, Emitter<ReviewDetailState> emit) async {
     try {
       final reviewId = event.reviewId;
       emit(state.copyWith(reviewDetailStatus: ReviewDetailStatus.loading));
