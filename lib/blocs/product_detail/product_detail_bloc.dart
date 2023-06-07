@@ -46,15 +46,13 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
   Future<void> _onProductCharacteristicsFetched(ProductCharacteristicsFetched event, Emitter<ProductDetailState> emit) async {
     final productId = event.productId;
     try {
-      final characteristics = await productRepository.fetchCharacteristics(productId: productId);
-      print(characteristics);
-      if (characteristics != null) {
+      final characteristicCriterias = await productRepository.fetchCharacteristics(productId: productId);
+      // characteristics?.retainWhere((c) => ((c!="Chất liệu") && (c!="Giá cả") && (c!="Hiệu quả") && (c!="An toàn")));
+      if (characteristicCriterias != null) {
         emit(state.copyWith(productDetailStatus: ProductDetailStatus.success,
-            characteristics: characteristics));
+            characteristicCriterias: characteristicCriterias));
       }
-      print(characteristics);
     } catch(error) {
-      print(error);
       emit(state.copyWith(productDetailStatus: ProductDetailStatus.failure));
     }
   }

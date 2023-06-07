@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cosmetic_frontend/routes.dart';
+import 'package:cosmetic_frontend/screens/menu/sub_screens/setting_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,167 +19,193 @@ class MenuScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Future<void> handleLogout() async {
-      context
-          .read<PersonalInfoBloc>();
       BlocProvider.of<AuthBloc>(context).add(Logout());
       // dù câu lệnh ở đằng sau nhưng vì là bất đồng bộ nên vẫn là AuthStatus.authenticated
       // print("Logout getUser: " + user.toString());
     }
+
     return Scaffold(
-        body: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            backgroundColor: Colors.white,
-            automaticallyImplyLeading: false,
-            title: const Text(
-              'Menu',
-              style: TextStyle(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-                fontSize: 30.0,
-              ),
-            ),
-            floating: true,
-            systemOverlayStyle: SystemUiOverlayStyle.dark,
-            actions: [
-              CircleButton(
-                  icon: Icons.search,
-                  iconSize: 30.0,
-                  onPressed: () => print('Search')),
-            ],
-          ),
-          SliverToBoxAdapter(
-            child: Container(
-              padding: EdgeInsets.all(12.0),
-              color: Colors.grey[200],
+        appBar: AppBar(
+          leading: Icon(Icons.menu),
+          title: Text("Cá nhân"),
+          actions: [
+            IconButton(onPressed: () {}, icon: Icon(Icons.chat_outlined))
+          ],
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  TextButton(
-                    onPressed: () => print('See profile'),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
                     child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Avatar(),
-                        const SizedBox(width: 12.0),
-                        Expanded(
-                            child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              UserName(),
-                              const Text(
-                                'See your profile',
-                                style: TextStyle(color: Colors.blue),
+                        Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 38.0,
+                              backgroundColor: Colors.black12,
+                              child: CircleAvatar(
+                                radius: 36.0,
+                                backgroundColor: Colors.grey[200],
+                                backgroundImage: const CachedNetworkImageProvider(
+                                    "https://banner2.cleanpng.com/20180612/hv/kisspng-computer-icons-designer-avatar-5b207ebb279901.8233901115288562511622.jpg"),
                               ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(width: 28),
+                        Expanded(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                children: [
+                                  Text("4", style: Theme.of(context).textTheme.titleLarge),
+                                  Text("Bài viết", style: Theme.of(context).textTheme.titleMedium)
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text("5", style: Theme.of(context).textTheme.titleLarge),
+                                  Text("Đánh giá", style: Theme.of(context).textTheme.titleMedium)
+                                ],
+                              ),
+                              Column(
+                                children: [
+                                  Text("4", style: Theme.of(context).textTheme.titleLarge),
+                                  Text("Lượt thích", style: Theme.of(context).textTheme.titleMedium)
+                                ],
+                              )
                             ],
-                        ))
+                          ),
+                        ),
+                        SizedBox(width: 20),
                       ],
                     ),
                   ),
-                  const SizedBox(
-                    height: 8.0,
+                  Text("daominhtien", style: Theme.of(context).textTheme.bodyMedium),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.tonal(
+                          onPressed: (){
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_) => ChangeProfileScreen()));
+                          },
+                          child: Text("Chỉnh sửa thông tin")
+                      ),
+                    ),
                   ),
-                  const Divider(height: 10.0, thickness: 2),
-                  ExpansionTile(
-                    title: const Text('Help & Support',
-                        style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.bold)),
-                    leading:
-                        const Icon(Icons.help, size: 35.0, color: Colors.black),
+                  Divider(),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 40),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          children: [
+                            Text("Bạn có", style: Theme.of(context).textTheme.titleMedium),
+                            SizedBox(height: 8),
+                            Text("0", style: Theme.of(context).textTheme.titleLarge),
+                            SizedBox(height: 8),
+                            Text("Điểm khả dụng >", style: Theme.of(context).textTheme.titleMedium),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            Text("Cấp bậc", style: Theme.of(context).textTheme.titleMedium),
+                            SizedBox(height: 8),
+                            Text("Lv. 1", style: Theme.of(context).textTheme.titleLarge),
+                            SizedBox(height: 8),
+                            Text("Cần 50P để đạt Lv.2", style: Theme.of(context).textTheme.titleMedium),
+                          ],
+                        )
+                      ],
+                    ),
+                  ),
+                  Divider(),
+                  SizedBox(height: 16),
+                  Row(
                     children: [
-                      ActionButton(
-                          icon: Icons.policy,
-                          buttonText: 'Terms & Policies',
-                          onPressed: () => print('object')),
-                      const SizedBox(height: 8.0),
-                      // _ActionButton(
-                      //     icon: Icons.help_center, buttonText: 'Help Center'),
-                      // SizedBox(height: 8.0),
+                      Icon(Icons.bookmarks_outlined),
+                      SizedBox(width: 16),
+                      Text("Sản phẩm đánh dấu", style: Theme.of(context).textTheme.titleMedium)
                     ],
                   ),
-                  // const Divider(height: 10.0, thickness: 2),
-                  ExpansionTile(
-                    title: const Text('Settings & Privacy',
-                        style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.bold)),
-                    leading: const Icon(Icons.settings,
-                        size: 35.0, color: Colors.black),
+                  SizedBox(height: 16),
+                  Row(
                     children: [
-                      ActionButton(
-                        icon: Icons.admin_panel_settings,
-                        buttonText: 'Settings',
-                        onPressed: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SettingsScreen()));
-                        },
-                      ),
-                      const SizedBox(height: 8.0),
-                      ActionButton(
-                        icon: Icons.lock_person_sharp,
-                        buttonText: 'Privacy',
-                        onPressed: () => print('object'),
-                      ),
-                      const SizedBox(height: 8.0),
+                      Icon(Icons.remove_red_eye_outlined),
+                      SizedBox(width: 16),
+                      Text("Sản phẩm đã xem", style: Theme.of(context).textTheme.titleMedium)
                     ],
                   ),
-                  // const Divider(height: 10.0, thickness: 2),
-                  ExpansionTile(
-                    title: const Text('Log out',
-                        style: TextStyle(
-                            fontSize: 18.0, fontWeight: FontWeight.bold)),
-                    leading:
-                        const Icon(Icons.close, size: 35.0, color: Colors.black),
+                  SizedBox(height: 16),
+                  Row(
                     children: [
-                      ActionButton(
-                        icon: Icons.logout,
-                        buttonText: 'Log out',
-                        onPressed: () {
-                          handleLogout();
-                        },
-                      ),
-                      const SizedBox(height: 8.0),
-                      ActionButton(
-                        icon: Icons.exit_to_app,
-                        buttonText: 'Close app',
-                        onPressed: () => exit(0),
-                      ),
-                      const SizedBox(height: 8.0),
+                      Icon(Icons.favorite_outline),
+                      SizedBox(width: 16),
+                      Text("Sản phẩm yêu thích", style: Theme.of(context).textTheme.titleMedium)
                     ],
                   ),
-                  // ),
+                  SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Icon(Icons.comment_bank_outlined),
+                      SizedBox(width: 16),
+                      Text("Sản phẩm đã đánh giá", style: Theme.of(context).textTheme.titleMedium)
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Icon(Icons.storefront),
+                      SizedBox(width: 16),
+                      Text("Danh sách cửa hàng", style: Theme.of(context).textTheme.titleMedium)
+                    ],
+                  ),
+                  SizedBox(height: 16),
+                  Divider(),
+                  InkWell(
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (_) => SettingScreen()));
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          Icon(Icons.settings_outlined),
+                          SizedBox(width: 16),
+                          Text("Cài đặt", style: Theme.of(context).textTheme.titleMedium)
+                        ],
+                      ),
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      handleLogout();
+                    },
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 8),
+                      child: Row(
+                        children: [
+                          Icon(Icons.logout),
+                          SizedBox(width: 16),
+                          Text("Đăng xuất", style: Theme.of(context).textTheme.titleMedium)
+                        ],
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-          )
-        ],
-    ));
-  }
-}
-
-class UserName extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<PersonalInfoBloc, PersonalInfoState>(
-        builder: (context, state) {
-          final userInfo = state.userInfo;
-          return Text(userInfo.name,
-              style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18.0,
-                  color: Colors.black));
-        });
-  }
-}
-
-class Avatar extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    context.read<PersonalInfoBloc>().add(PersonalInfoFetched());
-
-    return BlocBuilder<PersonalInfoBloc, PersonalInfoState>(
-        builder: (context, state) {
-          final userInfo = state.userInfo;
-          return ProfileAvatar(imageUrl: userInfo.avatar);
-        });
+          ),
+        ));
   }
 }

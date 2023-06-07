@@ -1,3 +1,4 @@
+import '../../models/models.dart' hide Image;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
@@ -7,6 +8,7 @@ import 'package:cosmetic_frontend/constants/assets/placeholder.dart';
 import 'package:cosmetic_frontend/routes.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 
+import '../../blocs/product_characteristic/product_characteristic_event.dart';
 import '../../blocs/product_detail/product_detail_bloc.dart';
 import '../../blocs/product_detail/product_detail_event.dart';
 import '../../blocs/product_detail/product_detail_state.dart';
@@ -14,17 +16,9 @@ import '../../blocs/review/review_bloc.dart';
 import '../../blocs/review/review_event.dart';
 
 class StandardCreateReviewScreen extends StatefulWidget {
-  final String productId;
-  final String productImageUrl;
-  final String productName;
-  final int rating;
-
   const StandardCreateReviewScreen({
     super.key,
-    required this.productId,
-    required this.productImageUrl,
-    required this.productName,
-    required this.rating
+
   });
 
   @override
@@ -43,6 +37,12 @@ class _StandardCreateReviewScreenState extends State<StandardCreateReviewScreen>
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final String productId = data["productId"];
+    final String productImageUrl = data["productImageUrl"];
+    final String productName = data["productName"];
+    final int rating = data["rating"];
+
     return Scaffold(
         appBar: AppBar(
           leading: BackButton(),
@@ -65,13 +65,13 @@ class _StandardCreateReviewScreenState extends State<StandardCreateReviewScreen>
                           // hoặc là bỏ height thì height được tính auto theo tỉ lệ
                           child: Align(
                               alignment: Alignment.topLeft,
-                              child: Image.network(widget.productImageUrl)
+                              child: Image.network(productImageUrl)
                           )
                       ),
                       SizedBox(width: 16),
                       Flexible(
                         child: Container(
-                          child: Text(widget.productName,
+                          child: Text(productName,
                               style: Theme.of(context).textTheme.titleLarge,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis),
@@ -176,10 +176,8 @@ class _StandardCreateReviewScreenState extends State<StandardCreateReviewScreen>
                           padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                         ),
                         onPressed: () {
-                          BlocProvider.of<ReviewBloc>(context).add(StandardReviewAdd(productId: widget.productId, classification: "Standard", rating: widget.rating, title: title, content: content));
-                          // Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen)); // black screen
-                          Navigator.pop(context);
-
+                          BlocProvider.of<ReviewBloc>(context).add(StandardReviewAdd(productId: productId, classification: "Standard", rating: rating, title: title, content: content));
+                          Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
                         },
                         child: Text("Hoàn thành đánh giá", style: TextStyle(fontSize: 18))
                     ),
@@ -219,7 +217,6 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
     setState(() {
       this.rating = rating;
     });
-    print(rating);
   }
 
   @override
@@ -261,9 +258,11 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
                             padding: const EdgeInsets.all(20.0),
                             child: Container(
                               child: Text("${productDetail?.name}",
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                  maxLines: 3,
-                                  overflow: TextOverflow.ellipsis),
+                                style: Theme.of(context).textTheme.titleLarge,
+                                maxLines: 3,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                              ),
                             ),
                           ),
                           Padding(
@@ -277,14 +276,23 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
                                 style: FilledButton.styleFrom(
                                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                                 ),
-                                onPressed: () {
-                                  Navigator.pushNamed(context, Routes.standard_create_review_screen, arguments: {
-                                    "productId": widget.productId,
-                                    "productImageUrl": productDetail?.images[0].url,
-                                    "productName": productDetail?.name,
-                                    "rating": rating
-                                  });
-                                },
+                                onPressed: rating != 0 ? () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => StandardCreateReviewScreen(),
+                                      settings: RouteSettings(
+                                          name: Routes.standard_create_review_screen,
+                                          arguments: {
+                                            "productId": widget.productId,
+                                            "productImageUrl": productDetail?.images[0].url,
+                                            "productName": productDetail?.name,
+                                            "rating": rating
+                                          }
+                                      ),
+                                    ),
+                                  );
+
+                                } : null,
                                 child: Text("Viết đánh giá tiêu chuẩn", style: TextStyle(fontSize: 18))
                             ),
                           ),
@@ -295,8 +303,23 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
                                 style: FilledButton.styleFrom(
                                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                                 ),
-                                onPressed: () {
-                                },
+                                onPressed: rating != 0 ? () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => DetailCreateReviewScreen(),
+                                      settings: RouteSettings(
+                                          name: Routes.detail_create_review_screen,
+                                          arguments: {
+                                            "productId": widget.productId,
+                                            "productImageUrl": productDetail?.images[0].url,
+                                            "productName": productDetail?.name,
+                                            "rating": rating
+                                          }
+                                      ),
+                                    ),
+                                  );
+
+                                } : null,
                                 child: Text("Viết chi tiết đánh giá", style: TextStyle(fontSize: 18))
                             ),
                           ),
@@ -306,10 +329,10 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
                                 style: TextButton.styleFrom(
                                   padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                                 ),
-                                onPressed: () {
+                                onPressed: rating != 0 ? () {
                                   BlocProvider.of<ReviewBloc>(context).add(QuickReviewAdd(productId: widget.productId, classification: "Quick", rating: rating));
-                                  Navigator.pop(context);
-                                },
+                                  Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
+                                } : null,
                                 child: Text("Hoàn thành đánh giá", style: TextStyle(fontSize: 18))
                             ),
                           )
@@ -466,8 +489,6 @@ class _InstructionCreateReviewScreenState extends State<InstructionCreateReviewS
                                       String content = await controller.getText();
                                       BlocProvider.of<ReviewBloc>(context).add(InstructionReviewAdd(productId: widget.productId, classification: "Instruction", title: title, content: content));
                                       Navigator.pop(context);
-                                      print(content);
-
                                     },
                                     child: Text("Hoàn thành", style: TextStyle(fontSize: 18))
                                 ),
@@ -657,20 +678,10 @@ class _ContentHtmlEditorState extends State<ContentHtmlEditor> {
   }
 }
 
-
-
 class DetailCreateReviewScreen extends StatefulWidget {
-  final String productId;
-  final String productImageUrl;
-  final String productName;
-  final int rating;
 
   const DetailCreateReviewScreen({
     super.key,
-    required this.productId,
-    required this.productImageUrl,
-    required this.productName,
-    required this.rating
   });
 
   @override
@@ -689,6 +700,13 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final Map<String, dynamic> data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final String productId = data["productId"];
+    final String productImageUrl = data["productImageUrl"];
+    final String productName = data["productName"];
+    final int rating = data["rating"];
+
+    print(productId);
     return Scaffold(
         appBar: AppBar(
           leading: BackButton(),
@@ -711,13 +729,13 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
                           // hoặc là bỏ height thì height được tính auto theo tỉ lệ
                           child: Align(
                               alignment: Alignment.topLeft,
-                              child: Image.network(widget.productImageUrl)
+                              child: Image.network(productImageUrl)
                           )
                       ),
                       SizedBox(width: 16),
                       Flexible(
                         child: Container(
-                          child: Text(widget.productName,
+                          child: Text(productName,
                               style: Theme.of(context).textTheme.titleLarge,
                               maxLines: 2,
                               overflow: TextOverflow.ellipsis),
@@ -813,24 +831,51 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
                     ),
                   ),
                 ),
-                Center(
-                  child: Container(
-                    width: 360,
-                    padding: EdgeInsets.only(bottom: 8),
-                    child: FilledButton.tonal(
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: OutlinedButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Quay lại", style: TextStyle(fontSize: 18))
                         ),
-                        onPressed: () {
-                          BlocProvider.of<ReviewBloc>(context).add(StandardReviewAdd(productId: widget.productId, classification: "Standard", rating: widget.rating, title: title, content: content));
-                          // Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen)); // black screen
-                          Navigator.pop(context);
-
-                        },
-                        child: Text("Hoàn thành đánh giá", style: TextStyle(fontSize: 18))
-                    ),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        flex: 1,
+                        child: FilledButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            ),
+                            onPressed: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => CharacteristicReviewScreen(),
+                                  settings: RouteSettings(
+                                    name: Routes.characteristic_review_screen,
+                                    arguments: {
+                                      "productId": productId,
+                                      "title": title,
+                                      "content": content
+                                    }
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Text("Tiếp", style: TextStyle(fontSize: 18))
+                        ),
+                      ),
+                    ],
                   ),
-                )
+                ),
+                SizedBox(height: 12),
               ],
             ),
           ),
@@ -840,6 +885,155 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
   }
 }
 
+class CharacteristicReviewScreen extends StatelessWidget {
+  CharacteristicReviewScreen({Key? key}) : super(key: key);
+
+  List<CharacteristicReviewCriteria> characteristicReviewCriterias = [];
+
+
+  @override
+  Widget build(BuildContext context) {
+    final Map<String, dynamic> data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
+    final String productId = data["productId"];
+    final int rating = data['rating'];
+    final String title = data["title"];
+    final String content = data["content"];
+
+    BlocProvider.of<ProductDetailBloc>(context).add(ProductCharacteristicsFetched(productId: productId));
+    return Scaffold(
+      appBar: AppBar(
+        leading: BackButton(),
+        title: Text("Viết đánh giá"),
+        centerTitle: true,
+      ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 8),
+                  child: Text("Vui lòng xếp hạng những tiêu chí sau:", style: Theme.of(context).textTheme.titleLarge),
+                ),
+                BlocBuilder<ProductDetailBloc, ProductDetailState>(
+                  builder: (context, state) {
+                    final characteristicCriterias = state.characteristicCriterias as List<CharacteristicReviewCriteria>?;
+                    if (characteristicCriterias != null) {
+
+                      return ListView.separated(
+                        physics: NeverScrollableScrollPhysics(),
+                        separatorBuilder: (ctx, index) {
+                          return SizedBox(height: 12);
+                        },
+                        shrinkWrap: true,
+                        itemCount: characteristicCriterias.length,
+                        itemBuilder: (ctx, index) {
+                          return CharacteristicProductTile(characteristicReviewCriteria: characteristicCriterias[index]);
+                        }
+                      );
+                    } else {
+                      return SizedBox.shrink();
+                    }
+                  }
+                ),
+                SizedBox(height: 16),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: OutlinedButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            ),
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: Text("Quay lại", style: TextStyle(fontSize: 18))
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Expanded(
+                        flex: 1,
+                        child: FilledButton(
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                            ),
+                            onPressed: () {
+                              // BlocProvider.of<ReviewBloc>(context).add(DetailReviewAdd(productId: productId, classification: "Detail", rating: rating, title: title, content: content, characteristicReviews: characteristicReviews))
+                              Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
+                            },
+                            child: Text("Hoàn thành", style: TextStyle(fontSize: 18))
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16),
+
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class CharacteristicProductTile extends StatefulWidget {
+  final CharacteristicReviewCriteria characteristicReviewCriteria;
+
+  const CharacteristicProductTile({
+    super.key,
+    required this.characteristicReviewCriteria
+  });
+
+  @override
+  State<CharacteristicProductTile> createState() => _CharacteristicProductTileState();
+}
+
+class _CharacteristicProductTileState extends State<CharacteristicProductTile> {
+  late int value;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    value = 1;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(width: 1, color: Colors.black12),
+        borderRadius: BorderRadius.all(Radius.circular(8))
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(widget.characteristicReviewCriteria.criteria, style: Theme.of(context).textTheme.titleLarge),
+          Slider(
+              value: value.toDouble(),
+              max: 5,
+              min: 1,
+              divisions: 4,
+              label: value.toString(),
+              onChanged: (value) {
+                setState(() {
+                  this.value = value.toInt();
+                });
+
+              }
+          )
+        ],
+      ),
+    );
+  }
+}
 
 class RatingStars extends StatefulWidget {
   final int rating;

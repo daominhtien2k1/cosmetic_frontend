@@ -13,6 +13,7 @@ import '../../blocs/product_carousel/product_carousel_state.dart';
 import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
 
 import '../../routes.dart';
+import '../product_detail/product_detail_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -244,7 +245,14 @@ class PopularProductList extends StatelessWidget {
             final Product product = popularProducts[index] as Product;
             return ListTile(
               onTap: () {
-                Navigator.pushNamed(context, Routes.product_detail_screen, arguments: product.id);
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => ProductDetailScreen(productId: product.id),
+                    settings: RouteSettings(
+                      name: Routes.product_detail_screen,
+                    ),
+                  ),
+                );
               },
               leading: Wrap(
                 spacing: 6,

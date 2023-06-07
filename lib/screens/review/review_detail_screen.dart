@@ -1,14 +1,20 @@
+import 'package:cosmetic_frontend/blocs/reply/reply_event.dart';
+import 'package:cosmetic_frontend/blocs/review/review_bloc.dart';
+import 'package:cosmetic_frontend/blocs/review/review_state.dart';
 import 'package:cosmetic_frontend/blocs/review_detail/review_detail_bloc.dart';
 import 'package:cosmetic_frontend/blocs/review_detail/review_detail_event.dart';
 import 'package:cosmetic_frontend/blocs/review_detail/review_detail_state.dart';
 import 'package:cosmetic_frontend/common/widgets/expandable_text.dart';
 import 'package:cosmetic_frontend/constants/assets/placeholder.dart';
+import 'package:cosmetic_frontend/models/models.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../../blocs/reply/reply_bloc.dart';
+import '../../blocs/reply/reply_state.dart';
 import '../../common/widgets/star_list.dart';
 
 class ReviewDetailScreen extends StatelessWidget {
@@ -18,6 +24,7 @@ class ReviewDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<ReviewDetailBloc>(context).add(ReviewDetailFetched(reviewId: reviewId));
+    BlocProvider.of<ReplyBloc>(context).add(ReplyFetched(reviewId: reviewId));
     return Scaffold(
       appBar: AppBar(
         title: Text("Chi tiết đánh giá"),
@@ -56,7 +63,7 @@ class ReviewDetailContent extends StatelessWidget {
             String characteristicReviewsText = "";
 
             reviewDetail.characteristicReviews?.forEach((element) {
-              characteristicReviewsText += " - ${element.characteristic} (${element.point})";
+              characteristicReviewsText += " - ${element.criteria} (${element.point})";
             });
             if(characteristicReviewsText.isNotEmpty) characteristicReviewsText = characteristicReviewsText.substring(3);
 
@@ -67,9 +74,6 @@ class ReviewDetailContent extends StatelessWidget {
             final String timeAgo = diff.inDays == 0 ? "${diff.inHours}h" : "${diff.inDays}d";
 
             return Container(
-              margin: const EdgeInsets.symmetric(vertical: 6),
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              color: Colors.white,
               child: Column(
                 children: [
                   Padding(
@@ -153,7 +157,9 @@ class ReviewDetailContent extends StatelessWidget {
                         isSettedUseful: reviewDetail.isSettedUseful,
                         onSetUsefulReview: handleSetUsefulReview
                     ),
-                  )
+                  ),
+                  Expanded(child: ReplyList()),
+                  SendReply(reviewId: reviewDetail.id)
                 ],
               ),
             );
@@ -362,6 +368,250 @@ class _ReviewDetailVideoContainerState extends State<ReviewDetailVideoContainer>
       child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: YoutubePlayer(controller: _controller)
+      ),
+    );
+  }
+}
+
+
+class ReplyList extends StatefulWidget {
+  const ReplyList({Key? key}) : super(key: key);
+
+  @override
+  State<ReplyList> createState() => _ReplyListState();
+}
+
+class _ReplyListState extends State<ReplyList> {
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ReplyBloc, ReplyState>(
+        builder: (context, state) {
+          switch (state.replyStatus) {
+            case ReplyStatus.initial:
+              return Center(child: CircularProgressIndicator());
+            case ReplyStatus.loading:
+              return Center(child: CircularProgressIndicator());
+            case ReplyStatus.failure:
+              return Center(child: Text('Failed to fetch replies'));
+            case ReplyStatus.success: {
+              final List<Reply> replies = state.replies ?? <Reply>[];
+              return ListView.builder(
+                // primary: false,
+                // shrinkWrap: true,
+                // physics: NeverScrollableScrollPhysics(),
+                  padding: const EdgeInsets.all(8),
+                  itemCount: replies.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final Reply reply = replies[index];
+                    return ReplyContainer(avtUrl: reply.poster.avatar, name: reply.poster.name, reply: reply.reply, createdAt: reply.createdAt);
+                  }
+              );
+            }
+          }
+        }
+    );
+  }
+
+}
+
+class ReplyContainer extends StatelessWidget {
+  final String avtUrl;
+  final String name;
+  final String reply;
+  final String createdAt;
+
+  ReplyContainer({Key? key, required this.avtUrl, required this.name, required this.reply, required this.createdAt}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    DateTime dt1 = DateTime.now();
+    DateTime dt2 = DateTime.parse(createdAt);
+    final Duration diff = dt1.difference(dt2);
+    final String timeAgo = diff.inDays == 0 ? "${diff.inHours} giờ" : "${diff.inDays} ngày";
+    return Container(
+        child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
+                child: CircleAvatar(
+                    radius: 22.0,
+                    backgroundImage: CachedNetworkImageProvider(avtUrl)
+                ),
+              ),
+              Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(name, style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold ,fontSize: 18)),
+                      SizedBox(height: 4),
+                      Text(reply, style: TextStyle(color: Colors.black, overflow: TextOverflow.clip)),
+                      SizedBox(height: 4),
+                      Text(timeAgo, style: TextStyle(color: Colors.blue, fontStyle: FontStyle.italic, overflow: TextOverflow.clip)),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Divider(height: 4, thickness: 1),
+                      )
+                    ],
+                  )
+              )
+            ]
+        )
+    );
+  }
+}
+
+class SendReply extends StatefulWidget {
+  final String reviewId;
+  const SendReply({Key? key, required this.reviewId}) : super(key: key);
+
+  @override
+  State<SendReply> createState() => _SendReplyState();
+}
+
+class _SendReplyState extends State<SendReply> {
+  late TextEditingController _sendMessageController;
+  bool isTextSend = false;
+  late FocusNode myFocusNode;
+  late bool isMinimize;
+
+  @override
+  void initState() {
+    super.initState();
+    _sendMessageController = new TextEditingController();
+    myFocusNode = FocusNode();
+    myFocusNode.addListener(() {
+      // print("Focus: ${myFocusNode.hasFocus.toString()}");
+      if(myFocusNode.hasFocus) {
+        setState(() {
+          isMinimize = true;
+        });
+      }else{
+        setState(() {
+          isMinimize = false;
+        });
+      }
+    });
+    isMinimize = myFocusNode.hasFocus;
+  }
+
+  @override
+  void dispose() {
+    myFocusNode.dispose();
+    _sendMessageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      // height: 80,
+      // width: double.infinity,
+      constraints: BoxConstraints(
+          minHeight: 60,
+          minWidth: double.maxFinite,
+          maxHeight: 160),
+      decoration: BoxDecoration(
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: Offset(0, 3), // changes position of shadow
+            ),
+          ],
+          color: Colors.white
+      ),
+      child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: _sendMessageController.text.length <= 20 ? CrossAxisAlignment.center : CrossAxisAlignment.end,
+            children: <Widget>[
+              isMinimize ?
+              GestureDetector(
+                child: Icon(Icons.arrow_forward_ios, size: 35, color: Colors.blue),
+                onTap: () {
+                  setState(() {
+                    isMinimize = false;
+                  });
+                },
+              ) :
+              Container(
+                child: Row(
+                  children: const <Widget>[
+                    Icon(Icons.add_circle, size: 35,color: Colors.blue),
+                    SizedBox(width: 5),
+                    Icon(Icons.camera_alt,size: 35,color: Colors.blue),
+                    SizedBox(width: 5),
+                    Icon(Icons.photo,size: 35,color: Colors.blue)
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Container(
+                  padding: const EdgeInsets.only(left: 12), //for TextField
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey),
+                    borderRadius: BorderRadius.all(
+                        Radius.circular(12.0) //                 <--- border radius here
+                    ),
+                    color: Colors.white,
+                  ),
+                  child: TextField(
+                      keyboardType: TextInputType.multiline,
+                      maxLines: null,
+                      cursorColor: Colors.grey,
+                      autofocus: false,
+                      decoration: InputDecoration(
+                          hintText: 'Viết bình luận của bạn',
+                          focusedBorder: InputBorder.none,
+                          enabledBorder: InputBorder.none
+                      ),
+                      focusNode: myFocusNode,
+                      controller: _sendMessageController,
+                      onChanged: (text) {
+                        if(text.length == 0) {
+                          setState(() {
+                            isTextSend = false;
+                          });
+                        }else{
+                          setState(() {
+                            isTextSend = true;
+                            isMinimize = true;
+                          });
+                        }
+                      },
+                      onTap: (){
+                        setState(() {
+                          isMinimize = true;
+                        });
+                      }
+                  ),
+                ),
+              ),
+              SizedBox(width: 12),
+              isTextSend ?
+              SizedBox(
+                height: 32.0,
+                width: 32.0,
+                child: IconButton(
+                    onPressed: (){
+                      final reply = _sendMessageController.text;
+                      BlocProvider.of<ReplyBloc>(context).add(ReplySet(reviewId: widget.reviewId, reply: reply));
+                      _sendMessageController.clear();
+                      myFocusNode.unfocus();
+                    },
+                    iconSize: 32,
+                    padding: EdgeInsets.all(0),
+                    icon: const Icon(Icons.send,color: Colors.blue)
+                ),
+              ) :
+              const Icon(Icons.sms,size: 32,color: Colors.blue),
+            ],
+          )
       ),
     );
   }

@@ -24,7 +24,7 @@ class ReviewContainer extends StatelessWidget {
     String characteristicReviewsText = "";
 
     review.characteristicReviews?.forEach((element) {
-      characteristicReviewsText += " - ${element.characteristic} (${element.point})";
+      characteristicReviewsText += " - ${element.criteria} (${element.point})";
     });
     if(characteristicReviewsText.isNotEmpty) characteristicReviewsText = characteristicReviewsText.substring(3);
 

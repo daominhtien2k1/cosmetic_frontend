@@ -6,6 +6,7 @@ import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'dart:convert';
 
+// get list reviews
 class Review {
   final String id;
   final String classification;
@@ -98,7 +99,7 @@ class Review {
     return Review(
       id: json["id"] as String,
       classification: json["classification"] as String,
-      characteristicReviews: json["characteristic_review_results"] != null ? List<CharacteristicReviewCriteria>.from(json["characteristic_review_results"].map((x) => CharacteristicReviewCriteria.fromJson(x))) : null,
+      characteristicReviews: json["characteristic_reviews"] != null ? List<CharacteristicReviewCriteria>.from(json["characteristic_reviews"].map((x) => CharacteristicReviewCriteria.fromJson(x))) : null,
       rating: json["rating"] as int?,
       title: json["title"] as String?,
       content: json["content"] as String?,
@@ -121,7 +122,7 @@ class Review {
     return {
       "id": id,
       "classification": classification,
-      if(characteristicReviews!= null) "characteristic_review_results": List<dynamic>.from(characteristicReviews!.map((x) => x.toJson())),
+      if(characteristicReviews!= null) "characteristic_reviews": List<dynamic>.from(characteristicReviews!.map((x) => x.toJson())),
       if(rating != null) "rating": rating,
       if(title != null) "title": title,
       if(content != null) "content": content,
@@ -183,31 +184,37 @@ class AuthorReview extends Equatable {
 }
 
 class CharacteristicReviewCriteria {
-  final String characteristic;
-  final int point;
+  final String characteristic_id;
+  final String criteria;
+  final int? point;
 
   CharacteristicReviewCriteria({
-    required this.characteristic,
-    required this.point,
+    required this.characteristic_id,
+    required this.criteria,
+    this.point,
   });
 
   CharacteristicReviewCriteria copyWith({
-    String? characteristic,
+    String? characteristic_id,
+    String? criteria,
     int? point,
   }) =>
       CharacteristicReviewCriteria(
-        characteristic: characteristic ?? this.characteristic,
+        characteristic_id: characteristic_id ?? this.characteristic_id,
+        criteria: criteria ?? this.criteria,
         point: point ?? this.point,
       );
 
   factory CharacteristicReviewCriteria.fromJson(Map<String, dynamic> json) => CharacteristicReviewCriteria(
-    characteristic: json["characteristic"],
-    point: json["point"],
+    characteristic_id: json["characteristic_id"] as String,
+    criteria: json["criteria"] as String,
+    point: json["point"] as int?,
   );
 
   Map<String, dynamic> toJson() => {
-    "characteristic": characteristic,
-    "point": point,
+    "characteristic_id": characteristic_id,
+    "criteria": criteria,
+    if (point != null) "point": point,
   };
 }
 

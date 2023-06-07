@@ -96,7 +96,7 @@ class ProductDetailContent extends StatelessWidget {
                   Divider(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: Characteristic(),
+                    child: CharacteristicContainer(),
                   ),
                   Divider(thickness: 8, color: Colors.black12),
                   Padding(
@@ -295,14 +295,15 @@ class ProductInfo extends StatelessWidget {
   }
 }
 
-class Characteristic extends StatelessWidget {
-  const Characteristic({Key? key}) : super(key: key);
+class CharacteristicContainer extends StatelessWidget {
+  const CharacteristicContainer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ProductDetailBloc, ProductDetailState>(
         builder: (context, state) {
-          final characteristics = state.characteristics as List<String>?;
+          final characteristicCriterias = state.characteristicCriterias as List<CharacteristicReviewCriteria>?;
+          final characteristics = characteristicCriterias?.map((cr) => cr.criteria.toString()).toList();
           final productId = state.productDetail?.id;
           return Container(
             child: Column(
@@ -310,7 +311,6 @@ class Characteristic extends StatelessWidget {
               children: [
                 GestureDetector(
                   onTap: () {
-                    print("AA");
                     Navigator.pushNamed(context, Routes.product_characteristic_screen, arguments: productId);
                   },
                   child: Row(

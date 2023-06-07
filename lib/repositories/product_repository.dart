@@ -93,7 +93,7 @@ class ProductRepository {
     }
   }
 
-  Future<List<String>?> fetchCharacteristics({required String productId}) async {
+  Future<List<CharacteristicReviewCriteria>?> fetchCharacteristics({required String productId}) async {
     final url = Uri.http(Configuration.baseUrlConnect, '/product/get_list_characteristics', {'product_id': productId});
 
     var token = await Token.getToken();
@@ -105,9 +105,8 @@ class ProductRepository {
     );
     if (response.statusCode == 200) {
       final body = json.decode(response.body) as Map<String, dynamic>;
-      final characteristicsData = body["data"] as List<dynamic>?;
-      final characteristics = characteristicsData?.map((item) => item.toString()).toList();
-      return characteristics;
+      final characteristicCriterias = List<CharacteristicReviewCriteria>.from(body["data"]["characteristic_reviews"].map((c) => CharacteristicReviewCriteria.fromJson(c)));
+      return characteristicCriterias;
     } else if (response.statusCode == 400) {
       return null;
     } else {

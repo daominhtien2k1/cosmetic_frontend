@@ -6,18 +6,18 @@ class ProductDetailState {
   ProductDetailStatus productDetailStatus;
   ProductDetail? productDetail;
   List<RelateProduct>? relateProducts;
-  List<String>? characteristics;
+  List<CharacteristicReviewCriteria>? characteristicCriterias;
 
-  ProductDetailState({required this.productDetailStatus, this.productDetail, this.relateProducts, this.characteristics});
+  ProductDetailState({required this.productDetailStatus, this.productDetail, this.relateProducts, this.characteristicCriterias});
 
-  ProductDetailState.init(): productDetailStatus = ProductDetailStatus.initial, productDetail = null, relateProducts = null, characteristics = null;
+  ProductDetailState.init(): productDetailStatus = ProductDetailStatus.initial, productDetail = null, relateProducts = null, characteristicCriterias = null;
 
-  ProductDetailState copyWith({ProductDetailStatus? productDetailStatus, ProductDetail? productDetail, List<RelateProduct>? relateProducts, List<String>? characteristics}) {
+  ProductDetailState copyWith({ProductDetailStatus? productDetailStatus, ProductDetail? productDetail, List<RelateProduct>? relateProducts, List<CharacteristicReviewCriteria>? characteristicCriterias}) {
     return ProductDetailState(
       productDetailStatus: productDetailStatus ?? this.productDetailStatus,
       productDetail: productDetail ?? this.productDetail,
       relateProducts: relateProducts ?? this.relateProducts,
-      characteristics: characteristics ?? this.characteristics
+      characteristicCriterias: characteristicCriterias ?? this.characteristicCriterias
     );
   }
 

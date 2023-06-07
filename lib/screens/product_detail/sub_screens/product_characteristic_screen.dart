@@ -73,7 +73,7 @@ class ProductCharacteristicScreen extends StatelessWidget {
                                       width: 40,
                                       child: FilledButton.tonal(
                                         onPressed: () {},
-                                        child: Text("$index"),
+                                        child: Text("${index+1}"),
                                         style: FilledButton.styleFrom(
                                             shape: CircleBorder(),
                                             padding: EdgeInsets.all(0)

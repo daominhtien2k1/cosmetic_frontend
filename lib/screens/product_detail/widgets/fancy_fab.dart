@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../routes.dart';
+import '../../review/create_review_screen.dart';
 
 class FancyFab extends StatefulWidget {
   final String productId;
@@ -130,7 +131,14 @@ class _FancyFabState extends State<FancyFab>
                 heroTag: "btn2",
                 elevation: 0,
                 onPressed: () {
-                  Navigator.pushNamed(context, Routes.quick_create_review_screen, arguments: widget.productId);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => QuickCreateReviewScreen(productId: widget.productId),
+                      settings: RouteSettings(
+                          name: Routes.quick_create_review_screen,
+                      ),
+                    ),
+                  );
                 },
                 tooltip: 'Đánh giá sản phẩm',
                 child: Icon(Icons.reviews_outlined),

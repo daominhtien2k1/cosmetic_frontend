@@ -1,5 +1,6 @@
 import 'package:cosmetic_frontend/models/review_model.dart';
 
+// add review
 class ReviewDetail {
   final String id;
   final String classification;
@@ -98,7 +99,7 @@ class ReviewDetail {
     return ReviewDetail(
       id: json["id"] as String,
       classification: json["classification"] as String,
-      characteristicReviews: json["characteristic_review_results"] != null ? List<CharacteristicReviewCriteria>.from(json["characteristic_review_results"].map((x) => CharacteristicReviewCriteria.fromJson(x))) : null,
+      characteristicReviews: json["characteristic_reviews"] != null ? List<CharacteristicReviewCriteria>.from(json["characteristic_reviews"].map((x) => CharacteristicReviewCriteria.fromJson(x))) : null,
       rating: json["rating"] as int?,
       title: json["title"] as String?,
       content: json["content"] as String?,
@@ -122,7 +123,7 @@ class ReviewDetail {
     return {
       "id": id,
       "classification": classification,
-      if(characteristicReviews!= null) "characteristic_review_results": List<dynamic>.from(characteristicReviews!.map((x) => x.toJson())),
+      if(characteristicReviews!= null) "characteristic_reviews": List<dynamic>.from(characteristicReviews!.map((x) => x.toJson())),
       if(rating != null) "rating": rating,
       if(title != null) "title": title,
       if(content != null) "content": content,

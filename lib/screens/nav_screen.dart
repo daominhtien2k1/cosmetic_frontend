@@ -1,4 +1,5 @@
 import 'package:cosmetic_frontend/common/widgets/navigation_drawer_section.dart';
+import 'package:cosmetic_frontend/screens/menu/sub_screens/menu_subscreens.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
@@ -32,15 +33,15 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin{
 
 
   static final List<IconData> _icons = [
-    Icons.home, Icons.feed, Icons.people, FontAwesomeIcons.gift, Icons.account_circle
+    Icons.home, Icons.feed, Icons.people, FontAwesomeIcons.gift, Icons.settings
   ];
   static final List<Widget> _screens = [
     HomeScreen(),
     NewsFeedScreen(),
     // WatchTab(),
     FriendScreen(),
-    EventScreen(),
-    PersonalScreen(),
+   PersonalScreen(),
+    MenuScreen()
   ];
 
   final List<Tab> _screenTabs = _icons.map((icon) => Tab(

@@ -20,5 +20,6 @@ class Routes {
   static const String detail_create_review_screen = "/detail_create_review_screen";
   static const String product_characteristic_screen = "/product_characteristic_screen";
   static const String review_detail_screen = "/review_detail_screen";
+  static const String characteristic_review_screen = "/characteristic_review_screen";
 }
 
