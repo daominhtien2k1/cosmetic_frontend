@@ -862,6 +862,7 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
                                     name: Routes.characteristic_review_screen,
                                     arguments: {
                                       "productId": productId,
+                                      "rating": rating,
                                       "title": title,
                                       "content": content
                                     }
@@ -890,6 +891,71 @@ class CharacteristicReviewScreen extends StatelessWidget {
 
   List<CharacteristicReviewCriteria> characteristicReviewCriterias = [];
 
+  initOrRestoreScoredCharacteristicReviews() {
+
+    characteristicReviewCriterias = [
+      CharacteristicReviewCriteria(
+        characteristic_id: "6475d20319f32362c05956ec",
+        criteria: "Làm sáng da",
+        point: 1
+      ),
+      CharacteristicReviewCriteria(
+          characteristic_id: "6475d20319f32362c05956ed",
+          criteria: "Kháng khuẩn",
+          point: 1
+      ),
+      CharacteristicReviewCriteria(
+          characteristic_id: "6475d20319f32362c05956ed",
+          criteria: "Kháng khuẩn",
+          point: 1
+      ),
+      CharacteristicReviewCriteria(
+          characteristic_id: "6475d20319f32362c05956ee",
+          criteria: "Chống tia UV",
+          point: 1
+      ),
+      CharacteristicReviewCriteria(
+          characteristic_id: "6475d20319f32362c05956ef",
+          criteria: "Không gây kích ứng",
+          point: 1
+      ),
+      CharacteristicReviewCriteria(
+          characteristic_id: "6475d20319f32362c05956f0",
+          criteria: "Chất liệu",
+          point: 1
+      ),
+      CharacteristicReviewCriteria(
+          characteristic_id: "6475d20319f32362c05956f1",
+          criteria: "Giá cả",
+          point: 1
+      ),
+      CharacteristicReviewCriteria(
+          characteristic_id: "6475d20319f32362c05956f2",
+          criteria: "Hiệu quả",
+          point: 1
+      ),
+      CharacteristicReviewCriteria(
+          characteristic_id: "6475d20319f32362c05956f3",
+          criteria: "An toàn",
+          point: 1
+      ),
+    ];
+    // print(List<dynamic>.from(characteristicReviewCriterias.map((c) => c.toJson())));
+
+  }
+
+  updateCharacteristicReviews (String criteria, int newScore) {
+    int index = characteristicReviewCriterias.indexWhere((c) => c.criteria == criteria);
+    final String characteristic_id_temp = characteristicReviewCriterias.elementAt(index).characteristic_id;
+    characteristicReviewCriterias
+      ..removeAt(index)
+      ..insert(index, CharacteristicReviewCriteria(
+          characteristic_id: characteristic_id_temp,
+          criteria: criteria,
+          point: newScore
+      ));
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -899,7 +965,10 @@ class CharacteristicReviewScreen extends StatelessWidget {
     final String title = data["title"];
     final String content = data["content"];
 
-    BlocProvider.of<ProductDetailBloc>(context).add(ProductCharacteristicsFetched(productId: productId));
+    initOrRestoreScoredCharacteristicReviews();
+
+    // print("Rebuild");
+
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(),
@@ -911,32 +980,29 @@ class CharacteristicReviewScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: SingleChildScrollView(
             child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Text("Vui lòng xếp hạng những tiêu chí sau:", style: Theme.of(context).textTheme.titleLarge),
-                ),
-                BlocBuilder<ProductDetailBloc, ProductDetailState>(
-                  builder: (context, state) {
-                    final characteristicCriterias = state.characteristicCriterias as List<CharacteristicReviewCriteria>?;
-                    if (characteristicCriterias != null) {
-
-                      return ListView.separated(
-                        physics: NeverScrollableScrollPhysics(),
-                        separatorBuilder: (ctx, index) {
-                          return SizedBox(height: 12);
-                        },
-                        shrinkWrap: true,
-                        itemCount: characteristicCriterias.length,
-                        itemBuilder: (ctx, index) {
-                          return CharacteristicProductTile(characteristicReviewCriteria: characteristicCriterias[index]);
-                        }
-                      );
-                    } else {
-                      return SizedBox.shrink();
-                    }
-                  }
-                ),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: Text(
+                        "Vui lòng xếp hạng những tiêu chí sau:", style: Theme
+                        .of(context)
+                        .textTheme
+                        .titleLarge),
+                  ),
+                  ListView.separated(
+                      physics: NeverScrollableScrollPhysics(),
+                      separatorBuilder: (ctx, index) {
+                        return SizedBox(height: 12);
+                      },
+                      shrinkWrap: true,
+                      itemCount: characteristicReviewCriterias.length,
+                      itemBuilder: (ctx, index) {
+                        return CharacteristicProductTile(
+                          characteristicReviewCriteria: characteristicReviewCriterias[index],
+                          onScoringCriteria: updateCharacteristicReviews
+                        );
+                      }
+                  ),
                 SizedBox(height: 16),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16),
@@ -962,8 +1028,8 @@ class CharacteristicReviewScreen extends StatelessWidget {
                               padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                             ),
                             onPressed: () {
-                              // BlocProvider.of<ReviewBloc>(context).add(DetailReviewAdd(productId: productId, classification: "Detail", rating: rating, title: title, content: content, characteristicReviews: characteristicReviews))
-                              Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
+                              BlocProvider.of<ReviewBloc>(context).add(DetailReviewAdd(productId: productId, classification: "Detail", rating: rating, title: title, content: content, characteristicReviews: characteristicReviewCriterias));
+                              // Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
                             },
                             child: Text("Hoàn thành", style: TextStyle(fontSize: 18))
                         ),
@@ -977,17 +1043,19 @@ class CharacteristicReviewScreen extends StatelessWidget {
             ),
           ),
         ),
-      ),
+      )
     );
   }
 }
 
 class CharacteristicProductTile extends StatefulWidget {
   final CharacteristicReviewCriteria characteristicReviewCriteria;
+  final Function(String, int) onScoringCriteria;
 
   const CharacteristicProductTile({
     super.key,
-    required this.characteristicReviewCriteria
+    required this.characteristicReviewCriteria,
+    required this.onScoringCriteria
   });
 
   @override
@@ -995,13 +1063,13 @@ class CharacteristicProductTile extends StatefulWidget {
 }
 
 class _CharacteristicProductTileState extends State<CharacteristicProductTile> {
-  late int value;
+  late int point;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    value = 1;
+    point = widget.characteristicReviewCriteria.point ?? 1;
   }
 
   @override
@@ -1017,16 +1085,16 @@ class _CharacteristicProductTileState extends State<CharacteristicProductTile> {
         children: [
           Text(widget.characteristicReviewCriteria.criteria, style: Theme.of(context).textTheme.titleLarge),
           Slider(
-              value: value.toDouble(),
+              value: point.toDouble(),
               max: 5,
               min: 1,
               divisions: 4,
-              label: value.toString(),
+              label: point.toString(),
               onChanged: (value) {
                 setState(() {
-                  this.value = value.toInt();
+                  this.point = value.toInt();
                 });
-
+                widget.onScoringCriteria(widget.characteristicReviewCriteria.criteria, point);
               }
           )
         ],

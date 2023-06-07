@@ -216,6 +216,11 @@ class CharacteristicReviewCriteria {
     "criteria": criteria,
     if (point != null) "point": point,
   };
+
+  Map<String, dynamic> toJson2() => {
+    "characteristic_id": characteristic_id,
+    if (point != null) "point": point,
+  };
 }
 
 class AttachedReviewImage extends Equatable {

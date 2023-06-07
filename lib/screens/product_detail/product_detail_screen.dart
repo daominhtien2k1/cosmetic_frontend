@@ -302,7 +302,7 @@ class CharacteristicContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ProductDetailBloc, ProductDetailState>(
         builder: (context, state) {
-          final characteristicCriterias = state.characteristicCriterias as List<CharacteristicReviewCriteria>?;
+          final characteristicCriterias = state.characteristicReviewCriterias as List<CharacteristicReviewCriteria>?;
           final characteristics = characteristicCriterias?.map((cr) => cr.criteria.toString()).toList();
           final productId = state.productDetail?.id;
           return Container(

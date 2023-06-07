@@ -50,7 +50,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       // characteristics?.retainWhere((c) => ((c!="Chất liệu") && (c!="Giá cả") && (c!="Hiệu quả") && (c!="An toàn")));
       if (characteristicCriterias != null) {
         emit(state.copyWith(productDetailStatus: ProductDetailStatus.success,
-            characteristicCriterias: characteristicCriterias));
+            characteristicReviewCriterias: characteristicCriterias));
       }
     } catch(error) {
       emit(state.copyWith(productDetailStatus: ProductDetailStatus.failure));

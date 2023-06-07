@@ -127,7 +127,8 @@ class ReviewRepository {
     int? rating,
     String? title,
     String? content,
-    List<XFile>? imageFileList
+    List<XFile>? imageFileList,
+    List<CharacteristicReviewCriteria>? characteristicReviews
   }) async {
     try {
       var token = await Token.getToken();
@@ -147,6 +148,46 @@ class ReviewRepository {
       if(rating != null) request.fields["rating"] = rating.toString();
       if(title != null) request.fields["title"] = title;
       if(content != null) request.fields["content"] = content;
+
+      // List<Map<String, dynamic>> characteristic_reviews = [
+      //   {
+      //     "characteristic_id": "6475d20319f32362c05956ec",
+      //     "point": 5
+      //   },
+      //   {
+      //     "characteristic_id": "6475d20319f32362c05956ed",
+      //     "point": 5
+      //   },
+      //   {
+      //     "characteristic_id": "6475d20319f32362c05956ee",
+      //     "point": 5
+      //   },
+      //   {
+      //     "characteristic_id": "6475d20319f32362c05956ef",
+      //     "point": 5
+      //   },
+      //   {
+      //     "characteristic_id": "6475d20319f32362c05956f0",
+      //     "point": 5
+      //   },
+      //   {
+      //     "characteristic_id": "6475d20319f32362c05956f1",
+      //     "point": 5
+      //   },
+      //   {
+      //     "characteristic_id": "6475d20319f32362c05956f2",
+      //     "point": 5
+      //   },
+      //   {
+      //     "characteristic_id": "6475d20319f32362c05956f3",
+      //     "point": 5
+      //   }
+      // ];
+      // print(jsonEncode(characteristic_reviews));
+      // if(characteristicReviews != null) request.fields["characteristic_reviews"] = jsonEncode(characteristic_reviews);
+
+      // thừa criteria vẫn chạy được
+      if(characteristicReviews != null) request.fields["characteristic_reviews"] = jsonEncode(List<dynamic>.from(characteristicReviews.map((c) => c.toJson2())));
 
       if (imageList != null && imageList.length == 1) {
         // print(imageList[0].path);
