@@ -70,6 +70,7 @@ class ReviewContainer extends StatelessWidget {
                         if (review.rating != null) 'oldRating': review.rating,
                         if (review.title != null) 'oldTitle': review.title,
                         if (review.content != null) 'oldContent': review.content,
+                        if (review.characteristicReviews != null) 'oldCharacteristicReviews': review.characteristicReviews,
                         'classification': review.classification
                       }
                   ),
@@ -215,6 +216,7 @@ class _ReviewHeader extends StatelessWidget {
                     oldTitle: extras?["oldTitle"],
                     oldContent: extras?["oldContent"],
                     authorId: extras?["authorId"],
+                    oldCharacteristicReviews: extras?["oldCharacteristicReviews"],
                     classification: extras?["classification"],
                 )
             );
@@ -381,6 +383,7 @@ class OptionContainerBottomSheet extends StatelessWidget {
   final int? oldRating;
   final String? oldTitle;
   final String? oldContent;
+  final List<CharacteristicReviewCriteria>? oldCharacteristicReviews;
   final String classification;
 
   OptionContainerBottomSheet({
@@ -390,6 +393,7 @@ class OptionContainerBottomSheet extends StatelessWidget {
     required this.oldRating,
     required this.oldTitle,
     required this.oldContent,
+    required this.oldCharacteristicReviews,
     required this.classification
   }) : super(key: key);
 
@@ -469,6 +473,7 @@ class OptionContainerBottomSheet extends StatelessWidget {
                   // print(oldContent);
                   // print(oldRating);
                   if (productId != null && classification != "Instruction") {
+                    // push cả null value
                     Navigator.of(context).push(
                       MaterialPageRoute(
                         builder: (_) => QuickCreateReviewScreen(productId: productId),
@@ -478,7 +483,8 @@ class OptionContainerBottomSheet extends StatelessWidget {
                             "isEdit": true,
                             "oldRating": oldRating,
                             "oldTitle": oldTitle,
-                            "oldContent": oldContent
+                            "oldContent": oldContent,
+                            "oldCharacteristicReviews": oldCharacteristicReviews
                           }
                         ),
                       ),

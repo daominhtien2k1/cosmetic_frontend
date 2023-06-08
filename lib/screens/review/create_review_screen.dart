@@ -243,7 +243,7 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
 
   String? oldTitleToTransfer;
   String? oldContentToTransfer;
-  List<CharacteristicReviewCriteria>? oldCharacteristicReviews;
+  List<CharacteristicReviewCriteria>? oldCharacteristicReviewsToTransfer;
 
   @override
   void initState() {
@@ -268,6 +268,7 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
     final int? oldRatingReceive = data?["oldRating"];
     final String? oldTitleReceive = data?["oldTitle"];
     final String? oldContentReceive = data?["oldContent"];
+    final List<CharacteristicReviewCriteria>? oldCharacteristicReviewsReceive = data?["oldCharacteristicReviews"];
 
     // Chỉ gán lại một lần - Khôi phục dữ liệu khi ấn vào edit review
     if (isEditReceive == true && hasRestoredRating == "Unknown") {
@@ -275,6 +276,7 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
           if (oldRatingReceive != null) rating = oldRatingReceive!;
           if (oldTitleReceive != null) oldTitleToTransfer = oldTitleReceive;
           if (oldContentReceive != null) oldContentToTransfer = oldContentReceive;
+          if (oldCharacteristicReviewsReceive != null) oldCharacteristicReviewsToTransfer = oldCharacteristicReviewsReceive;
         });
 
 
@@ -291,7 +293,7 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
           rating = retrieveReview.rating!;
           oldTitleToTransfer = retrieveReview.title;
           oldContentToTransfer = retrieveReview.content;
-          oldCharacteristicReviews = retrieveReview.characteristicReviews;
+          oldCharacteristicReviewsToTransfer = retrieveReview.characteristicReviews;
           hasRestoredRating = "Success restore from FAB";
         });
       }
@@ -405,7 +407,7 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
                                             "rating": rating,
                                             if (oldTitleToTransfer != null) "oldTitle": oldTitleToTransfer,
                                             if (oldContentToTransfer != null) "oldContent": oldContentToTransfer,
-                                            if (oldCharacteristicReviews != null) "oldCharacteristicReviews": oldCharacteristicReviews
+                                            if (oldCharacteristicReviewsToTransfer != null) "oldCharacteristicReviews": oldCharacteristicReviewsToTransfer
                                           }
                                       ),
                                     ),
