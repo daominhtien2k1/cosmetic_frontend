@@ -7,12 +7,14 @@ import 'package:flutter_html/flutter_html.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
+import '../../../blocs/product_detail/product_detail_bloc.dart';
 import '../../../common/widgets/star_list.dart';
 import '../../../constants/assets/placeholder.dart';
 import '../../../models/models.dart';
 import '../../../routes.dart';
 
 import '../../../blocs/auth/auth_bloc.dart';
+import '../../review/create_review_screen.dart';
 
 // Standard and Detail
 class ReviewContainer extends StatelessWidget {
@@ -57,7 +59,20 @@ class ReviewContainer extends StatelessWidget {
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _ReviewHeader(avtUrl: review.author.avatar, name: review.author.name, timeAgo: timeAgo, onHandleOtherReviewEvent: (event) => handleOtherReviewEvent(event), extras: {'reviewId': review.id, 'authorId': review.author.id}),
+                  _ReviewHeader(
+                      avtUrl: review.author.avatar,
+                      name: review.author.name,
+                      timeAgo: timeAgo,
+                      onHandleOtherReviewEvent: (event) => handleOtherReviewEvent(event),
+                      extras: {
+                        'reviewId': review.id,
+                        'authorId': review.author.id,
+                        if (review.rating != null) 'oldRating': review.rating,
+                        if (review.title != null) 'oldTitle': review.title,
+                        if (review.content != null) 'oldContent': review.content,
+                        'classification': review.classification
+                      }
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(top: 16),
                     child: Row(
@@ -194,7 +209,14 @@ class _ReviewHeader extends StatelessWidget {
           onPressed: (){
             showModalBottomSheet(
                 context: context,
-                builder: (context) => OptionContainerBottomSheet(reviewId: extras?["reviewId"], authorId: extras?["authorId"])
+                builder: (context) => OptionContainerBottomSheet(
+                    reviewId: extras?["reviewId"],
+                    oldRating: extras?["oldRating"],
+                    oldTitle: extras?["oldTitle"],
+                    oldContent: extras?["oldContent"],
+                    authorId: extras?["authorId"],
+                    classification: extras?["classification"],
+                )
             );
           },
         )
@@ -355,7 +377,21 @@ class _ReviewVideoContainerState extends State<ReviewVideoContainer> {
 class OptionContainerBottomSheet extends StatelessWidget {
   final String reviewId;
   final String authorId;
-  const OptionContainerBottomSheet({Key? key, required this.reviewId, required this.authorId}) : super(key: key);
+
+  final int? oldRating;
+  final String? oldTitle;
+  final String? oldContent;
+  final String classification;
+
+  OptionContainerBottomSheet({
+    Key? key,
+    required this.reviewId,
+    required this.authorId,
+    required this.oldRating,
+    required this.oldTitle,
+    required this.oldContent,
+    required this.classification
+  }) : super(key: key);
 
   void rejectConfirmation(BuildContext context) {
     showDialog(
@@ -399,6 +435,10 @@ class OptionContainerBottomSheet extends StatelessWidget {
     final userId = authUser.id;
     final bool isMe = (userId == authorId);
 
+    final productDetailState = BlocProvider.of<ProductDetailBloc>(context).state;
+    final productId = productDetailState.productDetail?.id;
+
+
     return Container(
       padding: EdgeInsets.symmetric(vertical: 10.0),
       // height: 210.0,
@@ -425,7 +465,25 @@ class OptionContainerBottomSheet extends StatelessWidget {
                 icon: Icons.edit,
                 buttonText: "Chỉnh sửa bài viết",
                 onPressed: () {
-
+                  // print(oldTitle);
+                  // print(oldContent);
+                  // print(oldRating);
+                  if (productId != null && classification != "Instruction") {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => QuickCreateReviewScreen(productId: productId),
+                        settings: RouteSettings(
+                          name: Routes.quick_create_review_screen,
+                          arguments: {
+                            "isEdit": true,
+                            "oldRating": oldRating,
+                            "oldTitle": oldTitle,
+                            "oldContent": oldContent
+                          }
+                        ),
+                      ),
+                    );
+                  }
                 }
             ),
           if(isMe)

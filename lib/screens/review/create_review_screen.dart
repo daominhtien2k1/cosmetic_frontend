@@ -1,3 +1,5 @@
+import '../../blocs/retrieve_review/retrieve_review_bloc.dart';
+import '../../blocs/retrieve_review/retrieve_review_event.dart';
 import '../../models/models.dart' hide Image;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -29,19 +31,44 @@ class _StandardCreateReviewScreenState extends State<StandardCreateReviewScreen>
   late String title;
   late String content;
 
+  String hasRestoredTitleAndContent = "Unknown";
+
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _titleController = TextEditingController();
+    _contentController = TextEditingController();
+
   }
 
   @override
   Widget build(BuildContext context) {
+    print("#Create_review_screen: Rebuild");
+
+    // chỉ có 1 kiểu push từ Quick review và có tham số nên chắc chắn là data!
     final Map<String, dynamic> data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final String productId = data["productId"];
     final String productImageUrl = data["productImageUrl"];
     final String productName = data["productName"];
     final int rating = data["rating"];
+    final String? oldTitle = data["oldTitle"];
+    final String? oldContent = data["oldContent"];
+
+    if (hasRestoredTitleAndContent == "Unknown") {
+      setState(() {
+        if (oldTitle != null) _titleController.text = oldTitle;
+        if (oldContent != null) _contentController.text = oldContent;
+        if (oldTitle != null && oldContent != null) {
+          hasRestoredTitleAndContent = "Restore success";
+        } else {
+          hasRestoredTitleAndContent = "Fail";
+        }
+      });
+    }
 
     return Scaffold(
         appBar: AppBar(
@@ -95,6 +122,7 @@ class _StandardCreateReviewScreenState extends State<StandardCreateReviewScreen>
                         color: Colors.grey[200],
                       ),
                       child: TextField(
+                        controller: _titleController,
                         onSubmitted: (value) {
                           setState(() {
                             title = value;
@@ -126,6 +154,7 @@ class _StandardCreateReviewScreenState extends State<StandardCreateReviewScreen>
                         color: Colors.grey[200],
                       ),
                       child: TextField(
+                        controller: _contentController,
                         onSubmitted: (value) {
                           setState(() {
                             content = value;
@@ -176,7 +205,9 @@ class _StandardCreateReviewScreenState extends State<StandardCreateReviewScreen>
                           padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                         ),
                         onPressed: () {
-                          BlocProvider.of<ReviewBloc>(context).add(StandardReviewAdd(productId: productId, classification: "Standard", rating: rating, title: title, content: content));
+                          String titleValue = _titleController.text ?? title;
+                          String contentValue = _contentController.text ?? content;
+                          BlocProvider.of<ReviewBloc>(context).add(StandardReviewAdd(productId: productId, classification: "Standard", rating: rating, title: titleValue, content: contentValue));
                           Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
                         },
                         child: Text("Hoàn thành đánh giá", style: TextStyle(fontSize: 18))
@@ -206,6 +237,12 @@ class QuickCreateReviewScreen extends StatefulWidget {
 class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
   late int rating;
 
+  // cập nhật lại giá trị 1 lần
+  String hasRestoredRating = "Unknown";
+
+  late String? oldTitleToTransfer;
+  late String? oldContentToTransfer;
+
   @override
   void initState() {
     // TODO: implement initState
@@ -219,8 +256,55 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
+    // là ? vì push 2 kiểu từ 2 nơi, nên tham số khác nhau
+    final Map<String, dynamic>? data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final bool? isEditReceive = data?["isEdit"];
+    final int? oldRatingReceive = data?["oldRating"];
+    final String? oldTitleReceive = data?["oldTitle"];
+    final String? oldContentReceive = data?["oldContent"];
+
+    // Chỉ gán lại một lần - Khôi phục dữ liệu khi ấn vào edit review
+    if (isEditReceive == true && hasRestoredRating == "Unknown") {
+        setState(() {
+          if (oldRatingReceive != null) rating = oldRatingReceive!;
+          if (oldTitleReceive != null) oldTitleToTransfer = oldTitleReceive;
+          if (oldContentReceive != null) oldContentToTransfer = oldContentReceive;
+        });
+
+
+      hasRestoredRating = "Success restore from edit";
+    }
+
+    // Chỉ gán lại một lần - Khôi phục dữ liệu đã đánh giá khi ấn Fab
+    if (rating == 0 && hasRestoredRating == "Unknown") {
+      BlocProvider.of<RetrieveReviewBloc>(context).add(ReviewRetrieved(productId: widget.productId));
+      final retrieveReviewState = context.watch<RetrieveReviewBloc>().state;
+      final retrieveReview = retrieveReviewState.retrieveReview;
+      if (retrieveReview != null) {
+        setState(() {
+          rating = retrieveReview.rating!;
+          oldTitleToTransfer = retrieveReview.title;
+          oldContentToTransfer = retrieveReview.content;
+          hasRestoredRating = "Success restore from FAB";
+        });
+      }
+      // chưa tồn tại dữ liệu, lấy mặc định như lúc đầu, khiến cho không gọi lại Bloc add ReviewRetrieved
+      else {
+        setState(() {
+          hasRestoredRating = "Fail";
+        });
+      }
+    }
+
+    // print("#Create_review_screen: Rebuild");
+    // print("#Create_review_screen:  + $rating");
+    // print("#Create_review_screen:  + $oldTitleToTransfer");
+    // print("#Create_review_screen:  + $oldContentToTransfer");
+
     return Scaffold(
         appBar: AppBar(
           leading: BackButton(),
@@ -286,7 +370,9 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
                                             "productId": widget.productId,
                                             "productImageUrl": productDetail?.images[0].url,
                                             "productName": productDetail?.name,
-                                            "rating": rating
+                                            "rating": rating,
+                                            if (oldTitleToTransfer != null) "oldTitle": oldTitleToTransfer,
+                                            if (oldContentToTransfer != null) "oldContent": oldContentToTransfer
                                           }
                                       ),
                                     ),
@@ -313,7 +399,10 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
                                             "productId": widget.productId,
                                             "productImageUrl": productDetail?.images[0].url,
                                             "productName": productDetail?.name,
-                                            "rating": rating
+                                            "rating": rating,
+                                            if (oldTitleToTransfer != null) "oldTitle": oldTitleToTransfer,
+                                            if (oldContentToTransfer != null) "oldContent": oldContentToTransfer
+
                                           }
                                       ),
                                     ),
@@ -332,6 +421,8 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
                                 onPressed: rating != 0 ? () {
                                   BlocProvider.of<ReviewBloc>(context).add(QuickReviewAdd(productId: widget.productId, classification: "Quick", rating: rating));
                                   Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
+
+                                  // BlocProvider.of<RetrieveReviewBloc>(context).add(ReviewRetrieved(productId: widget.productId));
                                 } : null,
                                 child: Text("Hoàn thành đánh giá", style: TextStyle(fontSize: 18))
                             ),
@@ -692,10 +783,17 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
   late String title;
   late String content;
 
+  String hasRestoredTitleAndContent = "Unknown";
+
+  late TextEditingController _titleController;
+  late TextEditingController _contentController;
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _titleController = TextEditingController();
+    _contentController = TextEditingController();
   }
 
   @override
@@ -705,8 +803,21 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
     final String productImageUrl = data["productImageUrl"];
     final String productName = data["productName"];
     final int rating = data["rating"];
+    final String? oldTitle = data["oldTitle"];
+    final String? oldContent = data["oldContent"];
 
-    print(productId);
+    if (hasRestoredTitleAndContent == "Unknown") {
+      setState(() {
+        if (oldTitle != null) _titleController.text = oldTitle;
+        if (oldContent != null) _contentController.text = oldContent;
+        if (oldTitle != null && oldContent != null) {
+          hasRestoredTitleAndContent = "Restore success";
+        } else {
+          hasRestoredTitleAndContent = "Fail";
+        }
+      });
+    }
+
     return Scaffold(
         appBar: AppBar(
           leading: BackButton(),
@@ -759,6 +870,7 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
                         color: Colors.grey[200],
                       ),
                       child: TextField(
+                        controller: _titleController,
                         onSubmitted: (value) {
                           setState(() {
                             title = value;
@@ -790,6 +902,7 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
                         color: Colors.grey[200],
                       ),
                       child: TextField(
+                        controller: _contentController,
                         onSubmitted: (value) {
                           setState(() {
                             content = value;
@@ -855,6 +968,8 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
                               padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
                             ),
                             onPressed: () {
+                              String titleValue = _titleController.text ?? title;
+                              String contentValue = _contentController.text ?? content;
                               Navigator.of(context).push(
                                 MaterialPageRoute(
                                   builder: (_) => CharacteristicReviewScreen(),
@@ -863,8 +978,8 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
                                     arguments: {
                                       "productId": productId,
                                       "rating": rating,
-                                      "title": title,
-                                      "content": content
+                                      "title": titleValue,
+                                      "content": contentValue
                                     }
                                   ),
                                 ),
@@ -1029,7 +1144,7 @@ class CharacteristicReviewScreen extends StatelessWidget {
                             ),
                             onPressed: () {
                               BlocProvider.of<ReviewBloc>(context).add(DetailReviewAdd(productId: productId, classification: "Detail", rating: rating, title: title, content: content, characteristicReviews: characteristicReviewCriterias));
-                              // Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
+                              Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
                             },
                             child: Text("Hoàn thành", style: TextStyle(fontSize: 18))
                         ),

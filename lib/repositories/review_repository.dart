@@ -232,8 +232,32 @@ class ReviewRepository {
     } else if (response.statusCode == 400) {
       return null;
     } else {
-      print(json.decode(response.body) as Map<String, dynamic>);
+      // print(json.decode(response.body) as Map<String, dynamic>);
       return null;
     }
   }
+
+  Future<RetrieveReview?> retrieveReview({required String productId}) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/review/retrieve_review', {
+          'product_id': productId
+    });
+
+    var token = await Token.getToken();
+
+    final response = await http.get(url,
+        headers: {
+          HttpHeaders.authorizationHeader: token,
+        }
+    );
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body) as Map<String, dynamic>;
+      final retrieveReview = RetrieveReview.fromJson(body['data']);
+      return retrieveReview;
+    } else if (response.statusCode == 400) {
+      return null;
+    } else {
+      return null;
+    }
+  }
+
 }

@@ -3,6 +3,9 @@ import 'dart:convert';
 import 'package:cosmetic_frontend/blocs/product_detail/product_detail_bloc.dart';
 import 'package:cosmetic_frontend/blocs/product_detail/product_detail_event.dart';
 import 'package:cosmetic_frontend/blocs/product_detail/product_detail_state.dart';
+import 'package:cosmetic_frontend/blocs/retrieve_review/retrieve_review_bloc.dart';
+import 'package:cosmetic_frontend/blocs/retrieve_review/retrieve_review_event.dart';
+import 'package:cosmetic_frontend/blocs/retrieve_review/retrieve_review_state.dart';
 import 'package:cosmetic_frontend/blocs/review/review_bloc.dart';
 import 'package:cosmetic_frontend/blocs/review/review_event.dart';
 import 'package:cosmetic_frontend/blocs/review/review_state.dart';
@@ -33,6 +36,7 @@ class ProductDetailScreen extends StatelessWidget {
     BlocProvider.of<ReviewBloc>(context).add(StatisticStarReviewFetched(productId: productId));
     BlocProvider.of<ProductDetailBloc>(context).add(RelateProductsFetched(productId: productId));
     BlocProvider.of<ProductDetailBloc>(context).add(ProductCharacteristicsFetched(productId: productId));
+    BlocProvider.of<RetrieveReviewBloc>(context).add(ReviewRetrieved(productId: productId));
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(),
@@ -155,13 +159,50 @@ class FavouriteAndReviewContainer extends StatelessWidget {
 
                 }, icon: Icon(Icons.favorite_border)),
                 SizedBox(width: 20),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text("Đánh giá ngay", style: Theme.of(context).textTheme.titleMedium),
-                    StarList(rating: 0, size: 24)
-                  ],
+                BlocBuilder<RetrieveReviewBloc, RetrieveReviewState>(
+                    builder: (context, state) {
+                      switch (state.retrieveReviewStatus) {
+                        case RetrieveReviewStatus.initial: {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Đánh giá ngay", style: Theme.of(context).textTheme.titleMedium),
+                              StarList(rating: 0, size: 24)
+                            ],
+                          );
+                        }
+                        case RetrieveReviewStatus.loading: {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Đánh giá ngay", style: Theme.of(context).textTheme.titleMedium),
+                              StarList(rating: 0, size: 24)
+                            ],
+                          );
+                        }
+                        case RetrieveReviewStatus.failure: {
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Đánh giá ngay", style: Theme.of(context).textTheme.titleMedium),
+                              StarList(rating: 0, size: 24)
+                            ],
+                          );
+                        }
+                        case RetrieveReviewStatus.success: {
+                          final retrieveReview = state.retrieveReview;
+                          final rating = retrieveReview!.rating!;
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text("Đánh giá ngay", style: Theme.of(context).textTheme.titleMedium),
+                              StarList(rating: rating.toDouble(), size: 24)
+                            ],
+                          );
+                        }
+                      }
 
+                  }
                 ),
               ],
             ),

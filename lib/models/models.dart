@@ -25,3 +25,4 @@ export 'product_characteristic.dart';
 export 'review_detail_model.dart';
 export 'review_detail2_model.dart';
 export 'reply_model.dart';
+export 'retrieve_review_model.dart';

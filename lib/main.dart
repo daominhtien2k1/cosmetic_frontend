@@ -1,5 +1,6 @@
 import 'package:cosmetic_frontend/blocs/product_characteristic/product_characteristic_bloc.dart';
 import 'package:cosmetic_frontend/blocs/reply/reply_bloc.dart';
+import 'package:cosmetic_frontend/blocs/retrieve_review/retrieve_review_bloc.dart';
 import 'package:cosmetic_frontend/blocs/review/review_bloc.dart';
 import 'package:cosmetic_frontend/blocs/review_detail/review_detail_bloc.dart';
 import 'package:cosmetic_frontend/models/models.dart';
@@ -149,6 +150,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<ReplyBloc>(
           lazy: false,
           create: (_) => ReplyBloc(),
+        ),
+        BlocProvider<RetrieveReviewBloc>(
+          lazy: false,
+          create: (_) => RetrieveReviewBloc(reviewRepository: reviewRepository),
         )
       ],
       child: MaterialApp(
