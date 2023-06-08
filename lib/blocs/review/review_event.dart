@@ -88,6 +88,7 @@ class DetailReviewAdd extends ReviewAdd {
   );
 }
 
+// không cần image nhé
 class InstructionReviewAdd extends ReviewAdd {
   final String title;
   final String content;
@@ -103,4 +104,16 @@ class InstructionReviewAdd extends ReviewAdd {
     classification: classification,
     imageFileList: imageFileList,
   );
+}
+
+class InstructionReviewEdit extends ReviewEvent {
+  final String reviewId;
+  final String title;
+  final String content;
+
+  InstructionReviewEdit({
+    required this.reviewId,
+    required this.title,
+    required this.content
+  });
 }

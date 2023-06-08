@@ -458,21 +458,54 @@ class InstructionCreateReviewScreen extends StatefulWidget {
 
 class _InstructionCreateReviewScreenState extends State<InstructionCreateReviewScreen> {
   late String title;
+  late TextEditingController _titleController;
   final QuillEditorController controller = QuillEditorController();
+
+  String hasRestoredTitleAndContent = "Unknown";
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    _titleController = TextEditingController();
   }
 
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
+
   }
   @override
   Widget build(BuildContext context) {
+    // là ? vì push 2 kiểu từ 2 nơi, nên tham số khác nhau
+    final Map<String, dynamic>? data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+    final bool? isEditReceive = data?["isEdit"];
+    final String? reviewIdReceive = data?["reviewId"];
+    final String? oldTitleReceive = data?["oldTitle"];
+    final String? oldContentReceive = data?["oldContent"];
+
+
+    // Chỉ gán lại một lần - Khôi phục dữ liệu khi ấn vào edit review
+    if (isEditReceive == true && hasRestoredTitleAndContent == "Unknown") {
+      setState(() {
+        if (oldTitleReceive != null) _titleController.text = oldTitleReceive;
+        if (oldContentReceive != null) {
+          // không được, không hiểu tại sao
+          // print(oldContentReceive);
+          // controller.setText(oldContentReceive);
+          // controller.getText().then((value) => print("CCCC: + $value"));
+        };
+
+        if (oldTitleReceive != null && oldContentReceive != null && reviewIdReceive != null) {
+          hasRestoredTitleAndContent = "Success restore from edit";
+        } else {
+          hasRestoredTitleAndContent = "Fail";
+        }
+      });
+    }
+
+
     return Scaffold(
         appBar: AppBar(
           leading: BackButton(),
@@ -540,6 +573,7 @@ class _InstructionCreateReviewScreenState extends State<InstructionCreateReviewS
                                     color: Colors.grey.shade100,
                                   ),
                                   child: TextField(
+                                    controller: _titleController,
                                     onSubmitted: (value) {
                                       setState(() {
                                         title = value;
@@ -570,7 +604,7 @@ class _InstructionCreateReviewScreenState extends State<InstructionCreateReviewS
                                     borderRadius: BorderRadius.circular(8),
                                     color: Colors.grey.shade100,
                                   ),
-                                  child: ContentHtmlEditor(controller: controller)
+                                  child: ContentHtmlEditor(controller: controller, oldContent: oldContentReceive)
                               ),
                             ),
                             Center(
@@ -583,7 +617,13 @@ class _InstructionCreateReviewScreenState extends State<InstructionCreateReviewS
                                     ),
                                     onPressed: () async {
                                       String content = await controller.getText();
-                                      BlocProvider.of<ReviewBloc>(context).add(InstructionReviewAdd(productId: widget.productId, classification: "Instruction", title: title, content: content));
+                                      // print(content);
+                                      if (isEditReceive == null) { // nếu là tạo mới
+                                        BlocProvider.of<ReviewBloc>(context).add(InstructionReviewAdd(productId: widget.productId, classification: "Instruction", title: title, content: content));
+                                      }
+                                    else if (isEditReceive == true && reviewIdReceive != null){ // nếu là edit
+                                        BlocProvider.of<ReviewBloc>(context).add(InstructionReviewEdit(reviewId: reviewIdReceive, title: title, content: content));
+                                      }
                                       Navigator.pop(context);
                                     },
                                     child: Text("Hoàn thành", style: TextStyle(fontSize: 18))
@@ -605,7 +645,8 @@ class _InstructionCreateReviewScreenState extends State<InstructionCreateReviewS
 
 class ContentHtmlEditor extends StatefulWidget {
   final QuillEditorController controller;
-  ContentHtmlEditor({Key? key, required this.controller}) : super(key: key);
+  final String? oldContent;
+  ContentHtmlEditor({Key? key, required this.controller, this.oldContent}) : super(key: key);
 
   @override
   State<ContentHtmlEditor> createState() => _ContentHtmlEditorState();
@@ -643,12 +684,24 @@ class _ContentHtmlEditorState extends State<ContentHtmlEditor> {
 
   @override
   void initState() {
+    super.initState();
     controller = widget.controller;
     // controller.onTextChanged((text) {
     //   // print('listening to $text');
     // });
-    super.initState();
   }
+
+  // không được, init state cũng không được
+  // @override
+  // void didChangeDependencies() {
+  //   super.didChangeDependencies();
+  //
+  //   if (mounted) {
+  //     if (widget.oldContent != null) {
+  //       controller.setText(widget.oldContent!);
+  //     }
+  //   }
+  // }
 
   @override
   void dispose() {
@@ -699,6 +752,11 @@ class _ContentHtmlEditorState extends State<ContentHtmlEditor> {
 
   @override
   Widget build(BuildContext context) {
+    // controller.setText("Không cần sử dụng await nên không thêm async vào method chứa nó");
+    // controller.getText().then((value) => print(value));
+
+    // print("Rebuild");
+    
     return Container(
       height: 400,
       child: Column(
@@ -716,30 +774,38 @@ class _ContentHtmlEditorState extends State<ContentHtmlEditor> {
               crossAxisAlignment: CrossAxisAlignment.center,
               direction: Axis.horizontal,
               // toolBarConfig: customToolBarList,
-              // customButtons: [
-              //   InkWell(
-              //       onTap: () => unFocusEditor(),
-              //       child: const Icon(
-              //         Icons.favorite,
-              //         color: Colors.black,
-              //       )),
-              //   InkWell(
-              //       onTap: () async {
-              //         var selectedText = await controller.getSelectedText();
-              //         // print('selectedText: $selectedText');
-              //         var selectedHtmlText = await controller.getSelectedHtmlText();
-              //         // print('selectedHtmlText: $selectedHtmlText');
-              //       },
-              //       child: const Icon(
-              //         Icons.add_circle,
-              //         color: Colors.black,
-              //       )),
-              // ],
+              customButtons: [
+                // InkWell(
+                //     onTap: () => unFocusEditor(),
+                //     child: const Icon(
+                //       Icons.favorite,
+                //       color: Colors.black,
+                //     )),
+                // InkWell(
+                //     onTap: () async {
+                //       var selectedText = await controller.getSelectedText();
+                //       // print('selectedText: $selectedText');
+                //       var selectedHtmlText = await controller.getSelectedHtmlText();
+                //       // print('selectedHtmlText: $selectedHtmlText');
+                //     },
+                //     child: const Icon(
+                //       Icons.add_circle,
+                //       color: Colors.black,
+                //     )),
+                InkWell(
+                    onTap: () {
+                      controller.setText(widget.oldContent!);
+                    },
+                    child: const Icon(
+                      Icons.start,
+                      color: Colors.black,
+                    )),
+              ],
             ),
             Flexible(
               fit: FlexFit.tight,
               child: QuillHtmlEditor(
-                // text: "<h1>Hello</h1>This is a quill html editor example 😊",
+                text: widget.oldContent != null ? widget.oldContent : null,
                 hintText: '', // có chữ sẽ bị lỗi khi nhập xong
                 controller: controller,
                 isEnabled: true,

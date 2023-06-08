@@ -251,10 +251,10 @@ class MyApp extends StatelessWidget {
               //       productName: productName, rating: rating
               //   ));
               // }
-              case Routes.instruction_create_review_screen: {
-                final String productId = settings.arguments as String;
-                return MaterialPageRoute(builder: (_) => InstructionCreateReviewScreen(productId: productId));
-              }
+              // case Routes.instruction_create_review_screen: {
+              //   final String productId = settings.arguments as String;
+              //   return MaterialPageRoute(builder: (_) => InstructionCreateReviewScreen(productId: productId));
+              // }
               case Routes.product_characteristic_screen: {
                 final String productId = settings.arguments as String;
                 return MaterialPageRoute(builder: (_) => ProductCharacteristicScreen(productId: productId));

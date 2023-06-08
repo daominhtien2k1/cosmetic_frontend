@@ -260,4 +260,32 @@ class ReviewRepository {
     }
   }
 
+  Future<Review?> editInstructionReview({required String reviewId, required String title, required String content}) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/review/edit_instruction_review');
+
+    var token = await Token.getToken();
+
+    final response = await http.post(url,
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'id': reviewId,
+          'title': title,
+          'content': content
+        })
+    );
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body) as Map<String, dynamic>;
+      final review= Review.fromJson(body['data']);
+      return review;
+    } else if (response.statusCode == 400) {
+      return null;
+    } else {
+      // print(json.decode(response.body) as Map<String, dynamic>);
+      return null;
+    }
+  }
+
 }

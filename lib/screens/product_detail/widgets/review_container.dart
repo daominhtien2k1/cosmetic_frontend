@@ -490,6 +490,23 @@ class OptionContainerBottomSheet extends StatelessWidget {
                       ),
                     );
                   }
+
+                  if (productId != null && classification == "Instruction") {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (_) => InstructionCreateReviewScreen(productId: productId),
+                        settings: RouteSettings(
+                          name: Routes.instruction_create_review_screen,
+                          arguments: {
+                            "isEdit": true,
+                            "reviewId": reviewId,
+                            "oldTitle": oldTitle,
+                            "oldContent": oldContent,
+                          }
+                        ),
+                      ),
+                    );
+                  }
                 }
             ),
           if(isMe)

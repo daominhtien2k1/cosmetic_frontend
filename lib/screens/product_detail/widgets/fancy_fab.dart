@@ -108,7 +108,14 @@ class _FancyFabState extends State<FancyFab>
                 heroTag: "btn3",
                 elevation: 0,
                 onPressed: () {
-                  Navigator.pushNamed(context, Routes.instruction_create_review_screen, arguments: widget.productId);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => InstructionCreateReviewScreen(productId: widget.productId),
+                      settings: RouteSettings(
+                        name: Routes.instruction_create_review_screen,
+                      ),
+                    ),
+                  );
                 },
                 tooltip: 'Hướng dẫn và chia sẻ cảm nhận',
                 child: Icon(Icons.newspaper),
