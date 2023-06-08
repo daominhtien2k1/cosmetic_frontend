@@ -28,6 +28,7 @@ class StandardCreateReviewScreen extends StatefulWidget {
 }
 
 class _StandardCreateReviewScreenState extends State<StandardCreateReviewScreen> {
+  // có controller nên không cần thiết lắm
   late String title;
   late String content;
 
@@ -240,8 +241,9 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
   // cập nhật lại giá trị 1 lần
   String hasRestoredRating = "Unknown";
 
-  late String? oldTitleToTransfer;
-  late String? oldContentToTransfer;
+  String? oldTitleToTransfer;
+  String? oldContentToTransfer;
+  List<CharacteristicReviewCriteria>? oldCharacteristicReviews;
 
   @override
   void initState() {
@@ -289,6 +291,7 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
           rating = retrieveReview.rating!;
           oldTitleToTransfer = retrieveReview.title;
           oldContentToTransfer = retrieveReview.content;
+          oldCharacteristicReviews = retrieveReview.characteristicReviews;
           hasRestoredRating = "Success restore from FAB";
         });
       }
@@ -401,8 +404,8 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
                                             "productName": productDetail?.name,
                                             "rating": rating,
                                             if (oldTitleToTransfer != null) "oldTitle": oldTitleToTransfer,
-                                            if (oldContentToTransfer != null) "oldContent": oldContentToTransfer
-
+                                            if (oldContentToTransfer != null) "oldContent": oldContentToTransfer,
+                                            if (oldCharacteristicReviews != null) "oldCharacteristicReviews": oldCharacteristicReviews
                                           }
                                       ),
                                     ),
@@ -805,6 +808,7 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
     final int rating = data["rating"];
     final String? oldTitle = data["oldTitle"];
     final String? oldContent = data["oldContent"];
+    final List<CharacteristicReviewCriteria>? oldCharacteristicReviews = data["oldCharacteristicReviews"];
 
     if (hasRestoredTitleAndContent == "Unknown") {
       setState(() {
@@ -979,7 +983,8 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
                                       "productId": productId,
                                       "rating": rating,
                                       "title": titleValue,
-                                      "content": contentValue
+                                      "content": contentValue,
+                                      if (oldCharacteristicReviews != null) "oldCharacteristicReviews": oldCharacteristicReviews
                                     }
                                   ),
                                 ),
@@ -1006,55 +1011,58 @@ class CharacteristicReviewScreen extends StatelessWidget {
 
   List<CharacteristicReviewCriteria> characteristicReviewCriterias = [];
 
-  initOrRestoreScoredCharacteristicReviews() {
-
-    characteristicReviewCriterias = [
-      CharacteristicReviewCriteria(
-        characteristic_id: "6475d20319f32362c05956ec",
-        criteria: "Làm sáng da",
-        point: 1
-      ),
-      CharacteristicReviewCriteria(
-          characteristic_id: "6475d20319f32362c05956ed",
-          criteria: "Kháng khuẩn",
-          point: 1
-      ),
-      CharacteristicReviewCriteria(
-          characteristic_id: "6475d20319f32362c05956ed",
-          criteria: "Kháng khuẩn",
-          point: 1
-      ),
-      CharacteristicReviewCriteria(
-          characteristic_id: "6475d20319f32362c05956ee",
-          criteria: "Chống tia UV",
-          point: 1
-      ),
-      CharacteristicReviewCriteria(
-          characteristic_id: "6475d20319f32362c05956ef",
-          criteria: "Không gây kích ứng",
-          point: 1
-      ),
-      CharacteristicReviewCriteria(
-          characteristic_id: "6475d20319f32362c05956f0",
-          criteria: "Chất liệu",
-          point: 1
-      ),
-      CharacteristicReviewCriteria(
-          characteristic_id: "6475d20319f32362c05956f1",
-          criteria: "Giá cả",
-          point: 1
-      ),
-      CharacteristicReviewCriteria(
-          characteristic_id: "6475d20319f32362c05956f2",
-          criteria: "Hiệu quả",
-          point: 1
-      ),
-      CharacteristicReviewCriteria(
-          characteristic_id: "6475d20319f32362c05956f3",
-          criteria: "An toàn",
-          point: 1
-      ),
-    ];
+  initOrRestoreScoredCharacteristicReviews({List<CharacteristicReviewCriteria>? oldCharacteristicReviews}) {
+    if (oldCharacteristicReviews != null) {
+      characteristicReviewCriterias = oldCharacteristicReviews;
+    } else {
+      characteristicReviewCriterias = [
+        CharacteristicReviewCriteria(
+            characteristic_id: "6475d20319f32362c05956ec",
+            criteria: "Làm sáng da",
+            point: 1
+        ),
+        CharacteristicReviewCriteria(
+            characteristic_id: "6475d20319f32362c05956ed",
+            criteria: "Kháng khuẩn",
+            point: 1
+        ),
+        CharacteristicReviewCriteria(
+            characteristic_id: "6475d20319f32362c05956ed",
+            criteria: "Kháng khuẩn",
+            point: 1
+        ),
+        CharacteristicReviewCriteria(
+            characteristic_id: "6475d20319f32362c05956ee",
+            criteria: "Chống tia UV",
+            point: 1
+        ),
+        CharacteristicReviewCriteria(
+            characteristic_id: "6475d20319f32362c05956ef",
+            criteria: "Không gây kích ứng",
+            point: 1
+        ),
+        CharacteristicReviewCriteria(
+            characteristic_id: "6475d20319f32362c05956f0",
+            criteria: "Chất liệu",
+            point: 1
+        ),
+        CharacteristicReviewCriteria(
+            characteristic_id: "6475d20319f32362c05956f1",
+            criteria: "Giá cả",
+            point: 1
+        ),
+        CharacteristicReviewCriteria(
+            characteristic_id: "6475d20319f32362c05956f2",
+            criteria: "Hiệu quả",
+            point: 1
+        ),
+        CharacteristicReviewCriteria(
+            characteristic_id: "6475d20319f32362c05956f3",
+            criteria: "An toàn",
+            point: 1
+        ),
+      ];
+    }
     // print(List<dynamic>.from(characteristicReviewCriterias.map((c) => c.toJson())));
 
   }
@@ -1079,8 +1087,9 @@ class CharacteristicReviewScreen extends StatelessWidget {
     final int rating = data['rating'];
     final String title = data["title"];
     final String content = data["content"];
+    final List<CharacteristicReviewCriteria>? oldCharacteristicReviews = data["oldCharacteristicReviews"];
 
-    initOrRestoreScoredCharacteristicReviews();
+    initOrRestoreScoredCharacteristicReviews(oldCharacteristicReviews: oldCharacteristicReviews);
 
     // print("Rebuild");
 
