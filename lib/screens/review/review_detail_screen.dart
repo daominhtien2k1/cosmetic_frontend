@@ -6,7 +6,7 @@ import 'package:cosmetic_frontend/blocs/review_detail/review_detail_event.dart';
 import 'package:cosmetic_frontend/blocs/review_detail/review_detail_state.dart';
 import 'package:cosmetic_frontend/common/widgets/expandable_text.dart';
 import 'package:cosmetic_frontend/constants/assets/placeholder.dart';
-import 'package:cosmetic_frontend/models/models.dart';
+import 'package:cosmetic_frontend/models/models.dart' hide Image;
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -82,6 +82,29 @@ class ReviewDetailContent extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _ReviewDetailHeader(avtUrl: reviewDetail.author.avatar, name: reviewDetail.author.name, timeAgo: timeAgo),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 16),
+                            child: Row(
+                              children: [
+                                Container(
+                                    width: 60,
+                                    height: 60,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(50),
+                                      child: Image.network(reviewDetail.product.images[0].url),
+                                    )
+                                ),
+                                SizedBox(width: 10),
+                                Expanded(
+                                  child: Text(reviewDetail.product.name,
+                                    style: Theme.of(context).textTheme.titleMedium,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                           Padding(
                             padding: const EdgeInsets.only(top: 16),
                             child: Row(

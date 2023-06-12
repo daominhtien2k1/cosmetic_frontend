@@ -148,7 +148,7 @@ class _FancyFabState extends State<FancyFab>
                   );
                 },
                 tooltip: 'Đánh giá sản phẩm',
-                child: Icon(Icons.reviews_outlined),
+                child: Icon(Icons.rate_review_outlined),
               ),
             ],
           ),

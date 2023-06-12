@@ -1,5 +1,5 @@
-class SaveSearch {
-  SaveSearch({
+class SavedSearch {
+  SavedSearch({
     required this.id,
     required this.accountId,
     required this.keyword,
@@ -13,14 +13,14 @@ class SaveSearch {
   final String createdAt;
   final String updatedAt;
 
-  SaveSearch copyWith({
+  SavedSearch copyWith({
     String? id,
     String? accountId,
     String? keyword,
     String? createdAt,
     String? updatedAt,
   }) =>
-      SaveSearch(
+      SavedSearch(
         id: id ?? this.id,
         accountId: accountId ?? this.accountId,
         keyword: keyword ?? this.keyword,
@@ -28,7 +28,7 @@ class SaveSearch {
         updatedAt: updatedAt ?? this.updatedAt,
       );
 
-  factory SaveSearch.fromJson(Map<String, dynamic> json) => SaveSearch(
+  factory SavedSearch.fromJson(Map<String, dynamic> json) => SavedSearch(
     id: json["_id"],
     accountId: json["account_id"],
     keyword: json["keyword"],

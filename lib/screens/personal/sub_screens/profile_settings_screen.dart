@@ -51,13 +51,9 @@ class ProfileSetScreen extends StatelessWidget {
                     padding:
                         EdgeInsets.symmetric(vertical: 5.0, horizontal: 2.0),
                     child: _SettingsButton(
-                        onPressed: () => {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          SearchProfileScreen()))
-                            },
+                        onPressed: () {
+
+                        },
                         icon: Icons.search_outlined,
                         buttonName: 'Tìm kiếm trên trang cá nhân'),
                   ),
