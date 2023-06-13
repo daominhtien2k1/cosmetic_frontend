@@ -10,7 +10,7 @@ import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../../../blocs/product_detail/product_detail_bloc.dart';
 import '../../../common/widgets/star_list.dart';
 import '../../../constants/assets/placeholder.dart';
-import '../../../models/models.dart';
+import '../../../models/models.dart' hide Image;
 import '../../../routes.dart';
 
 import '../../../blocs/auth/auth_bloc.dart';
@@ -73,6 +73,29 @@ class SearchReviewContainer extends StatelessWidget {
                         if (review.characteristicReviews != null) 'oldCharacteristicReviews': review.characteristicReviews,
                         'classification': review.classification
                       }
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16),
+                    child: Row(
+                      children: [
+                        Container(
+                            width: 60,
+                            height: 60,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: Image.network(review.product.images[0].url),
+                            )
+                        ),
+                        SizedBox(width: 10),
+                        Expanded(
+                          child: Text(review.product.name,
+                            style: Theme.of(context).textTheme.titleMedium,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(top: 16),

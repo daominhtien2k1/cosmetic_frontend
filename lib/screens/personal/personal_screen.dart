@@ -145,26 +145,13 @@ class _PersonalScreenState extends State<PersonalScreen> {
                     UserName(),
                     Description(),
                     const SizedBox(height: 15.0),
-                    if (isMe) GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProfileSetScreen()));
-                      },
-                      child: ClipRRect(
-                        borderRadius:
-                            const BorderRadius.all(Radius.circular(10.0)),
-                        child: Container(
-                            alignment: Alignment.center,
-                            width: double.infinity,
-                            height: 45.0,
-                            color: Colors.grey[300],
-                            child: const Text(
-                              "Cài đặt trang cá nhân",
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 18.0),
-                            )),
+                    if (isMe) SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.tonal(
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
+                        },
+                        child: Text("Chỉnh sửa trang cá nhân"),
                       ),
                     ),
                     if (!isMe) Row(

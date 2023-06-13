@@ -39,7 +39,7 @@ class Product {
       name: json["name"] as String,
       image: ProductImage.fromJson(json["image"]),
       reviews: json["reviews"] as int,
-      rating: json["rating"] as double,
+      rating: json["rating"].toDouble(),
       loves: json["loves"] as int
     );
   }

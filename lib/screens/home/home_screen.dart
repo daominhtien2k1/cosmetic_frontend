@@ -256,8 +256,7 @@ class PopularProductList extends StatelessWidget {
               },
               leading: Wrap(
                 spacing: 6,
-                children:
-                [
+                children: [
                   Text('${index+1}', style: Theme.of(context).textTheme.displaySmall),
                   Image.network(product.image.url, width: 42, height: 52)
                 ]

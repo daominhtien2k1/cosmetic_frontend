@@ -11,7 +11,7 @@ class ProductDetail {
   final int loves;
   final bool isLoved;
   final bool isViewed;
-  final Brand brand;
+  final BrandInfo brand;
   final List<ProductDetailImage> images;
   final int reviews;
   final double rating;
@@ -48,7 +48,7 @@ class ProductDetail {
     int? loves,
     bool? isLoved,
     bool? isViewed,
-    Brand? brand,
+    BrandInfo? brand,
     List<ProductDetailImage>? images,
     int? reviews,
     double? rating,
@@ -86,7 +86,7 @@ class ProductDetail {
     loves: json["loves"] as int,
     isLoved: json["isLoved"] as bool,
     isViewed: json["isViewed"] as bool,
-    brand: Brand.fromJson(json["brand"]),
+    brand: BrandInfo.fromJson(json["brand"]),
     images: List<ProductDetailImage>.from(json["images"].map((x) => ProductDetailImage.fromJson(x))),
     reviews: json["reviews"] as int,
     rating: json["rating"].toDouble(),
@@ -112,14 +112,14 @@ class ProductDetail {
   };
 }
 
-class Brand {
+class BrandInfo {
   final String id;
   final String name;
   final String origin;
   final String description;
   final BrandImage image;
 
-  Brand({
+  BrandInfo({
     required this.id,
     required this.name,
     required this.origin,
@@ -127,14 +127,14 @@ class Brand {
     required this.image,
   });
 
-  Brand copyWith({
+  BrandInfo copyWith({
     String? id,
     String? name,
     String? origin,
     String? description,
     BrandImage? image,
   }) =>
-      Brand(
+      BrandInfo(
         id: id ?? this.id,
         name: name ?? this.name,
         origin: origin ?? this.origin,
@@ -142,7 +142,7 @@ class Brand {
         image: image ?? this.image,
       );
 
-  factory Brand.fromJson(Map<String, dynamic> json) => Brand(
+  factory BrandInfo.fromJson(Map<String, dynamic> json) => BrandInfo(
     id: json["id"],
     name: json["name"],
     origin: json["origin"],

@@ -1,4 +1,6 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cosmetic_frontend/blocs/search/search_event.dart';
+import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
 import 'package:cosmetic_frontend/screens/newsfeed/widgets/newsfeed_widgets.dart';
 import 'package:cosmetic_frontend/screens/search/widgets/search_review_container.dart';
 import 'package:flutter/material.dart';
@@ -44,7 +46,7 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
   Widget build(BuildContext context) {
 
     return DefaultTabController(
-      initialIndex: 2,
+      initialIndex: 0,
       length: 5,
       child: Scaffold(
         appBar: AppBar(
@@ -89,17 +91,11 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
         body: SafeArea(
           child: TabBarView(
             children: [
-              Center(
-                child: Text("It's cloudy here"),
-              ),
-              Center(
-                child: Text("It's cloudy here"),
-              ),
               ProductSearchResultView(keyword: keyword),
+              BrandSearchResultView(keyword: keyword),
+              PostSearchResultView(keyword: keyword),
               ReviewSearchResultView(keyword: keyword),
-              Center(
-                child: Text("It's cloudy here"),
-              ),
+              AccountSearchResultView(keyword: keyword)
             ]
           )
         ),
@@ -111,6 +107,132 @@ class _SearchResultScreenState extends State<SearchResultScreen> {
 class ProductSearchResultView extends StatelessWidget {
   final String keyword;
   const ProductSearchResultView({Key? key, required this.keyword}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    BlocProvider.of<SearchBloc>(context).add(Search(keyword: keyword, searchBy: "Product"));
+    return BlocBuilder<SearchBloc, SearchState>(
+        builder: (context, state) {
+          switch (state.searchStatus) {
+            case SearchStatus.initial:
+              return Center(child: Text("Không tìm thấy sản phẩm"));
+            case SearchStatus.loading:
+              return Center(child: CircularProgressIndicator());
+            case SearchStatus.failure:
+              return Center(child: Text("Không có kết nối mạng"));
+            case SearchStatus.success: {
+              final searchProductList = state.searchProductList;
+              return searchProductList != null && searchProductList.foundedProducts.isNotEmpty
+                  ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: searchProductList.founds ?? 0,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                        leading: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 32.0,
+                              backgroundColor: Colors.black12,
+                              child: CircleAvatar(
+                                radius: 32.0,
+                                backgroundColor: Colors.grey[200],
+                                backgroundImage: NetworkImage(searchProductList.foundedProducts[index].image.url)
+                              ),
+                            ),
+                          ],
+                        ),
+                        title: Text(searchProductList.foundedProducts[index].name,
+                            style: Theme.of(context).textTheme.titleMedium,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 2,
+                        ),
+                        subtitle: Wrap(
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            StarList(rating: searchProductList.foundedProducts[index].rating),
+                            SizedBox(width: 8),
+                            Text("(${searchProductList.foundedProducts[index].reviews})")
+                          ],
+                        ),
+                      );
+                    }
+                ): Center(child: Text("Không tìm thấy sản phẩm"));
+            }
+          }
+        }
+    );
+  }
+}
+
+
+class BrandSearchResultView extends StatelessWidget {
+  final String keyword;
+  const BrandSearchResultView({Key? key, required this.keyword}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+        shrinkWrap: true,
+        itemCount: 3,
+        itemBuilder: (context, index) {
+          return BrandSearchListTile();
+        }
+    );
+  }
+}
+
+class BrandSearchListTile extends StatefulWidget {
+  const BrandSearchListTile({
+    super.key,
+  });
+
+  @override
+  State<BrandSearchListTile> createState() => _BrandSearchListTileState();
+}
+
+class _BrandSearchListTileState extends State<BrandSearchListTile> {
+  bool isFollow = false;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+        leading: Stack(
+          children: [
+            CircleAvatar(
+              radius: 32.0,
+              backgroundColor: Colors.black12,
+              child: CircleAvatar(
+                radius: 32.0,
+                backgroundColor: Colors.grey[200],
+                backgroundImage: const CachedNetworkImageProvider(
+                    "https://banner2.cleanpng.com/20180612/hv/kisspng-computer-icons-designer-avatar-5b207ebb279901.8233901115288562511622.jpg"),
+              ),
+            ),
+          ],
+        ),
+        title: Text("daominhtien", style: Theme.of(context).textTheme.titleMedium),
+        subtitle: Text("Lv.3"),
+        trailing: OutlinedButton(
+          onPressed: () {
+            setState(() {
+              isFollow = !isFollow;
+            });
+          },
+          child: Text(isFollow ? "Theo dõi" : "Đang theo dõi"),
+        )
+    );
+  }
+}
+
+class PostSearchResultView extends StatelessWidget {
+  final String keyword;
+  const PostSearchResultView({Key? key, required this.keyword}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -170,3 +292,109 @@ class ReviewSearchResultView extends StatelessWidget {
     );
   }
 }
+
+class AccountSearchResultView extends StatelessWidget {
+  final String keyword;
+  const AccountSearchResultView({Key? key, required this.keyword}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+        itemCount: 3,
+        itemBuilder: (context, index) {
+           return AccountSearchListTile();
+        }
+    );
+  }
+}
+
+class AccountSearchListTile extends StatefulWidget {
+  const AccountSearchListTile({
+    super.key,
+  });
+
+  @override
+  State<AccountSearchListTile> createState() => _AccountSearchListTileState();
+}
+
+class _AccountSearchListTileState extends State<AccountSearchListTile> {
+  String statusFriend = "Bạn bè";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      leading: Stack(
+        children: [
+          CircleAvatar(
+            radius: 32.0,
+            backgroundColor: Colors.black12,
+            child: CircleAvatar(
+              radius: 32.0,
+              backgroundColor: Colors.grey[200],
+              backgroundImage: const CachedNetworkImageProvider(
+                  "https://banner2.cleanpng.com/20180612/hv/kisspng-computer-icons-designer-avatar-5b207ebb279901.8233901115288562511622.jpg"),
+            ),
+          ),
+        ],
+      ),
+      title: Text("daominhtien", style: Theme.of(context).textTheme.titleMedium),
+      subtitle: Text("Lv.3"),
+      trailing: statusFriend != "Bạn bè" ? OutlinedButton(
+        onPressed: () {
+          setState(() {
+            if (statusFriend == "Kết bạn") {
+              statusFriend = "Hủy lời mời";
+            } else {
+              statusFriend = "Kết bạn";
+            }
+          });
+        },
+        child: Text(statusFriend),
+      )
+          :
+      FilledButton.tonal(
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Xác nhận hủy kết bạn?'),
+              content: const Text('Thao tác này không thể hoàn tác'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Hủy'),
+                  child: const Text('Hủy'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Xác nhận'),
+                  child: const Text('Xác nhận'),
+                ),
+              ],
+            ),
+          ).then((value) {
+            if (value == "Hủy") {
+
+            } else if (value == "Xác nhận") {
+              setState(() {
+                if (statusFriend == "Bạn bè") {
+                  statusFriend = "Kết bạn";
+                }
+              });
+            }
+          });
+
+        },
+        child: Text(statusFriend),
+      )
+    );
+  }
+}
+
+
+

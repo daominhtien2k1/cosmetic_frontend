@@ -39,7 +39,8 @@ class _NavScreenState extends State<NavScreen> with TickerProviderStateMixin{
     HomeScreen(),
     NewsFeedScreen(),
     // WatchTab(),
-    FriendScreen(),
+    // FriendScreen(),
+    PersonalScreen(),
     SearchScreen(),
     MenuScreen()
   ];

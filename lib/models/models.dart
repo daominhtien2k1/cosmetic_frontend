@@ -28,3 +28,4 @@ export 'reply_model.dart';
 export 'retrieve_review_model.dart';
 export 'search_review_model.dart';
 export 'search_post_mode.dart';
+export 'search_product_model.dart';

@@ -20,6 +20,7 @@ import 'package:cosmetic_frontend/screens/product_detail/widgets/review_containe
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/models.dart' hide Image;
@@ -447,12 +448,71 @@ class ProductDetailDescription extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text("Xem tất cả", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.blueAccent)),
-                  Icon(Icons.navigate_next)
-                ],
+              child: GestureDetector(
+                onTap: () {
+                  showModalBottomSheet(
+                    enableDrag: true,
+                    isDismissible: true,
+                    isScrollControlled: true,
+                    context: context,
+                    builder: (context) {
+                      return Material(
+                          elevation: 20,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(20)
+                          ),
+                          color: Colors.white,
+                          child: Container(
+                            height: MediaQuery.of(context).size.height * 0.75,
+                            child: Column(
+                              children: [
+                                SizedBox(
+                                  height: 46,
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Flexible(
+                                        flex: 1,
+                                        child: Center(
+                                          child: Text("Thông tin sản phẩm", style: Theme.of(context).textTheme.titleMedium)
+                                        ),
+                                      ),
+                                      IconButton(
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                        icon: Icon(Icons.close)
+                                      )
+                                    ],
+                                  ),
+                                ),
+                                Divider(
+                                  height: 1,
+                                ),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(horizontal: 12),
+                                      child: Html(
+                                        data: product?.description
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          )
+                      );
+                    }
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Xem tất cả", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.blueAccent)),
+                    Icon(Icons.navigate_next)
+                  ],
+                ),
               ),
             )
           ],

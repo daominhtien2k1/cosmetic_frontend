@@ -9,7 +9,7 @@ class AvatarBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       height: 200.0,
       child: Column(
         children: <Widget>[
@@ -27,11 +27,11 @@ class AvatarBottomSheet extends StatelessWidget {
           BottomSheetButton(
               icon: Icons.image,
               buttonText: "Xem ảnh đại diện",
-              onPressed: () => print('Xem ảnh đại diện')),
+              onPressed: () {}),
           BottomSheetButton(
               icon: MdiIcons.fileImagePlus,
               buttonText: "Chọn ảnh đại diện",
-              onPressed: () => print('Chọn ảnh đại diện'))
+              onPressed: () {})
         ],
       ),
     );

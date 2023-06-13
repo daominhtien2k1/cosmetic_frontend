@@ -8,7 +8,7 @@ class CoverBottomSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 10.0),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       height: 200.0,
       child: Column(
         children: <Widget>[
@@ -26,11 +26,11 @@ class CoverBottomSheet extends StatelessWidget {
           BottomSheetButton(
               icon: Icons.image,
               buttonText: "Xem ảnh bìa",
-              onPressed: () => print('Xem ảnh bìa')),
+              onPressed: () {}),
           BottomSheetButton(
               icon: Icons.upload,
               buttonText: "Tải ảnh lên",
-              onPressed: () => print('Tải ảnh lên'))
+              onPressed: () {})
         ],
       ),
     );

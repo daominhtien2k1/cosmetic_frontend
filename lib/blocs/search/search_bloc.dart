@@ -65,7 +65,10 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       final String keyword = event.keyword;
       final String searchBy = event.searchBy;
 
-      if (searchBy == "Post") {
+      if (searchBy == "Product") {
+        final searchProductList = await searchRepository.searchSthByProduct(keyword: keyword);
+        emit(state.copyWith(searchProductList: searchProductList));
+      } else if (searchBy == "Post") {
         final searchPostList = await searchRepository.searchSthByPost(keyword: keyword);
         emit(state.copyWith(searchPostList: searchPostList));
       } else if (searchBy == "Review") {
