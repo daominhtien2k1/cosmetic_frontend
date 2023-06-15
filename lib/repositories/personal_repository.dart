@@ -11,8 +11,7 @@ import '../configuration.dart';
 class UserInfoRepository {
   Future<UserInfo> fetchPersonalInfo() async {
     print("#!#4Bắt đầu thực hiện fetchPersonalInfo()");
-    final url =
-        Uri.http(Configuration.baseUrlConnect, '/account/get_user_info');
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/get_user_info');
 
     var token = await Token.getToken();
 
@@ -34,8 +33,7 @@ class UserInfoRepository {
   }
 
   Future<UserInfo> fetchPersonalInfoOfAnotherUser(String id) async {
-    final url =
-        Uri.http(Configuration.baseUrlConnect, '/account/get_user_info', {
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/get_user_info', {
       'user_id': id,
     });
 
@@ -59,15 +57,9 @@ class UserInfoRepository {
   }
 
   Future<void> setNameUser(String name) async {
-    final url =
-        Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
 
-    final prefs = await SharedPreferences.getInstance();
-    String userPref = prefs.getString('user') ?? '{"token": "No userdata"}';
-    Map<String, dynamic> userMap = jsonDecode(userPref) as Map<String, dynamic>;
-    final token = userMap['token'] != 'No userdata'
-        ? userMap['token']
-        : Configuration.token;
+    var token = await Token.getToken();
 
     final response = await http.post(url,
         headers: <String, String>{
@@ -81,12 +73,7 @@ class UserInfoRepository {
     final url =
         Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
 
-    final prefs = await SharedPreferences.getInstance();
-    String userPref = prefs.getString('user') ?? '{"token": "No userdata"}';
-    Map<String, dynamic> userMap = jsonDecode(userPref) as Map<String, dynamic>;
-    final token = userMap['token'] != 'No userdata'
-        ? userMap['token']
-        : Configuration.token;
+    var token = await Token.getToken();
 
     final response = await http.post(url,
         headers: <String, String>{
@@ -97,15 +84,9 @@ class UserInfoRepository {
   }
 
   Future<void> setCityUser(String city) async {
-    final url =
-        Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
 
-    final prefs = await SharedPreferences.getInstance();
-    String userPref = prefs.getString('user') ?? '{"token": "No userdata"}';
-    Map<String, dynamic> userMap = jsonDecode(userPref) as Map<String, dynamic>;
-    final token = userMap['token'] != 'No userdata'
-        ? userMap['token']
-        : Configuration.token;
+    var token = await Token.getToken();
 
     final response = await http.post(url,
         headers: <String, String>{
@@ -116,15 +97,9 @@ class UserInfoRepository {
   }
 
   Future<void> setCountryUser(String country) async {
-    final url =
-        Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
 
-    final prefs = await SharedPreferences.getInstance();
-    String userPref = prefs.getString('user') ?? '{"token": "No userdata"}';
-    Map<String, dynamic> userMap = jsonDecode(userPref) as Map<String, dynamic>;
-    final token = userMap['token'] != 'No userdata'
-        ? userMap['token']
-        : Configuration.token;
+    var token = await Token.getToken();
 
     final response = await http.post(url,
         headers: <String, String>{
