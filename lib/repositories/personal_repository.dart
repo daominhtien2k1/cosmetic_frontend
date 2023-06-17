@@ -69,6 +69,20 @@ class UserInfoRepository {
         body: jsonEncode(<String, dynamic>{'username': name}));
   }
 
+  Future<void> setGenderUser(String gender) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
+
+    var token = await Token.getToken();
+
+    final response = await http.post(url,
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{'gender': gender}));
+  }
+
+
   Future<void> setDescriptionUser(String description) async {
     final url =
         Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
@@ -108,4 +122,18 @@ class UserInfoRepository {
         },
         body: jsonEncode(<String, dynamic>{'country': country}));
   }
+
+  Future<void> setSkinUser(Skin skin) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/set_user_info');
+
+    var token = await Token.getToken();
+
+    final response = await http.post(url,
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{'skin': skin.toJson()}));
+  }
+
 }

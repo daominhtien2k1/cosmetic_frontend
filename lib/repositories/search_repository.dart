@@ -135,6 +135,32 @@ class SearchRepository {
     }
   }
 
+  Future<SearchAccountList?> searchSthByAccount({required String keyword}) async {
+    try {
+      final url = Uri.http(Configuration.baseUrlConnect, '/search/search_sth', {'keyword': keyword, 'searchBy': 'Account'});
+
+      var token = await Token.getToken();
+      final response = await http.post(url,
+          headers: <String, String>{
+            HttpHeaders.authorizationHeader: token,
+            'Content-Type': 'application/json; charset=UTF-8',
+          }
+      );
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body) as Map<String, dynamic>;
+        final searchAccountList = SearchAccountList.fromJson(body);
+        return searchAccountList;
+      } else if (response.statusCode == 400) {
+        return SearchAccountList.init();
+      } else {
+        return SearchAccountList.init();
+      }
+    } catch (error) {
+      throw Exception('Error fetching search accounts');
+    }
+  }
+
   Future<List<SavedSearch>> delSavedSearch({required String searchId}) async {
     final url = Uri.http(Configuration.baseUrlConnect, '/search/del_saved_search', {'id': searchId});
 

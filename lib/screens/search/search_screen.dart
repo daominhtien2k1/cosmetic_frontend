@@ -47,7 +47,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Iterable<Widget> getHistoryList(BuildContext context, SearchController controller) {
-    print("Rebuild when state changed");
+    // print("Rebuild when state changed");
     final List<SavedSearch> savedSearches = BlocProvider.of<SearchBloc>(context).state.savedSearches;
 
     return savedSearches.map((s) => ListTile(

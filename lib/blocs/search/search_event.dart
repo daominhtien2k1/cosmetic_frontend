@@ -1,3 +1,4 @@
+import 'package:cosmetic_frontend/models/models.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class SearchEvent extends Equatable{
@@ -24,4 +25,10 @@ class SavedSearchDelete extends SearchEvent {
   final String searchId;
 
   SavedSearchDelete({required this.searchId});
+}
+
+class StatusFriendInSearchAccountUpdated extends SearchEvent {
+  final SearchAccount searchAccount;
+  final String newStatusFriend;
+  StatusFriendInSearchAccountUpdated({required this.searchAccount, required this.newStatusFriend});
 }

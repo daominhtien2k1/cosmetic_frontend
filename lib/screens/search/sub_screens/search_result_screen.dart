@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../blocs/search/search_bloc.dart';
 import '../../../blocs/search/search_state.dart';
+import '../../../models/search_account_model.dart';
 
 class SearchResultScreen extends StatefulWidget {
   const SearchResultScreen({Key? key}) : super(key: key);
@@ -299,67 +300,121 @@ class AccountSearchResultView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-        itemCount: 3,
-        itemBuilder: (context, index) {
-           return AccountSearchListTile();
+    BlocProvider.of<SearchBloc>(context).add(Search(keyword: keyword, searchBy: "Account"));
+    return  BlocBuilder<SearchBloc, SearchState>(
+        builder: (context, state) {
+          switch (state.searchStatus) {
+            case SearchStatus.initial:
+              return Center(child: Text("Không tìm thấy tài khoản"));
+            case SearchStatus.loading:
+              return Center(child: CircularProgressIndicator());
+            case SearchStatus.failure:
+              return Center(child: Text("Không có kết nối mạng"));
+            case SearchStatus.success: {
+              final searchAccountList = state.searchAccountList;
+                return searchAccountList != null && searchAccountList.foundedAccounts.isNotEmpty ? ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: searchAccountList.foundedAccounts.length ?? 0,
+                    itemBuilder: (context, index) {
+                      return AccountSearchListTile(searchAccount: searchAccountList.foundedAccounts[index]);
+                    }
+                ) : Center(child: Text("Không tìm thấy tài khoản"));
+            }
+          }
         }
     );
   }
 }
 
-class AccountSearchListTile extends StatefulWidget {
-  const AccountSearchListTile({
-    super.key,
-  });
+class AccountSearchListTile extends StatelessWidget {
+  final SearchAccount searchAccount;
 
-  @override
-  State<AccountSearchListTile> createState() => _AccountSearchListTileState();
-}
-
-class _AccountSearchListTileState extends State<AccountSearchListTile> {
-  String statusFriend = "Bạn bè";
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
+  AccountSearchListTile({required this.searchAccount});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Stack(
-        children: [
-          CircleAvatar(
-            radius: 32.0,
-            backgroundColor: Colors.black12,
-            child: CircleAvatar(
-              radius: 32.0,
-              backgroundColor: Colors.grey[200],
-              backgroundImage: const CachedNetworkImageProvider(
-                  "https://banner2.cleanpng.com/20180612/hv/kisspng-computer-icons-designer-avatar-5b207ebb279901.8233901115288562511622.jpg"),
+        leading: Stack(
+          children: [
+            CircleAvatar(
+                radius: 32.0,
+                backgroundColor: Colors.black12,
+                child: CircleAvatar(
+                    radius: 32.0,
+                    backgroundColor: Colors.grey[200],
+                    backgroundImage: CachedNetworkImageProvider(searchAccount.avatar)
+                )
             ),
-          ),
-        ],
-      ),
-      title: Text("daominhtien", style: Theme.of(context).textTheme.titleMedium),
-      subtitle: Text("Lv.3"),
-      trailing: statusFriend != "Bạn bè" ? OutlinedButton(
+          ],
+        ),
+        title: Text(searchAccount.name, style: Theme.of(context).textTheme.titleMedium),
+        subtitle: Text("Level ${searchAccount.level}"),
+        trailing: buildStatusFriendButton(context)
+
+    );
+  }
+
+  // Ở đây không có chặn
+  Widget buildStatusFriendButton(BuildContext context) {
+    if (searchAccount.statusFriend == "Unknown") {
+      return OutlinedButton(
         onPressed: () {
-          setState(() {
-            if (statusFriend == "Kết bạn") {
-              statusFriend = "Hủy lời mời";
-            } else {
-              statusFriend = "Kết bạn";
+          // setState(() {
+          //   statusFriend = "Sent friend request";
+          // });
+          BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Sent friend request"));
+        },
+        child: Text("Thêm bạn bè"),
+      );
+    } else if (searchAccount.statusFriend == "Sent friend request") {
+      return FilledButton.tonal(
+        style: FilledButton.styleFrom(backgroundColor: Colors.amber),
+        onPressed: () {
+          // setState(() {
+          //   statusFriend = "Unknown";
+          // });
+          BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Unknown"));
+        },
+        child: Text("Hủy lời mời"),
+      );
+    } else if (searchAccount.statusFriend == "Received friend request") {
+      return FilledButton.tonal(
+        style: FilledButton.styleFrom(backgroundColor: Colors.amber),
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Xóa lời mời đã nhận?'),
+              content: const Text('Thao tác này không thể hoàn tác'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Xóa'),
+                  child: const Text('Xóa'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Xác nhận'),
+                  child: const Text('Xác nhận'),
+                ),
+              ],
+            ),
+          ).then((value) {
+            if (value == "Xóa") {
+              // setState(() {
+              //   statusFriend = "Unknown";
+              // });
+              BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Unknown"));
+            } else if (value == "Xác nhận") {
+              // setState(() {
+              //   statusFriend = "Friend";
+              // });
+              BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Friend"));
             }
           });
         },
-        child: Text(statusFriend),
-      )
-          :
-      FilledButton.tonal(
+        child: Text("Có lời mời"),
+      );
+    } else if(searchAccount.statusFriend == "Friend") {
+      return FilledButton.tonal(
         onPressed: () {
           showDialog<String>(
             context: context,
@@ -381,18 +436,52 @@ class _AccountSearchListTileState extends State<AccountSearchListTile> {
             if (value == "Hủy") {
 
             } else if (value == "Xác nhận") {
-              setState(() {
-                if (statusFriend == "Bạn bè") {
-                  statusFriend = "Kết bạn";
-                }
-              });
+              // setState(() {
+              //   statusFriend = "Unknown";
+              // });
+              BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Unknown"));
             }
           });
 
         },
-        child: Text(statusFriend),
-      )
-    );
+        child: Text("Bạn bè"),
+      );
+    } else {
+      return FilledButton.tonal(
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Xác nhận hủy kết bạn?'),
+              content: const Text('Thao tác này không thể hoàn tác'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Hủy'),
+                  child: const Text('Hủy'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Xác nhận'),
+                  child: const Text('Xác nhận'),
+                ),
+              ],
+            ),
+          ).then((value) {
+            if (value == "Hủy") {
+
+            } else if (value == "Xác nhận") {
+              // setState(() {
+              //   statusFriend = "Unknown";
+              // });
+              BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Unknown"));
+            }
+          });
+
+        },
+        child: Text("Bạn bè"),
+      );
+    }
+
+
   }
 }
 

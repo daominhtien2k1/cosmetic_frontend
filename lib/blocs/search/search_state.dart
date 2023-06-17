@@ -9,6 +9,7 @@ class SearchState {
   SearchProductList? searchProductList;
   SearchPostList? searchPostList;
   SearchReviewList? searchReviewList;
+  SearchAccountList? searchAccountList;
 
   SearchState({
     required this.searchStatus,
@@ -16,7 +17,8 @@ class SearchState {
     required this.searchSuggestions ,
     this.searchProductList,
     this.searchPostList,
-    this.searchReviewList
+    this.searchReviewList,
+    this.searchAccountList
   });
 
   SearchState.initial()
@@ -25,7 +27,8 @@ class SearchState {
         searchSuggestions = List<String>.empty(growable: true),
         searchProductList = SearchProductList.init(),
         searchPostList = SearchPostList.init(),
-        searchReviewList = SearchReviewList.init()
+        searchReviewList = SearchReviewList.init(),
+        searchAccountList = SearchAccountList.init()
   ;
 
   SearchState copyWith(
@@ -34,7 +37,8 @@ class SearchState {
         List<String>? searchSuggestions,
         SearchProductList? searchProductList,
         SearchPostList? searchPostList,
-        SearchReviewList? searchReviewList
+        SearchReviewList? searchReviewList,
+        SearchAccountList? searchAccountList
       }) {
     return SearchState(
         searchStatus: searchStatus ?? this.searchStatus,
@@ -42,7 +46,8 @@ class SearchState {
         searchSuggestions: searchSuggestions ?? this.searchSuggestions,
         searchProductList: searchProductList ?? this.searchProductList,
         searchPostList: searchPostList ?? this.searchPostList,
-        searchReviewList: searchReviewList ?? this.searchReviewList
+        searchReviewList: searchReviewList ?? this.searchReviewList,
+        searchAccountList: searchAccountList ?? this.searchAccountList
     );
   }
 }

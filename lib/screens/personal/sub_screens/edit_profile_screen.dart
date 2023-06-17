@@ -44,6 +44,7 @@ class EditProfileScreen extends StatelessWidget {
           );
         });
   }
+
   void setDescription(BuildContext context)  {
     TextEditingController _textFieldController = TextEditingController();
     showDialog(
@@ -77,6 +78,7 @@ class EditProfileScreen extends StatelessWidget {
           );
         });
   }
+
   void setCity(BuildContext context)  {
     TextEditingController _textFieldController = TextEditingController();
     showDialog(
@@ -110,6 +112,7 @@ class EditProfileScreen extends StatelessWidget {
           );
         });
   }
+
   void setCountry(BuildContext context)  {
     TextEditingController _textFieldController = TextEditingController();
     showDialog(

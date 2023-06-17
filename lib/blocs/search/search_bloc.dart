@@ -20,6 +20,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     on<Search>(_onSearch);
     on<SavedSearchDelete>(_onSavedSearchDelete);
+
+    on<StatusFriendInSearchAccountUpdated>(_onStatusFriendInSearchAccountUpdated);
   }
 
   void _startCancelFuture() {
@@ -74,10 +76,34 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       } else if (searchBy == "Review") {
         final searchReviewList = await searchRepository.searchSthByReview(keyword: keyword);
         emit(state.copyWith(searchReviewList: searchReviewList));
+      } else if (searchBy == "Account") {
+        final searchAccountList = await searchRepository.searchSthByAccount(keyword: keyword);
+        emit(state.copyWith(searchAccountList: searchAccountList));
       }
 
     } catch (err) {
       emit(state.copyWith(searchStatus: SearchStatus.failure));
+    }
+  }
+
+  Future<void> _onStatusFriendInSearchAccountUpdated(StatusFriendInSearchAccountUpdated event, Emitter<SearchState> emit) async {
+    try {
+      final searchAccount = event.searchAccount;
+      final newStatusFriend = event.newStatusFriend;
+      final searchAccountList = state.searchAccountList;
+      // print(searchAccountList?.foundedAccounts.first.statusFriend);
+      if (searchAccountList != null) {
+        final indexSearchAccountToReplace = searchAccountList.foundedAccounts.indexOf(searchAccount);
+        final newSearchAccount = searchAccount.copyWith(statusFriend: newStatusFriend);
+        if (indexSearchAccountToReplace != -1) {
+          searchAccountList?.foundedAccounts?..removeAt(indexSearchAccountToReplace)..add(newSearchAccount);
+        }
+        // print(searchAccountList?.foundedAccounts.first.statusFriend);
+        emit(state.copyWith(searchAccountList: searchAccountList));
+      }
+
+    } catch (err) {
+
     }
   }
 

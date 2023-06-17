@@ -1,5 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cosmetic_frontend/blocs/personal_info/personal_info_event.dart';
+import 'package:cosmetic_frontend/models/models.dart';
+import 'package:cosmetic_frontend/screens/menu/sub_screens/test_baumann_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+import '../../../blocs/personal_info/personal_info_bloc.dart';
 
 class SkinInfoScreen extends StatefulWidget {
 
@@ -16,9 +22,29 @@ class _SkinInfoScreenState extends State<SkinInfoScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    skinType = "Da dầu";
-    isSensitive = false;
-    hasAcne = false;
+    final userInfo = BlocProvider.of<PersonalInfoBloc>(context).state.userInfo;
+    skinType = userInfo.skin.type;
+    isSensitive = userInfo.skin.obstacle.isSensitive;
+    hasAcne = userInfo.skin.obstacle.hasAcne;
+  }
+
+  void onChangeSkinType(String skinType) {
+    setState(() {
+      this.skinType = skinType;
+    });
+  }
+
+  void onChangeIsSensitive(bool isSensitive) {
+    setState(() {
+      this.isSensitive = isSensitive;
+    });
+  }
+
+
+  void onChangeHasAcne(bool hasAcne) {
+    setState(() {
+      this.hasAcne = hasAcne;
+    });
   }
 
   @override
@@ -28,7 +54,12 @@ class _SkinInfoScreenState extends State<SkinInfoScreen> {
         leading: BackButton(),
         title: Text('Thông tin loại da'),
         actions: [
-          TextButton(onPressed: (){}, child: Text("Lưu", style: Theme.of(context).textTheme.titleLarge))
+          TextButton(onPressed: (){
+            final newSkin = Skin(obstacle: Obstacle(isSensitive: isSensitive, hasAcne: hasAcne), type: skinType);
+            BlocProvider.of<PersonalInfoBloc>(context).add(SetSkinUser(skin: newSkin));
+            BlocProvider.of<PersonalInfoBloc>(context).add(PersonalInfoFetched());
+            Navigator.of(context).pop();
+          }, child: Text("Lưu", style: Theme.of(context).textTheme.titleLarge))
         ],
       ),
       body: SingleChildScrollView(
@@ -45,7 +76,7 @@ class _SkinInfoScreenState extends State<SkinInfoScreen> {
                       ],
                     )
                 ),
-                SkinTypeList(),
+                SkinTypeList(selectedSkinType: skinType, onChangeSkinType: onChangeSkinType),
                 SizedBox(height: 16),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
@@ -58,9 +89,9 @@ class _SkinInfoScreenState extends State<SkinInfoScreen> {
                     )
                 ),
                 SizedBox(height: 8),
-                Sensitive(),
+                Sensitive(isSensitive: isSensitive, onChangeIsSensitive: onChangeIsSensitive),
                 SizedBox(height: 12),
-                Acne(),
+                Acne(hasAcne: hasAcne, onChangeHasAcne: onChangeHasAcne),
                 SizedBox(height: 24),
                 Center(
                   child: Container(
@@ -73,7 +104,13 @@ class _SkinInfoScreenState extends State<SkinInfoScreen> {
                 ),
                 SizedBox(height: 8),
                 Center(
-                  child: Text("Test Baumann", style: Theme.of(context).textTheme.titleLarge?.copyWith(decoration: TextDecoration.underline) ),
+                  child: TextButton(
+                    onPressed: () {
+                      Navigator.of(context).push(MaterialPageRoute(builder: (builder) => TestBaumannScreen()));
+                    },
+                    child: Text("Test Baumann",
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(decoration: TextDecoration.underline))
+                  ),
                 ),
                 SizedBox(height: 24),
               ],
@@ -85,12 +122,23 @@ class _SkinInfoScreenState extends State<SkinInfoScreen> {
 }
 
 class SkinTypeList extends StatefulWidget {
+  final String selectedSkinType;
+  void Function(String) onChangeSkinType;
+
+  SkinTypeList({required this.selectedSkinType, required this.onChangeSkinType});
+
   @override
   _SkinTypeListState createState() => _SkinTypeListState();
 }
 
 class _SkinTypeListState extends State<SkinTypeList> {
   String selectedSkinType = '';
+
+  @override
+  void initState() {
+    selectedSkinType = widget.selectedSkinType;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +149,7 @@ class _SkinTypeListState extends State<SkinTypeList> {
           label: 'Da thường',
           isSelected: selectedSkinType == 'Da thường',
           onSelected: (isSelected) {
+            widget.onChangeSkinType('Da thường');
             setState(() {
               selectedSkinType = isSelected ? 'Da thường' : '';
             });
@@ -110,6 +159,7 @@ class _SkinTypeListState extends State<SkinTypeList> {
           label: 'Da dầu',
           isSelected: selectedSkinType == 'Da dầu',
           onSelected: (isSelected) {
+            widget.onChangeSkinType('Da dầu');
             setState(() {
               selectedSkinType = isSelected ? 'Da dầu' : '';
             });
@@ -119,6 +169,7 @@ class _SkinTypeListState extends State<SkinTypeList> {
           label: 'Da khô',
           isSelected: selectedSkinType == 'Da khô',
           onSelected: (isSelected) {
+            widget.onChangeSkinType('Da khô');
             setState(() {
               selectedSkinType = isSelected ? 'Da khô' : '';
             });
@@ -128,6 +179,7 @@ class _SkinTypeListState extends State<SkinTypeList> {
           label: 'Da thiên dầu',
           isSelected: selectedSkinType == 'Da thiên dầu',
           onSelected: (isSelected) {
+            widget.onChangeSkinType('Da thiên dầu');
             setState(() {
               selectedSkinType = isSelected ? 'Da thiên dầu' : '';
             });
@@ -137,6 +189,7 @@ class _SkinTypeListState extends State<SkinTypeList> {
           label: 'Da thiên khô',
           isSelected: selectedSkinType == 'Da thiên khô',
           onSelected: (isSelected) {
+            widget.onChangeSkinType('Da thiên khô');
             setState(() {
               selectedSkinType = isSelected ? 'Da thiên khô' : '';
             });
@@ -146,6 +199,7 @@ class _SkinTypeListState extends State<SkinTypeList> {
           label: 'Da nhạy cảm',
           isSelected: selectedSkinType == 'Da nhạy cảm',
           onSelected: (isSelected) {
+            widget.onChangeSkinType('Da nhạy cảm');
             setState(() {
               selectedSkinType = isSelected ? 'Da nhạy cảm' : '';
             });
@@ -155,6 +209,7 @@ class _SkinTypeListState extends State<SkinTypeList> {
           label: 'Da hỗn hợp',
           isSelected: selectedSkinType == 'Da hỗn hợp',
           onSelected: (isSelected) {
+            widget.onChangeSkinType('Da hỗn hợp');
             setState(() {
               selectedSkinType = isSelected ? 'Da hỗn hợp' : '';
             });
@@ -204,12 +259,23 @@ class CosmeticTypeChip extends StatelessWidget {
 }
 
 class Sensitive extends StatefulWidget {
+  final bool isSensitive;
+  void Function(bool) onChangeIsSensitive;
+
+  Sensitive({required this.isSensitive, required this.onChangeIsSensitive});
+
   @override
   _SensitiveState createState() => _SensitiveState();
 }
 
 class _SensitiveState extends State<Sensitive> {
-  String selectedSensitiveType = '';
+  bool isSensitive = false;
+
+  @override
+  void initState() {
+    isSensitive = widget.isSensitive;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -231,19 +297,21 @@ class _SensitiveState extends State<Sensitive> {
             children: [
               CosmeticTypeChip(
                 label: 'Khỏe',
-                isSelected: selectedSensitiveType == 'Khỏe',
+                isSelected: isSensitive == false,
                 onSelected: (isSelected) {
+                  widget.onChangeIsSensitive(!isSensitive);
                   setState(() {
-                    selectedSensitiveType = isSelected ? 'Khỏe' : '';
+                    isSensitive = !isSensitive;
                   });
                 },
               ),
               CosmeticTypeChip(
                 label: 'Nhạy cảm',
-                isSelected: selectedSensitiveType == 'Nhạy cảm',
+                isSelected: isSensitive == true,
                 onSelected: (isSelected) {
+                  widget.onChangeIsSensitive(!isSensitive);
                   setState(() {
-                    selectedSensitiveType = isSelected ? 'Nhạy cảm' : '';
+                    isSensitive = !isSensitive;
                   });
                 },
               ),
@@ -256,12 +324,23 @@ class _SensitiveState extends State<Sensitive> {
 }
 
 class Acne extends StatefulWidget {
+  bool hasAcne;
+  void Function(bool) onChangeHasAcne;
+
+  Acne({required this.hasAcne, required this.onChangeHasAcne});
+
   @override
   _AcneState createState() => _AcneState();
 }
 
 class _AcneState extends State<Acne> {
-  String selectedAcneType = '';
+  bool hasAcne = false;
+
+  @override
+  void initState() {
+    hasAcne = widget.hasAcne;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -283,19 +362,21 @@ class _AcneState extends State<Acne> {
             children: [
               CosmeticTypeChip(
                 label: 'Không',
-                isSelected: selectedAcneType == 'Không',
+                isSelected: hasAcne == false,
                 onSelected: (isSelected) {
+                  widget.onChangeHasAcne(!hasAcne);
                   setState(() {
-                    selectedAcneType = isSelected ? 'Không' : '';
+                    hasAcne = !hasAcne;
                   });
                 },
               ),
               CosmeticTypeChip(
                 label: 'Có',
-                isSelected: selectedAcneType == 'Có',
+                isSelected: hasAcne == true,
                 onSelected: (isSelected) {
+                  widget.onChangeHasAcne(!hasAcne);
                   setState(() {
-                    selectedAcneType = isSelected ? 'Có' : '';
+                    hasAcne = !hasAcne;
                   });
                 },
               ),

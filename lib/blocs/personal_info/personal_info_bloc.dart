@@ -18,9 +18,11 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     on<PersonalInfoOfAnotherUserFetched>(_onPersonalInfoOfAnotherUserFerched);
 
     on<SetNameUser>(_onSetNameUser);
+    on<SetGenderUser>(_onSetGenderUser);
     on<SetDescriptionUser>(_onSetDescriptionUser);
     on<SetCityUser>(_onSetCityUser);
     on<SetCountryUser>(_onSetCountryUser);
+    on<SetSkinUser>(_onSetSkinUser);
   }
 
   Future<void> _onPersonalInfoFetched(PersonalInfoFetched event, Emitter<PersonalInfoState> emit) async {
@@ -35,8 +37,7 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
   Future<void> _onPersonalInfoOfAnotherUserFerched(PersonalInfoOfAnotherUserFetched event, Emitter<PersonalInfoState> emit) async {
     try {
       final String id = event.id;
-      final userInfoData =
-      await userInfoRepository.fetchPersonalInfoOfAnotherUser(id);
+      final userInfoData = await userInfoRepository.fetchPersonalInfoOfAnotherUser(id);
       emit(PersonalInfoState(userInfo: userInfoData));
     } catch (_) {
       emit(state.copyWith());
@@ -52,6 +53,16 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     }
   }
 
+  Future<void> _onSetGenderUser(SetGenderUser event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final String gender = event.gender;
+      await userInfoRepository.setGenderUser(gender);
+    } catch (_) {
+      emit(state.copyWith());
+    }
+  }
+  
+  
   Future<void> _onSetDescriptionUser(SetDescriptionUser event, Emitter<PersonalInfoState> emit) async {
     try {
       final String description = event.description;
@@ -75,6 +86,15 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     try {
       final String country = event.country;
       await userInfoRepository.setCountryUser(country);
+    } catch (_) {
+      emit(state.copyWith());
+    }
+  }
+
+  Future<void> _onSetSkinUser(SetSkinUser event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final skin = event.skin;
+      await userInfoRepository.setSkinUser(skin);
     } catch (_) {
       emit(state.copyWith());
     }
