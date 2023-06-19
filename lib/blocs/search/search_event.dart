@@ -32,3 +32,11 @@ class StatusFriendInSearchAccountUpdated extends SearchEvent {
   final String newStatusFriend;
   StatusFriendInSearchAccountUpdated({required this.searchAccount, required this.newStatusFriend});
 }
+
+class IsFollowedInSearchBrandUpdated extends SearchEvent {
+  final SearchBrand searchBrand;
+  final bool newIsFollowed;
+
+  IsFollowedInSearchBrandUpdated({required this.searchBrand, required this.newIsFollowed});
+
+}

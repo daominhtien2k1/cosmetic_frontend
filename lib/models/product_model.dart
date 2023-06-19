@@ -1,6 +1,3 @@
-import 'dart:convert';
-
-// Product ở mục Nhiều người quan tâm,
 class Product {
   final String id;
   final String slug;

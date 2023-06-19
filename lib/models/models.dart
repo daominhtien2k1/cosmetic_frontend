@@ -30,3 +30,5 @@ export 'search_review_model.dart';
 export 'search_post_mode.dart';
 export 'search_product_model.dart';
 export 'search_account_model.dart';
+export 'search_brand_model.dart';
+export 'brand_detail_model.dart';

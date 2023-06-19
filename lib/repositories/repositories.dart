@@ -11,3 +11,4 @@ export 'video_repository.dart';
 export 'product_repository.dart';
 export 'event_repository.dart';
 export 'review_repository.dart';
+export 'brand_repository.dart';

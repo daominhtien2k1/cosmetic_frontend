@@ -152,6 +152,7 @@ class ProductSearchResultView extends StatelessWidget {
                           children: [
                             StarList(rating: searchProductList.foundedProducts[index].rating),
                             SizedBox(width: 8),
+                            Text("${searchProductList.foundedProducts[index].rating}", style: Theme.of(context).textTheme.labelLarge),
                             Text("(${searchProductList.foundedProducts[index].reviews})")
                           ],
                         ),
@@ -172,61 +173,58 @@ class BrandSearchResultView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-        shrinkWrap: true,
-        itemCount: 3,
-        itemBuilder: (context, index) {
-          return BrandSearchListTile();
+    BlocProvider.of<SearchBloc>(context).add(Search(keyword: keyword, searchBy: "Brand"));
+    return BlocBuilder<SearchBloc, SearchState>(
+        builder: (context, state) {
+          switch (state.searchStatus) {
+            case SearchStatus.initial:
+              return Center(child: Text("Không tìm thấy thương hiệu"));
+            case SearchStatus.loading:
+              return Center(child: CircularProgressIndicator());
+            case SearchStatus.failure:
+              return Center(child: Text("Không có kết nối mạng"));
+            case SearchStatus.success: {
+              final searchBrandList = state.searchBrandList;
+              return searchBrandList != null && searchBrandList.foundedBrands.isNotEmpty ? ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: searchBrandList.foundedBrands.length ?? 0,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                        leading: Stack(
+                          children: [
+                            CircleAvatar(
+                              radius: 32.0,
+                              backgroundColor: Colors.black12,
+                              child: CircleAvatar(
+                                radius: 32.0,
+                                backgroundColor: Colors.grey[200],
+                                backgroundImage: CachedNetworkImageProvider(searchBrandList.foundedBrands[index].image),
+                              ),
+                            ),
+                          ],
+                        ),
+                        title: Text(searchBrandList.foundedBrands[index].name, style: Theme
+                            .of(context)
+                            .textTheme
+                            .titleMedium),
+                        trailing: searchBrandList.foundedBrands[index].isFollowed ? OutlinedButton(
+                          onPressed: () {
+                            BlocProvider.of<SearchBloc>(context).add(IsFollowedInSearchBrandUpdated(searchBrand: searchBrandList.foundedBrands[index], newIsFollowed: false));
+                          },
+                          child: Text("Đang theo dõi"),
+                        ) : FilledButton.tonal(
+                          onPressed: () {
+                            BlocProvider.of<SearchBloc>(context).add(IsFollowedInSearchBrandUpdated(searchBrand: searchBrandList.foundedBrands[index], newIsFollowed: true));
+                          },
+                          child: Text("Theo dõi"),
+                        )
+
+                    );;
+                  }
+              ) : SizedBox.shrink();
+            }
+          }
         }
-    );
-  }
-}
-
-class BrandSearchListTile extends StatefulWidget {
-  const BrandSearchListTile({
-    super.key,
-  });
-
-  @override
-  State<BrandSearchListTile> createState() => _BrandSearchListTileState();
-}
-
-class _BrandSearchListTileState extends State<BrandSearchListTile> {
-  bool isFollow = false;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-        leading: Stack(
-          children: [
-            CircleAvatar(
-              radius: 32.0,
-              backgroundColor: Colors.black12,
-              child: CircleAvatar(
-                radius: 32.0,
-                backgroundColor: Colors.grey[200],
-                backgroundImage: const CachedNetworkImageProvider(
-                    "https://banner2.cleanpng.com/20180612/hv/kisspng-computer-icons-designer-avatar-5b207ebb279901.8233901115288562511622.jpg"),
-              ),
-            ),
-          ],
-        ),
-        title: Text("daominhtien", style: Theme.of(context).textTheme.titleMedium),
-        subtitle: Text("Lv.3"),
-        trailing: OutlinedButton(
-          onPressed: () {
-            setState(() {
-              isFollow = !isFollow;
-            });
-          },
-          child: Text(isFollow ? "Theo dõi" : "Đang theo dõi"),
-        )
     );
   }
 }
@@ -301,7 +299,7 @@ class AccountSearchResultView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     BlocProvider.of<SearchBloc>(context).add(Search(keyword: keyword, searchBy: "Account"));
-    return  BlocBuilder<SearchBloc, SearchState>(
+    return BlocBuilder<SearchBloc, SearchState>(
         builder: (context, state) {
           switch (state.searchStatus) {
             case SearchStatus.initial:

@@ -22,5 +22,6 @@ class Routes {
   static const String review_detail_screen = "/review_detail_screen";
   static const String characteristic_review_screen = "/characteristic_review_screen";
   static const String search_result_screen = "/search_result_screen";
+  static const String brand_detail_screen = "/brand_detail_screen";
 }
 

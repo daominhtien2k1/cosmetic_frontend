@@ -7,6 +7,7 @@ class SearchState {
   List<SavedSearch> savedSearches;
   List<String> searchSuggestions;
   SearchProductList? searchProductList;
+  SearchBrandList? searchBrandList;
   SearchPostList? searchPostList;
   SearchReviewList? searchReviewList;
   SearchAccountList? searchAccountList;
@@ -16,6 +17,7 @@ class SearchState {
     required this.savedSearches,
     required this.searchSuggestions ,
     this.searchProductList,
+    this.searchBrandList,
     this.searchPostList,
     this.searchReviewList,
     this.searchAccountList
@@ -26,6 +28,7 @@ class SearchState {
         savedSearches = List<SavedSearch>.empty(growable: true),
         searchSuggestions = List<String>.empty(growable: true),
         searchProductList = SearchProductList.init(),
+        searchBrandList = SearchBrandList.init(),
         searchPostList = SearchPostList.init(),
         searchReviewList = SearchReviewList.init(),
         searchAccountList = SearchAccountList.init()
@@ -36,6 +39,7 @@ class SearchState {
         List<SavedSearch>? savedSearches,
         List<String>? searchSuggestions,
         SearchProductList? searchProductList,
+        SearchBrandList? searchBrandList,
         SearchPostList? searchPostList,
         SearchReviewList? searchReviewList,
         SearchAccountList? searchAccountList
@@ -45,6 +49,7 @@ class SearchState {
         savedSearches: savedSearches ?? this.savedSearches,
         searchSuggestions: searchSuggestions ?? this.searchSuggestions,
         searchProductList: searchProductList ?? this.searchProductList,
+        searchBrandList: searchBrandList ?? this.searchBrandList,
         searchPostList: searchPostList ?? this.searchPostList,
         searchReviewList: searchReviewList ?? this.searchReviewList,
         searchAccountList: searchAccountList ?? this.searchAccountList

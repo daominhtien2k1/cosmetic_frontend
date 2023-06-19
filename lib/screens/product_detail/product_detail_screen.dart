@@ -17,6 +17,7 @@ import 'package:cosmetic_frontend/screens/newsfeed/widgets/newsfeed_widgets.dart
 import 'package:cosmetic_frontend/screens/product_detail/widgets/product_detail_image_carousel.dart';
 import 'package:cosmetic_frontend/screens/product_detail/widgets/product_detail_widgets.dart';
 import 'package:cosmetic_frontend/screens/product_detail/widgets/review_container.dart';
+import 'package:cosmetic_frontend/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -245,21 +246,21 @@ class BrandAndInfo extends StatelessWidget {
           return Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  child: Row(
-                    children: [
-                      Container(
-                        width: 124,
-                        height: 48,
-                        padding: EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            border: Border.all(width: 1, color: Colors.black12),
-                            borderRadius: BorderRadius.all(Radius.circular(16))
-                        ),
-                        child: GestureDetector(
-                          onTap: (){
-                            // navigate to brand
-                          },
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => BrandDetailScreen(brandId: product!.brand.id)));
+                  },
+                  child: Container(
+                    child: Row(
+                      children: [
+                        Container(
+                          width: 124,
+                          height: 48,
+                          padding: EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 1, color: Colors.black12),
+                              borderRadius: BorderRadius.all(Radius.circular(16))
+                          ),
                           child: Row(
                             children: [
                               Image.network(
@@ -271,9 +272,9 @@ class BrandAndInfo extends StatelessWidget {
                               Icon(Icons.navigate_next_outlined)
                             ],
                           ),
-                        ),
-                      )
-                    ],
+                        )
+                      ],
+                    ),
                   ),
                 ),
                 IconButton(onPressed: () {},

@@ -83,6 +83,32 @@ class SearchRepository {
     }
   }
 
+  Future<SearchBrandList?> searchSthByBrand({required String keyword}) async {
+    try {
+      final url = Uri.http(Configuration.baseUrlConnect, '/search/search_sth', {'keyword': keyword, 'searchBy': 'Brand'});
+
+      var token = await Token.getToken();
+      final response = await http.post(url,
+          headers: <String, String>{
+            HttpHeaders.authorizationHeader: token,
+            'Content-Type': 'application/json; charset=UTF-8',
+          }
+      );
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body) as Map<String, dynamic>;
+        final searchBrandList = SearchBrandList.fromJson(body);
+        return searchBrandList;
+      } else if (response.statusCode == 400) {
+        return SearchBrandList.init();
+      } else {
+        return SearchBrandList.init();
+      }
+    } catch (error) {
+      throw Exception('Error fetching search brands');
+    }
+  }
+
   Future<SearchPostList?> searchSthByPost({required String keyword}) async {
     try {
       final url = Uri.http(Configuration.baseUrlConnect, '/search/search_sth', {'keyword': keyword, 'searchBy': 'Post'});

@@ -22,6 +22,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     on<SavedSearchDelete>(_onSavedSearchDelete);
 
     on<StatusFriendInSearchAccountUpdated>(_onStatusFriendInSearchAccountUpdated);
+    on<IsFollowedInSearchBrandUpdated>(_onIsFollowedInSearchBrandUpdated);
   }
 
   void _startCancelFuture() {
@@ -70,6 +71,9 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
       if (searchBy == "Product") {
         final searchProductList = await searchRepository.searchSthByProduct(keyword: keyword);
         emit(state.copyWith(searchProductList: searchProductList));
+      } else if (searchBy == "Brand") {
+        final searchBrandList = await searchRepository.searchSthByBrand(keyword: keyword);
+        emit(state.copyWith(searchBrandList: searchBrandList));
       } else if (searchBy == "Post") {
         final searchPostList = await searchRepository.searchSthByPost(keyword: keyword);
         emit(state.copyWith(searchPostList: searchPostList));
@@ -96,12 +100,30 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
         final indexSearchAccountToReplace = searchAccountList.foundedAccounts.indexOf(searchAccount);
         final newSearchAccount = searchAccount.copyWith(statusFriend: newStatusFriend);
         if (indexSearchAccountToReplace != -1) {
-          searchAccountList?.foundedAccounts?..removeAt(indexSearchAccountToReplace)..add(newSearchAccount);
+          searchAccountList?.foundedAccounts?..removeAt(indexSearchAccountToReplace)..insert(indexSearchAccountToReplace, newSearchAccount);
         }
         // print(searchAccountList?.foundedAccounts.first.statusFriend);
         emit(state.copyWith(searchAccountList: searchAccountList));
       }
 
+    } catch (err) {
+
+    }
+  }
+
+  Future<void> _onIsFollowedInSearchBrandUpdated(IsFollowedInSearchBrandUpdated event, Emitter<SearchState> emit) async {
+    try {
+      final searchBrand = event.searchBrand;
+      final newIsFollowed = event.newIsFollowed;
+      final searchBrandList = state.searchBrandList;
+      if (searchBrandList != null) {
+        final indexSearchBrandToReplace = searchBrandList.foundedBrands.indexOf(searchBrand);
+        final newSearchBrand = searchBrand.copyWith(isFollowed: newIsFollowed);
+        if (indexSearchBrandToReplace != -1) {
+          searchBrandList?.foundedBrands?..removeAt(indexSearchBrandToReplace)..insert(indexSearchBrandToReplace, newSearchBrand);
+        }
+        emit(state.copyWith(searchBrandList: searchBrandList));
+      }
     } catch (err) {
 
     }
