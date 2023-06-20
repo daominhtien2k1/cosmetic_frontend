@@ -32,3 +32,6 @@ export 'search_product_model.dart';
 export 'search_account_model.dart';
 export 'search_brand_model.dart';
 export 'brand_detail_model.dart';
+export 'loved_product_model.dart';
+export 'viewed_product_model.dart';
+export 'bookmarked_product_model.dart';

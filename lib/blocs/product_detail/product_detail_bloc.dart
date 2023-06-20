@@ -12,6 +12,8 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
     on<ProductDetailFetched>(_onProductDetailFetched);
     on<RelateProductsFetched>(_onRelateProductsFetched);
     on<ProductCharacteristicsFetched>(_onProductCharacteristicsFetched);
+    on<ProductLove>(_onProductLove);
+    on<ProductView>(_onProductView);
   }
 
   Future<void> _onProductDetailFetched(ProductDetailFetched event, Emitter<ProductDetailState> emit) async {
@@ -57,6 +59,29 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
     }
   }
 
+  Future<void> _onProductLove(ProductLove event, Emitter<ProductDetailState> emit) async {
+    try {
+      final productId = event.productId;
+      final productDetail = state.productDetail;
+      if (productDetail?.isLoved == true) {
+        productRepository.unloveProduct(productId: productId);
+      } else {
+        productRepository.loveProduct(productId: productId);
+      }
+      emit(state.copyWith(productDetail: productDetail?.copyWith(isLoved: !productDetail.isLoved)));
+    } catch (err) {
+      print(err);
+    }
+  }
+
+  _onProductView(ProductView event, Emitter<ProductDetailState> emit) {
+    try {
+      final productId = event.productId;
+      productRepository.viewProduct(productId: productId);
+    } catch (err) {
+      print(err);
+    }
+  }
 
   @override
   void onError(Object error, StackTrace stackTrace) {

@@ -1,3 +1,4 @@
+import 'package:cosmetic_frontend/blocs/product/product_event.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class ProductDetailEvent extends Equatable {
@@ -26,4 +27,16 @@ class ProductCharacteristicsFetched extends ProductDetailEvent {
   final String productId;
 
   ProductCharacteristicsFetched({required this.productId});
+}
+
+class ProductLove extends ProductDetailEvent {
+  final String productId;
+
+  ProductLove({required this.productId});
+}
+
+class ProductView extends ProductDetailEvent {
+  final String productId;
+
+  ProductView({required this.productId});
 }

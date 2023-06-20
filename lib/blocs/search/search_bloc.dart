@@ -1,5 +1,4 @@
 import 'package:async/async.dart';
-import 'package:cosmetic_frontend/models/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../repositories/repositories.dart';

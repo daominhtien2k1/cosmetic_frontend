@@ -1,9 +1,7 @@
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cosmetic_frontend/routes.dart';
 import 'package:cosmetic_frontend/screens/menu/sub_screens/setting_screen.dart';
+import 'package:cosmetic_frontend/screens/screens.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../blocs/auth/auth_bloc.dart';
@@ -136,20 +134,30 @@ class MenuScreen extends StatelessWidget {
                           ],
                         ),
                         SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Icon(Icons.remove_red_eye_outlined),
-                            SizedBox(width: 16),
-                            Text("Sản phẩm đã xem", style: Theme.of(context).textTheme.titleMedium)
-                          ],
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProductViewScreen()));
+                          },
+                          child: Row(
+                            children: [
+                              Icon(Icons.remove_red_eye_outlined),
+                              SizedBox(width: 16),
+                              Text("Sản phẩm đã xem", style: Theme.of(context).textTheme.titleMedium)
+                            ],
+                          ),
                         ),
                         SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Icon(Icons.favorite_outline),
-                            SizedBox(width: 16),
-                            Text("Sản phẩm yêu thích", style: Theme.of(context).textTheme.titleMedium)
-                          ],
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProductLoveScreen()));
+                          },
+                          child: Row(
+                            children: [
+                              Icon(Icons.favorite_outline),
+                              SizedBox(width: 16),
+                              Text("Sản phẩm yêu thích", style: Theme.of(context).textTheme.titleMedium)
+                            ],
+                          ),
                         ),
                         SizedBox(height: 16),
                         Row(

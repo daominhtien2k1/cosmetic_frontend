@@ -18,3 +18,5 @@ export 'product_detail/product_detail_screen.dart';
 export 'product_detail/sub_screens/product_detail_subscreens.dart';
 export 'search/search_screen.dart';
 export 'brand_detail/brand_detail_screen.dart';
+export 'product_storage/product_love_screen.dart';
+export 'product_storage/product_view_screen.dart';

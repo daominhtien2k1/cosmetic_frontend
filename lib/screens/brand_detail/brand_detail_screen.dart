@@ -70,11 +70,15 @@ class BrandDetailScreen extends StatelessWidget {
                             Spacer(),
                             brandDetail?.isFollowed == true ?
                             OutlinedButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  BlocProvider.of<BrandDetailBloc>(context).add(BrandFollow(brandId: brandId));
+                                },
                                 child: Text("Đang theo dõi")
                             )
                                 : FilledButton.tonal(
-                                onPressed: (){},
+                                onPressed: (){
+                                  BlocProvider.of<BrandDetailBloc>(context).add(BrandFollow(brandId: brandId));
+                                },
                                 child: Text("Theo dõi")
                             )
                           ],

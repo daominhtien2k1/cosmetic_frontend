@@ -12,18 +12,34 @@ class BrandDetailBloc extends Bloc<BrandDetailEvent, BrandDetailState>{
     brandRepository = BrandRepository();
 
     on<BrandDetailFetched>(_onBrandDetailFetched);
+    on<BrandFollow>(_onBrandFollow);
   }
 
   Future<void> _onBrandDetailFetched(BrandDetailFetched event, Emitter<BrandDetailState> emit) async {
     try {
       final brandId = event.brandId;
-      emit(state.copyWith(brandDetailStatus: BrandDetailStatus.initial));
+      emit(state.copyWith(brandDetailStatus: BrandDetailStatus.loading));
       final brandDetail = await brandRepository.fetchDetailBrand(brandId: brandId);
       if (brandDetail != null) {
         emit(state.copyWith(brandDetailStatus: BrandDetailStatus.success, brandDetail: brandDetail));
       }
     } catch (err) {
       emit(state.copyWith(brandDetailStatus: BrandDetailStatus.failure));
+    }
+  }
+
+  Future<void> _onBrandFollow(BrandFollow event, Emitter<BrandDetailState> emit) async {
+    try {
+      final brandId = event.brandId;
+      final brandDetail = state.brandDetail;
+      if (brandDetail?.isFollowed == true) {
+        brandRepository.unfollowBrand(brandId: brandId);
+      } else {
+        brandRepository.followBrand(brandId: brandId);
+      }
+      emit(state.copyWith(brandDetail: brandDetail?.copyWith(isFollowed: !brandDetail.isFollowed)));
+    } catch (err) {
+      print(err);
     }
   }
 

@@ -26,4 +26,37 @@ class BrandRepository {
       return null;
     }
   }
+
+  Future<void> followBrand({required String brandId}) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/brand/follow_brand');
+
+    var token = await Token.getToken();
+
+    final response = await http.post(url,
+        headers: {
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "id": brandId
+        })
+    );
+  }
+
+  Future<void> unfollowBrand({required String brandId}) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/brand/unfollow_brand');
+
+    var token = await Token.getToken();
+
+    final response = await http.post(url,
+        headers: {
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "id": brandId
+        })
+    );
+  }
+
 }

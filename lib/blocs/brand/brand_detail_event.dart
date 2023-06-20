@@ -10,3 +10,9 @@ class BrandDetailFetched extends BrandDetailEvent {
 
   BrandDetailFetched({required this.brandId});
 }
+
+class BrandFollow extends BrandDetailEvent {
+  final String brandId;
+
+  BrandFollow({required this.brandId});
+}

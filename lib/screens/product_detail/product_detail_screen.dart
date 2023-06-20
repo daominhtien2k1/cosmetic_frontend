@@ -39,6 +39,7 @@ class ProductDetailScreen extends StatelessWidget {
     BlocProvider.of<ProductDetailBloc>(context).add(RelateProductsFetched(productId: productId));
     BlocProvider.of<ProductDetailBloc>(context).add(ProductCharacteristicsFetched(productId: productId));
     BlocProvider.of<RetrieveReviewBloc>(context).add(ReviewRetrieved(productId: productId));
+    BlocProvider.of<ProductDetailBloc>(context).add(ProductView(productId: productId));
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(),
@@ -154,11 +155,11 @@ class FavouriteAndReviewContainer extends StatelessWidget {
               children: [
                 isLoved ?
                 IconButton.filledTonal(onPressed: (){
-
+                  BlocProvider.of<ProductDetailBloc>(context).add(ProductLove(productId: state.productDetail!.id));
                 }, icon: Icon(Icons.favorite_outlined))
                 :
                 IconButton.filledTonal(onPressed: (){
-
+                  BlocProvider.of<ProductDetailBloc>(context).add(ProductLove(productId: state.productDetail!.id));
                 }, icon: Icon(Icons.favorite_border)),
                 SizedBox(width: 20),
                 BlocBuilder<RetrieveReviewBloc, RetrieveReviewState>(
