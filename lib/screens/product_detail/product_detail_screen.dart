@@ -74,9 +74,14 @@ class ProductDetailScreen extends StatelessWidget {
   }
 }
 
+// convert to stateful nhưng không có thuộc tính state nào để cập nhật UI button -> đánh đổi là bị rebuild 5-12 lần
+class BookmarkProductIconButton extends StatefulWidget {
 
-class BookmarkProductIconButton extends StatelessWidget {
+  @override
+  State<BookmarkProductIconButton> createState() => _BookmarkProductIconButtonState();
+}
 
+class _BookmarkProductIconButtonState extends State<BookmarkProductIconButton> {
   @override
   Widget build(BuildContext context) {
     print("Rebuild");
@@ -104,9 +109,16 @@ class BookmarkProductIconButton extends StatelessWidget {
               BlocProvider.of<ProductBookmarkBloc>(context).add(ProductBookmarked(bookmarkedProduct: bookmarkedProduct));
               // không rebuild lại list khi extends Equatable (hình như vậy)
               // thử tìm hiểu xem BLOC vs final property vs Equatable
+              setState(() {
+                // setState chỉ nhằm mục đích rerender lại widget gây ra do lỗi trên
+                // không biến isBookmarked thành state bởi vì nếu làm thế thì nó sẽ sử dụng lại state cũ của sản phẩm trước
+              });
             } else {
               // un bookmark, xóa đi bằng id
               BlocProvider.of<ProductBookmarkBloc>(context).add(ProductUnbookmarked(productId: product!.id));
+              setState(() {
+
+              });
             }
           },
           icon: Icon(Icons.bookmark_border_outlined),
