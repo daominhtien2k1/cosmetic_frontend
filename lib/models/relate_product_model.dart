@@ -39,7 +39,7 @@ class RelateProduct {
         name: json["name"] as String,
         image: RelateProductImage.fromJson(json["image"]),
         reviews: json["reviews"] as int,
-        rating: json["rating"] as double,
+        rating: json["rating"].toDouble(),
         loves: json["loves"] as int
     );
   }

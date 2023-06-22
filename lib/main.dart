@@ -1,5 +1,6 @@
 import 'package:cosmetic_frontend/blocs/brand/brand_detail_bloc.dart';
 import 'package:cosmetic_frontend/blocs/my_storage_product/my_storage_product_bloc.dart';
+import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_bloc.dart';
 import 'package:cosmetic_frontend/blocs/product_characteristic/product_characteristic_bloc.dart';
 import 'package:cosmetic_frontend/blocs/reply/reply_bloc.dart';
 import 'package:cosmetic_frontend/blocs/retrieve_review/retrieve_review_bloc.dart';
@@ -11,6 +12,8 @@ import 'package:cosmetic_frontend/screens/review/create_review_screen.dart';
 import 'package:cosmetic_frontend/screens/review/review_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../blocs/auth/auth_bloc.dart';
 import '../blocs/auth/auth_event.dart';
@@ -41,13 +44,14 @@ import 'simple_bloc_observer.dart';
 import 'constants/material/theme.dart';
 
 
-void main() async{
+void main() async {
   // debug global BLOC, suggesting turn off, please override in debug local BLOC
   Bloc.observer = SimpleBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
   ErrorWidget.builder = (FlutterErrorDetails details) {
     return ErrorWidget(details.exception);
   };
+  HydratedBloc.storage = await HydratedStorage.build(storageDirectory: await getApplicationDocumentsDirectory());
   runApp(MyApp());
 }
 
@@ -164,6 +168,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<StorageProductBloc>(
           lazy: false,
           create: (_) => StorageProductBloc(productRepository: productRepository)
+        ),
+        BlocProvider<ProductBookmarkBloc>(
+          lazy: false,
+          create: (_) => ProductBookmarkBloc()
         )
       ],
       child: MaterialApp(

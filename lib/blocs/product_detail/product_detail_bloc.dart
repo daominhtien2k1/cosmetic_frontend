@@ -24,7 +24,6 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
       if (productDetail != null) {
         emit(state.copyWith(productDetailStatus: ProductDetailStatus.success, productDetail: productDetail));
       }
-      print(productDetail);
     } catch(error) {
       print(error);
       emit(state.copyWith(productDetailStatus: ProductDetailStatus.failure));
@@ -86,7 +85,7 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
   @override
   void onError(Object error, StackTrace stackTrace) {
     super.onError(error, stackTrace);
-    // print('#PRODUCT DETAIL OBSERVER: $error');
+    print('#PRODUCT DETAIL OBSERVER: $error');
   }
 
   @override
@@ -94,6 +93,9 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
     super.onTransition(transition);
     // print('#PRODUCT DETAIL OBSERVER: {stateCurrent: ${transition.event}, productDetailCurrent: ${transition.currentState.productDetail} ,relateProductsCurrent: ${transition.currentState.relateProducts} }');
     // print('#PRODUCT DETAIL OBSERVER: {stateNext: ${transition.event}, productDetailNext: ${transition.nextState.productDetail} ,relateProductsNext: ${transition.nextState.relateProducts} }');
+
+    print('#PRODUCT DETAIL OBSERVER: {stateCurrent: ${transition.event}, productDetailStatusCurrent: ${transition.currentState.productDetailStatus}  }');
+    print('#PRODUCT DETAIL OBSERVER: {stateNext: ${transition.event}, productDetailStatusNext: ${transition.nextState.productDetailStatus}  }');
 
   }
 

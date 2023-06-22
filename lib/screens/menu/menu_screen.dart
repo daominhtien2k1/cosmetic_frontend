@@ -126,12 +126,17 @@ class MenuScreen extends StatelessWidget {
                         ),
                         Divider(),
                         SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Icon(Icons.bookmarks_outlined),
-                            SizedBox(width: 16),
-                            Text("Sản phẩm đánh dấu", style: Theme.of(context).textTheme.titleMedium)
-                          ],
+                        InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(MaterialPageRoute(builder: (context) => ProductBookmarkScreen()));
+                          },
+                          child: Row(
+                            children: [
+                              Icon(Icons.bookmarks_outlined),
+                              SizedBox(width: 16),
+                              Text("Sản phẩm đánh dấu", style: Theme.of(context).textTheme.titleMedium)
+                            ],
+                          ),
                         ),
                         SizedBox(height: 16),
                         InkWell(

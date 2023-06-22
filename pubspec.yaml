@@ -70,6 +70,8 @@ dependencies:
   flutter_radar_chart: ^0.2.1
   quill_html_editor: ^2.1.9
   async: ^2.11.0
+  hydrated_bloc: ^9.1.2
+  path_provider: ^2.0.15
 
 
 

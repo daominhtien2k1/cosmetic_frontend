@@ -6,32 +6,28 @@ class StorageProductState {
   StorageProductStatus storageProductStatus;
   final List<LovedProduct>? lovedProducts;
   final List<ViewedProduct>? viewedProducts;
-  final List<BookmarkedProduct>? bookmarkedProducts;
+
 
   StorageProductState({
     required this.storageProductStatus,
     required this.lovedProducts,
-    required this.viewedProducts,
-    required this.bookmarkedProducts
+    required this.viewedProducts
   });
 
   StorageProductState.initial():
     storageProductStatus = StorageProductStatus.initial,
     lovedProducts = List<LovedProduct>.empty(growable: true),
-    viewedProducts = List<ViewedProduct>.empty(growable: true),
-    bookmarkedProducts = List<BookmarkedProduct>.empty(growable: true);
+    viewedProducts = List<ViewedProduct>.empty(growable: true);
 
   StorageProductState copyWith({
     StorageProductStatus? storageProductStatus,
     List<LovedProduct>? lovedProducts,
-    List<ViewedProduct>? viewedProducts,
-    List<BookmarkedProduct>? bookmarkedProducts
+    List<ViewedProduct>? viewedProducts
   }) {
     return StorageProductState(
       storageProductStatus: storageProductStatus ?? this.storageProductStatus,
       lovedProducts: lovedProducts ?? this.lovedProducts,
-      viewedProducts: viewedProducts ?? this.viewedProducts,
-      bookmarkedProducts: bookmarkedProducts ?? this.bookmarkedProducts
+      viewedProducts: viewedProducts ?? this.viewedProducts
     );
   }
 }

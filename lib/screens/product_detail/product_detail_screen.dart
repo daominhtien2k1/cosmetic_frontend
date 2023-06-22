@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_bloc.dart';
+import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_event.dart';
+import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_state.dart';
 import 'package:cosmetic_frontend/blocs/product_detail/product_detail_bloc.dart';
 import 'package:cosmetic_frontend/blocs/product_detail/product_detail_event.dart';
 import 'package:cosmetic_frontend/blocs/product_detail/product_detail_state.dart';
@@ -22,7 +25,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_html/flutter_html.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 import '../../models/models.dart' hide Image;
 
@@ -44,8 +49,18 @@ class ProductDetailScreen extends StatelessWidget {
       appBar: AppBar(
         leading: BackButton(),
         actions: [
-          IconButton(onPressed: (){}, icon: Icon(Icons.bookmark_border_outlined)),
-          IconButton(onPressed: (){}, icon: Icon(Icons.share_outlined)),
+          // BookmarkProductIconButton(),
+          IconButton(onPressed: (){
+            // /data/user/0/vn.edu.hust.soict.cosmetic_frontend/app_flutter
+            // getApplicationDocumentsDirectory().then((val) {
+            //   print(val.path);
+            // });
+            // final bookmarkedProducts = BlocProvider.of<ProductBookmarkBloc>(context).state.bookmarkedProducts;
+            // print(bookmarkedProducts?.length);
+            // print(HydratedBloc.storage.read("ProductBookmarkBloc"));
+            // print(HydratedBloc.storage.read("value")); // null vì tự có key bên ngoài "ProductBookmarkBloc"
+            // HydratedBloc.storage.clear(); // khi khởi tạo state là  {value: {productBookmarkStatus: initial, bookmarkedProducts: []} (cho nên trong file hive vẫn đống chữ), sau khi xóa còn null
+          }, icon: Icon(Icons.share_outlined)),
         ],
       ),
       body: SafeArea(
@@ -55,6 +70,46 @@ class ProductDetailScreen extends StatelessWidget {
         child: FavouriteAndReviewContainer(),
       ),
       floatingActionButton: FancyFab(productId: productId),
+    );
+  }
+}
+
+
+class BookmarkProductIconButton extends StatelessWidget {
+
+  @override
+  Widget build(BuildContext context) {
+    print("Rebuild");
+    return BlocBuilder<ProductBookmarkBloc, ProductBookmarkState>(
+      builder: (context, state) {
+        final bookmarkedProducts = state.bookmarkedProducts;
+        final product = BlocProvider.of<ProductDetailBloc>(context, listen: false).state.productDetail;
+
+        final isBookmarked = bookmarkedProducts != null ? (bookmarkedProducts.indexWhere((element) => element.id == product?.id) != -1) : false;
+        return IconButton(
+          isSelected: isBookmarked,
+          onPressed: (){
+            if (isBookmarked == false) {
+              // thêm mới
+              final bookmarkedProduct = BookmarkedProduct(
+                  id: product!.id,
+                  slug: product!.name,
+                  name: product!.name,
+                  image: ProductImage(url: product!.images[0].url),
+                  reviews: product!.reviews,
+                  rating: product!.rating,
+                  loves: product!.loves,
+                  isBookmarked: true);
+              BlocProvider.of<ProductBookmarkBloc>(context).add(ProductBookmarked(bookmarkedProduct: bookmarkedProduct));
+            } else {
+              // un bookmark, xóa đi bằng id
+              BlocProvider.of<ProductBookmarkBloc>(context).add(ProductUnbookmarked(productId: product!.id));
+            }
+          },
+          icon: Icon(Icons.bookmark_border_outlined),
+          selectedIcon: Icon(Icons.bookmark),
+        );
+      }
     );
   }
 }
@@ -83,14 +138,14 @@ class ProductDetailContent extends StatelessWidget {
                     alignment: Alignment.bottomCenter,
                     clipBehavior: Clip.none,
                     children: [
-                      ProductImage(),
+                      ProductImageContainer(),
                       Positioned(
                         bottom: -24,
                         left: 0,
                         right: 0,
                         child: Padding(
                           padding: EdgeInsets.symmetric(horizontal: 16),
-                          child: BrandAndInfo(),
+                          child: BrandAndInfoChip(),
                         ),
                       )
                     ],
@@ -215,29 +270,27 @@ class FavouriteAndReviewContainer extends StatelessWidget {
   }
 }
 
-class ProductImage extends StatelessWidget {
-  ProductImage({Key? key}) : super(key: key);
+class ProductImageContainer extends StatelessWidget {
+  ProductImageContainer({Key? key}) : super(key: key);
 
-  List<Carousel> carousels = [
-    Carousel(url: "https://encrypted-tbn1.gstatic.com/shopping?q=tbn:ANd9GcT3OuIQxdI2ustrh-aekGmKfkTVE3ewuPQYCgLWt_kEpgP5a46eH3TEtGxX7lpNMxVyHxRtzvpQviCQP_aHuiZ25wkhLNarrdv7-kqZ7A3ffTwDnW3jdwn3eMqmDOgHWoS2Njo&usqp=CAc"),
-    Carousel(url: "https://encrypted-tbn0.gstatic.com/shopping?q=tbn:ANd9GcTIwL4xUx-Ek5W8eeVkYgX7Na0DpaAZObJDxsHZQwAPe_T4TYA-UStoMWRzd7NYPUXqt1wZo0E5ONyk9Toi0uGDsf0SOTnu629-VUaOXjlVy7GJ_iATVVR5ov7MwzEkYloiC6s&usqp=CAc"),
-  ];
 
   @override
   Widget build(BuildContext context) {
+    // Dù Rebuild liên tục nhưng mà ảnh vẫn là của sản phẩm trước, phải vào lại lần thứ 2 mới load đúng
+    print("Rebuild");
     return BlocBuilder<ProductDetailBloc, ProductDetailState>(
         builder: (context, state) {
           final images = state.productDetail?.images;
-          carousels = images?.map((e) => Carousel(url: e.url)).toList() ?? carousels;
-          return ProductDetailImageCarouselSlider(carouselList: carousels);
+          final carousels = images?.map((e) => Carousel(url: e.url)).toList();
+          return carousels != null ? ProductDetailImageCarouselSlider(carouselList: carousels) : Placeholder(fallbackHeight: 150);
         }
     );
 
   }
 }
 
-class BrandAndInfo extends StatelessWidget {
-  const BrandAndInfo({Key? key}) : super(key: key);
+class BrandAndInfoChip extends StatelessWidget {
+  const BrandAndInfoChip({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -434,7 +487,7 @@ class ProductDetailDescription extends StatelessWidget {
                    overflow: TextOverflow.ellipsis,
                   ),
                   SizedBox(height: 8),
-                  BrandInfo()
+                  BrandInfoContainer()
                 ],
               ),
             ),
@@ -524,8 +577,8 @@ class ProductDetailDescription extends StatelessWidget {
   }
 }
 
-class BrandInfo extends StatelessWidget {
-  const BrandInfo({Key? key}) : super(key: key);
+class BrandInfoContainer extends StatelessWidget {
+  const BrandInfoContainer({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

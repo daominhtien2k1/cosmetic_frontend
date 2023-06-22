@@ -33,5 +33,36 @@ class BookmarkedProduct {
         isBookmarked: isBookmarked ?? this.isBookmarked
     );
   }
-  
+
+  factory BookmarkedProduct.fromJson(Map<String, dynamic> json) {
+    return BookmarkedProduct(
+      id: json['id'] as String,
+      slug: json['slug'] as String,
+      name: json['name'] as String,
+      image: ProductImage.fromJson(json['image'] as Map<String, dynamic>),
+      reviews: json['reviews'] as int,
+      rating: json['rating'] as double,
+      loves: json['loves'] as int,
+      isBookmarked: json['isBookmarked'] as bool,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'slug': slug,
+      'name': name,
+      'image': image.toJson(),
+      'reviews': reviews,
+      'rating': rating,
+      'loves': loves,
+      'isBookmarked': isBookmarked,
+    };
+  }
+
+  @override
+  String toString() {
+    return name;
+    // return super.toString();
+  }
 }
