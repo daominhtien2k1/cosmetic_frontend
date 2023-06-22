@@ -49,16 +49,16 @@ class ProductDetailScreen extends StatelessWidget {
       appBar: AppBar(
         leading: BackButton(),
         actions: [
-          // BookmarkProductIconButton(),
+          BookmarkProductIconButton(),
           IconButton(onPressed: (){
             // /data/user/0/vn.edu.hust.soict.cosmetic_frontend/app_flutter
             // getApplicationDocumentsDirectory().then((val) {
             //   print(val.path);
             // });
-            // final bookmarkedProducts = BlocProvider.of<ProductBookmarkBloc>(context).state.bookmarkedProducts;
-            // print(bookmarkedProducts?.length);
-            // print(HydratedBloc.storage.read("ProductBookmarkBloc"));
-            // print(HydratedBloc.storage.read("value")); // null vì tự có key bên ngoài "ProductBookmarkBloc"
+            final bookmarkedProducts = BlocProvider.of<ProductBookmarkBloc>(context).state.bookmarkedProducts;
+            print(bookmarkedProducts?.length);
+            print(HydratedBloc.storage.read("ProductBookmarkBloc"));
+            print(HydratedBloc.storage.read("value")); // null vì tự có key bên ngoài "ProductBookmarkBloc"
             // HydratedBloc.storage.clear(); // khi khởi tạo state là  {value: {productBookmarkStatus: initial, bookmarkedProducts: []} (cho nên trong file hive vẫn đống chữ), sau khi xóa còn null
           }, icon: Icon(Icons.share_outlined)),
         ],
@@ -80,11 +80,12 @@ class BookmarkProductIconButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print("Rebuild");
+    // để ở vị trí này + listen: true thì bị rebuild 4,5 lần. Nhưng khi listen: false thì lại lấy state sản phẩm cũ -> phải ra rồi vào fetch lại lần nữa
+    final product = BlocProvider.of<ProductDetailBloc>(context, listen: true).state.productDetail;
+
     return BlocBuilder<ProductBookmarkBloc, ProductBookmarkState>(
       builder: (context, state) {
         final bookmarkedProducts = state.bookmarkedProducts;
-        final product = BlocProvider.of<ProductDetailBloc>(context, listen: false).state.productDetail;
-
         final isBookmarked = bookmarkedProducts != null ? (bookmarkedProducts.indexWhere((element) => element.id == product?.id) != -1) : false;
         return IconButton(
           isSelected: isBookmarked,
@@ -101,6 +102,8 @@ class BookmarkProductIconButton extends StatelessWidget {
                   loves: product!.loves,
                   isBookmarked: true);
               BlocProvider.of<ProductBookmarkBloc>(context).add(ProductBookmarked(bookmarkedProduct: bookmarkedProduct));
+              // không rebuild lại list khi extends Equatable (hình như vậy)
+              // thử tìm hiểu xem BLOC vs final property vs Equatable
             } else {
               // un bookmark, xóa đi bằng id
               BlocProvider.of<ProductBookmarkBloc>(context).add(ProductUnbookmarked(productId: product!.id));

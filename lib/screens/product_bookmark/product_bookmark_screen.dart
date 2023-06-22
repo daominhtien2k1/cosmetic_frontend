@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_bloc.dart';
 import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_state.dart';
 import 'package:flutter/material.dart';
@@ -43,7 +44,8 @@ class ProductBookmarkScreen extends StatelessWidget {
                                 child: CircleAvatar(
                                     radius: 32.0,
                                     backgroundColor: Colors.grey[200],
-                                    backgroundImage: NetworkImage(bookmarkedProducts[index].image.url)
+                                    // backgroundImage: NetworkImage(bookmarkedProducts[index].image.url)
+                                    child: CachedNetworkImage(imageUrl: bookmarkedProducts[index].image.url),
                                 ),
                               ),
                             ],

@@ -41,7 +41,6 @@ dependencies:
   youtube_player_flutter: ^8.1.2
   flutter_bloc: ^8.1.2
   bloc: ^8.1.1
-  flutter_riverpod: ^2.3.6
   equatable: ^2.0.5
   http: ^0.13.6
   stream_transform: ^2.1.0
@@ -59,7 +58,6 @@ dependencies:
   google_fonts: ^4.0.4
   flutter_svg: ^2.0.6
   flutter_native_splash: ^2.2.16
-  riverpod: ^2.3.6
   shimmer: ^2.0.0
   carousel_slider: ^4.2.1
   webview_flutter: ^4.2.2

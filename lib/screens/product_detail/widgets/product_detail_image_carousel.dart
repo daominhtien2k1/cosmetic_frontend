@@ -3,16 +3,13 @@ import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:cosmetic_frontend/models/models.dart' hide Image;
 
-
 class ProductDetailImageCarouselSlider extends StatelessWidget {
   final List<Carousel> carouselList;
   ProductDetailImageCarouselSlider({required this.carouselList});
 
-  int _current = 0;
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       child: CarouselSlider.builder(
         itemCount: carouselList.length,

@@ -5,6 +5,7 @@ import '../../models/models.dart';
 
 enum ProductBookmarkStatus { initial, loading, success, failure }
 
+// không rebuild lại list khi extends Equatable (hình như vậy)
 class ProductBookmarkState extends Equatable {
   final ProductBookmarkStatus productBookmarkStatus;
   final List<BookmarkedProduct>? bookmarkedProducts;

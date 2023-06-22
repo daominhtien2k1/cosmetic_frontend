@@ -50,6 +50,8 @@ class ProductBookmarkBloc extends HydratedBloc<ProductBookmarkEvent, ProductBook
           productBookmarkStatus: ProductBookmarkStatus.success,
           bookmarkedProducts: bookmarkedProducts
       ));
+    } else {
+      print("Không có mà xóa");
     }
 
   }

@@ -94,8 +94,9 @@ class ProductDetailBloc extends Bloc<ProductDetailEvent, ProductDetailState> {
     // print('#PRODUCT DETAIL OBSERVER: {stateCurrent: ${transition.event}, productDetailCurrent: ${transition.currentState.productDetail} ,relateProductsCurrent: ${transition.currentState.relateProducts} }');
     // print('#PRODUCT DETAIL OBSERVER: {stateNext: ${transition.event}, productDetailNext: ${transition.nextState.productDetail} ,relateProductsNext: ${transition.nextState.relateProducts} }');
 
-    print('#PRODUCT DETAIL OBSERVER: {stateCurrent: ${transition.event}, productDetailStatusCurrent: ${transition.currentState.productDetailStatus}  }');
-    print('#PRODUCT DETAIL OBSERVER: {stateNext: ${transition.event}, productDetailStatusNext: ${transition.nextState.productDetailStatus}  }');
+    // không nên dùng chung status
+    // print('#PRODUCT DETAIL OBSERVER: {stateCurrent: ${transition.event}, productDetailStatusCurrent: ${transition.currentState.productDetailStatus}  }');
+    // print('#PRODUCT DETAIL OBSERVER: {stateNext: ${transition.event}, productDetailStatusNext: ${transition.nextState.productDetailStatus}  }');
 
   }
 
