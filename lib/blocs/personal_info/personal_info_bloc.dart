@@ -23,6 +23,7 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     on<SetCityUser>(_onSetCityUser);
     on<SetCountryUser>(_onSetCountryUser);
     on<SetSkinUser>(_onSetSkinUser);
+    on<PointIncrease>(_onPointIncrease);
   }
 
   Future<void> _onPersonalInfoFetched(PersonalInfoFetched event, Emitter<PersonalInfoState> emit) async {
@@ -100,6 +101,16 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     }
   }
 
+
+  Future<void> _onPointIncrease(PointIncrease event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final point = event.point;
+      await userInfoRepository.increasePointLevel(point: point);
+
+    } catch (_) {
+
+    }
+  }
   // @override
   // void onError(Object error, StackTrace stackTrace) {
   //   super.onError(error, stackTrace);

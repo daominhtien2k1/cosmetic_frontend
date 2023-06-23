@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:cosmetic_frontend/blocs/personal_info/personal_info_bloc.dart';
+import 'package:cosmetic_frontend/blocs/personal_info/personal_info_event.dart';
 import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_bloc.dart';
 import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_event.dart';
 import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_state.dart';
@@ -230,6 +232,25 @@ class FavouriteAndReviewContainer extends StatelessWidget {
                 :
                 IconButton.filledTonal(onPressed: (){
                   BlocProvider.of<ProductDetailBloc>(context).add(ProductLove(productId: state.productDetail!.id));
+
+                  final snackBar = SnackBar(
+                    content: Text('Bạn được cộng 1 point'),
+                    backgroundColor: Colors.pink,
+                    // behavior: SnackBarBehavior.floating,
+                    action: SnackBarAction(
+                      label: 'Tắt',
+                      disabledTextColor: Colors.white,
+                      textColor: Colors.yellow,
+                      onPressed: () {
+
+                      },
+                    ),
+                    onVisible: (){
+                      BlocProvider.of<PersonalInfoBloc>(context).add(PointIncrease(point: 1));
+                    },
+                  );
+                  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+
                 }, icon: Icon(Icons.favorite_border)),
                 SizedBox(width: 20),
                 BlocBuilder<RetrieveReviewBloc, RetrieveReviewState>(

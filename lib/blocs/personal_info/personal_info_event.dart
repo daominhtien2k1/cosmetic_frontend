@@ -43,3 +43,8 @@ class SetSkinUser extends PersonalInfoEvent {
   final Skin skin;
   SetSkinUser({required this.skin});
 }
+
+class PointIncrease extends PersonalInfoEvent {
+  final int point;
+  PointIncrease({required this.point});
+}

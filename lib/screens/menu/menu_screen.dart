@@ -118,7 +118,29 @@ class MenuScreen extends StatelessWidget {
                                   SizedBox(height: 8),
                                   Text("Lv. ${userInfo.level}", style: Theme.of(context).textTheme.titleLarge),
                                   SizedBox(height: 8),
-                                  Text("Cần 50P để đạt Lv.2", style: Theme.of(context).textTheme.titleMedium),
+                                  Builder(
+                                    builder: (context) {
+                                      const levelThresholds = {
+                                        1: 0,
+                                        2: 500,
+                                        3: 1000,
+                                        4: 1500,
+                                        5: 2000,
+                                        6: 2500,
+                                        7: 3000,
+                                        8: 3500,
+                                        9: 4000,
+                                        10: 4500
+                                      };
+                                      if (userInfo.level < 10) {
+                                        final needPoint = levelThresholds[userInfo.level+1]! - userInfo.point;
+                                        final nextLevel = userInfo.level +1;
+                                        return Text("Cần $needPoint để đạt Lv.$nextLevel", style: Theme.of(context).textTheme.titleMedium);
+                                      } else {
+                                        return Text("Đạt cấp tối đa", style: Theme.of(context).textTheme.titleMedium);
+                                      }
+                                    }
+                                  ),
                                 ],
                               )
                             ],

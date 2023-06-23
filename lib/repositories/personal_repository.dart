@@ -136,4 +136,16 @@ class UserInfoRepository {
         body: jsonEncode(<String, dynamic>{'skin': skin.toJson()}));
   }
 
+  Future<void> increasePointLevel({required int point}) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/increase_point_level');
+
+    var token = await Token.getToken();
+
+    final response = await http.post(url,
+        headers: <String, String>{
+          HttpHeaders.authorizationHeader: token,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{'point': point}));
+  }
 }
