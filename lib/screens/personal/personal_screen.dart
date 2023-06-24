@@ -76,9 +76,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
   Widget build(BuildContext context) {
     print("#!#0PersonalScreen: Rebuild");
     context.read<PersonalPostBloc>().add(PersonalPostReload(accountId: userId));
-    context
-        .read<PersonalPostBloc>()
-        .add(PersonalPostFetched(accountId: userId));
+    context.read<PersonalPostBloc>().add(PersonalPostFetched(accountId: userId));
     if (isMe) {
       print("#!#1Bắt đầu gọi bất đồng bộ");
       context.read<PersonalInfoBloc>().add(PersonalInfoFetched());

@@ -10,7 +10,9 @@ class UserInfo {
     required this.country,
     required this.skin,
     required this.point,
-    required this.level
+    required this.level,
+    required this.isBrand,
+    this.brandId
   });
 
   final String avatar;
@@ -24,6 +26,8 @@ class UserInfo {
   final Skin skin;
   final int point;
   final int level;
+  final bool isBrand;
+  final String? brandId;
 
   UserInfo.initial()
       : avatar = "",
@@ -36,7 +40,9 @@ class UserInfo {
         country = "",
         skin = Skin.init(),
         point = 0,
-        level = 1;
+        level = 1,
+        isBrand = false,
+        brandId = null;
 
   UserInfo copyWith({
     String? avatar,
@@ -49,7 +55,9 @@ class UserInfo {
     String? country,
     Skin? skin,
     int? point,
-    int? level
+    int? level,
+    bool? isBrand,
+    String? brandId
   }) =>
       UserInfo(
         avatar: avatar ?? this.avatar,
@@ -62,7 +70,9 @@ class UserInfo {
         country: country ?? this.country,
         skin: skin ?? this.skin,
         point: point ?? this.point,
-        level: level ?? this.point
+        level: level ?? this.point,
+        isBrand: isBrand ?? this.isBrand,
+        brandId: brandId ?? this.brandId
       );
 
   factory UserInfo.fromJson(Map<String, dynamic> json) => UserInfo(
@@ -76,7 +86,9 @@ class UserInfo {
         country: json["country"] as String,
         skin: Skin.fromJson(json["skin"]),
         point: json["point"] as int,
-        level: json["level"] as int
+        level: json["level"] as int,
+        isBrand: json["isBrand"] as bool,
+        brandId: json["brandId"] as String?
       );
 
   Map<String, dynamic> toJson() => {
@@ -90,7 +102,9 @@ class UserInfo {
         "country": country,
         "skin": skin.toJson(),
         "point": point,
-        "level": level
+        "level": level,
+        "isBrand": isBrand,
+        if (brandId != null) "brandId": brandId
       };
 }
 

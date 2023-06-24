@@ -221,7 +221,8 @@ class MyApp extends StatelessWidget {
                 return MaterialPageRoute(builder: (_) => EmotionScreen());
               case Routes.personal_screen: {
                 final String? accountId = settings.arguments as String?;
-                return MaterialPageRoute(builder: (_) => PersonalScreen(accountId: accountId));
+                // return MaterialPageRoute(builder: (_) => PersonalScreen(accountId: accountId));
+                return MaterialPageRoute(builder: (_) => PersonalBrandWrapScreen(accountId: accountId));
               }
               // case Routes.messenger_screen: {
               //   return MaterialPageRoute(builder: (_) => MessengerScreen());

@@ -221,7 +221,7 @@ class _PostStats extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: const BoxDecoration(
-                  color: Colors.blue,
+                  color: Colors.pink,
                   shape: BoxShape.circle
                 ),
                 child: const Icon(
@@ -260,7 +260,7 @@ class _PostStats extends StatelessWidget {
           children: [
             Expanded(
               child: _PostButton(
-                icon: isLiked? Icon(Icons.thumb_up, color: Colors.blue, size: 20) : Icon(Icons.thumb_up_outlined, color: Colors.grey[600], size: 20),
+                icon: isLiked? Icon(Icons.thumb_up, color: Colors.pink, size: 20) : Icon(Icons.thumb_up_outlined, color: Colors.grey[600], size: 20),
                 label: 'Thích',
                 onTap: (){
                   onLikePost();

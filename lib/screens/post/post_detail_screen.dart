@@ -226,7 +226,7 @@ class _PostDetailStats extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(4),
               decoration: const BoxDecoration(
-                  color: Colors.blue, shape: BoxShape.circle),
+                  color: Colors.pink, shape: BoxShape.circle),
               child: const Icon(
                 Icons.thumb_up,
                 size: 10,
@@ -262,7 +262,7 @@ class _PostDetailStats extends StatelessWidget {
           children: [
             Expanded(
               child: _PostDetailButton(
-                icon: isLiked? Icon(Icons.thumb_up, color: Colors.blue, size: 20) : Icon(Icons.thumb_up_outlined, color: Colors.grey[600], size: 20),
+                icon: isLiked? Icon(Icons.thumb_up, color: Colors.pink, size: 20) : Icon(Icons.thumb_up_outlined, color: Colors.grey[600], size: 20),
                 label: 'Thích',
                 onTap: (){
                   onLikePost();
@@ -440,7 +440,7 @@ class CommentContainer extends StatelessWidget {
                   SizedBox(height: 4),
                   Text(comment, style: TextStyle(color: Colors.black, overflow: TextOverflow.clip)),
                   SizedBox(height: 4),
-                  Text(timeAgo, style: TextStyle(color: Colors.blue, fontStyle: FontStyle.italic, overflow: TextOverflow.clip)),
+                  Text(timeAgo, style: TextStyle(color: Colors.pinkAccent, fontStyle: FontStyle.italic, overflow: TextOverflow.clip)),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Divider(height: 4, thickness: 1),
@@ -523,7 +523,7 @@ class _SendCommentState extends State<SendComment> {
               children: <Widget>[
                 isMinimize ?
                 GestureDetector(
-                  child: Icon(Icons.arrow_forward_ios, size: 35, color: Colors.blue),
+                  child: Icon(Icons.arrow_forward_ios, size: 35, color: Colors.pink),
                   onTap: () {
                     setState(() {
                       isMinimize = false;
@@ -533,11 +533,11 @@ class _SendCommentState extends State<SendComment> {
                 Container(
                   child: Row(
                     children: const <Widget>[
-                      Icon(Icons.add_circle, size: 35,color: Colors.blue),
+                      Icon(Icons.add_circle, size: 35,color: Colors.pink),
                       SizedBox(width: 5),
-                      Icon(Icons.camera_alt,size: 35,color: Colors.blue),
+                      Icon(Icons.camera_alt,size: 35,color: Colors.pink),
                       SizedBox(width: 5),
-                      Icon(Icons.photo,size: 35,color: Colors.blue)
+                      Icon(Icons.photo,size: 35,color: Colors.pink)
                     ],
                   ),
                 ),
@@ -598,10 +598,10 @@ class _SendCommentState extends State<SendComment> {
                       },
                       iconSize: 32,
                       padding: EdgeInsets.all(0),
-                      icon: const Icon(Icons.send,color: Colors.blue)
+                      icon: const Icon(Icons.send,color: Colors.pink)
                   ),
                 ) :
-                const Icon(Icons.sms,size: 32,color: Colors.blue),
+                const Icon(Icons.sms,size: 32,color: Colors.pink),
               ],
             )
       ),

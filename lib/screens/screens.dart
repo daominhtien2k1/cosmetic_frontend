@@ -5,6 +5,8 @@ export 'signup/signup_screen.dart';
 export 'menu/menu_screen.dart' hide UserName, Avatar;
 export 'notification/noti_screen.dart';
 export 'personal/personal_screen.dart' hide UserName, Avatar, NumberOfFriend;
+export 'personal/brand_official_screen.dart';
+export 'personal/personal_brand_wrap_screen.dart';
 export 'post/create_post_screen.dart';
 export 'post/post_detail_screen.dart';
 export 'post/emotion_screen.dart';
