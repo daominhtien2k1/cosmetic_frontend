@@ -178,11 +178,11 @@ class ProductDetailContent extends StatelessWidget {
                     child: CharacteristicContainer(),
                   ),
                   Divider(thickness: 8, color: Colors.black12),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    child: AvailableInStore(),
-                  ),
-                  Divider(thickness: 8, color: Colors.black12),
+                  // Padding(
+                  //   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  //   child: AvailableInStore(),
+                  // ),
+                  // Divider(thickness: 8, color: Colors.black12),
                   ProductDetailDescription(),
                   Divider(thickness: 8, color: Colors.black12),
                   // Trong backend model Product có mảng link các sản phẩm liên quan. Lúc render ra UI thì là danh sách sản phẩm liên quan của hãng + sản phẩm liên quan đến tìm kiếm search của mk + sản phẩm liên quan đến tình trạng hiện tại của mình

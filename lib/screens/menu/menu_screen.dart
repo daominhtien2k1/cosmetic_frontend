@@ -245,14 +245,14 @@ class MenuScreen extends StatelessWidget {
                           ),
                         ),
                         SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Icon(Icons.storefront),
-                            SizedBox(width: 16),
-                            Text("Danh sách cửa hàng", style: Theme.of(context).textTheme.titleMedium)
-                          ],
-                        ),
-                        SizedBox(height: 16),
+                        // Row(
+                        //   children: [
+                        //     Icon(Icons.storefront),
+                        //     SizedBox(width: 16),
+                        //     Text("Danh sách cửa hàng", style: Theme.of(context).textTheme.titleMedium)
+                        //   ],
+                        // ),
+                        // SizedBox(height: 16),
                         Divider(),
                         InkWell(
                           onTap: () {
