@@ -35,3 +35,5 @@ export 'brand_detail_model.dart';
 export 'loved_product_model.dart';
 export 'viewed_product_model.dart';
 export 'bookmarked_product_model.dart';
+export 'reported_post_model.dart';
+export 'reported_review_model.dart';

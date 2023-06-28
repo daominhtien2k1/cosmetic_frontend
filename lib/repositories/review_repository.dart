@@ -288,4 +288,25 @@ class ReviewRepository {
     }
   }
 
+  Future<void> reportReview({required String reviewId, required String subject, required String details}) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/review/report_review');
+
+    var token = await Token.getToken();
+    try {
+      final response = await http.post(url,
+          headers: <String, String>{
+            HttpHeaders.authorizationHeader: token,
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'id': reviewId,
+            'subject': subject,
+            'details': details
+          })
+      );
+    } catch(error) {
+      throw Exception('${error} - Error to report review');
+    }
+  }
+
 }

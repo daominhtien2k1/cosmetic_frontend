@@ -16,6 +16,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     on<InstructionReviewAdd>(_onInstructionReviewAdd);
     on<DetailReviewAdd>(_onDetailReviewAdd);
     on<InstructionReviewEdit>(_onInstructionReviewEdit);
+    on<ReviewReport>(_onReviewReport);
   }
 
   Future<void> _onStatisticStarReviewFetched(StatisticStarReviewFetched event, Emitter<ReviewState> emit) async {
@@ -127,4 +128,16 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
 
     }
   }
+
+  Future<void> _onReviewReport(ReviewReport event, Emitter<ReviewState> emit) async {
+    final String reviewId = event.reviewId;
+    final String subject = event.subject;
+    final String details = event.details;
+    try {
+      await reviewRepository.reportReview(reviewId: reviewId, subject: subject, details: details);
+    } catch (_) {
+
+    }
+  }
+
 }

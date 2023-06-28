@@ -521,89 +521,71 @@ class _ReportPostBottomSheetState extends State<ReportPostBottomSheet> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-            child: Center(
-              child: Text("Báo cáo bài viết", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-            )
-          ),
-          Divider(height: 10, color: Colors.blueGrey),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text("Hãy chọn vấn đề", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24)),
-          ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 6, 10, 8),
-            child: Text("Nếu bạn nhận thấy bài viết có vấn đề, đừng chần chừ mà hãy báo cáo ngay cho đội ngữ Facebook của chúng tôi xem xét", style: TextStyle(fontWeight: FontWeight.w300, fontSize: 20)),
-          ),
-          Container(
-            height: 300,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+          SizedBox(
+            height: 46,
+            child: Row(
               children: [
-               ReportPostItem(subject: subjectArray[0], onTap: () {
-                 setState(() {
-                   this.subject = subjectArray[0];
-                   this.details = subjectArray[0];
-                 });
-               }),
-                Divider(height: 8, color: Colors.blueGrey),
-                ReportPostItem(subject: subjectArray[1], onTap: () {
-                  setState(() {
-                    this.subject = subjectArray[1];
-                    this.details = subjectArray[1];
-                  });
-                }),
-                Divider(height: 8, color: Colors.blueGrey),
-                ReportPostItem(subject: subjectArray[2], onTap: () {
-                  setState(() {
-                    this.subject = subjectArray[2];
-                    this.details = subjectArray[2];
-                  });
-                }),
-                Divider(height: 8, color: Colors.blueGrey),
-                ReportPostItem(subject: subjectArray[3], onTap: () {
-                  setState(() {
-                    this.subject = subjectArray[3];
-                    this.details = subjectArray[3];
-                  });
-                }),
-                Divider(height: 8, color: Colors.blueGrey),
-                ReportPostItem(subject: subjectArray[4], onTap: () {
-                  setState(() {
-                    this.subject = subjectArray[4];
-                    this.details = subjectArray[4];
-                  });
-                }),
-                Divider(height: 8, color: Colors.blueGrey),
-                ReportPostItem(subject: subjectArray[5], onTap: () {
-                  setState(() {
-                    this.subject = subjectArray[5];
-                    this.details = subjectArray[5];
-                  });
-                }),
-                Center(
-                  child: Text("Vấn đề đang chọn: $subject", style: TextStyle(color: Colors.redAccent, fontWeight: FontWeight.w600)),
+                Expanded(
+                  child: Text(
+                    "Báo cáo bài viết",
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.close),
                 ),
               ],
             ),
           ),
-
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                style: TextButton.styleFrom(
-                  textStyle: const TextStyle(fontSize: 20),
-                ),
-                onPressed: () {
-                  BlocProvider.of<PostBloc>(context).add(PostReport(postId: widget.postId, subject: subject, details: details));
-                  Navigator.pop(context);
-                },
-                child: const Text('Gửi'),
-              ),
-            ],
+          Divider(
+            height: 1,
           ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+            child: Text("Hãy chọn vấn đề", style: Theme.of(context).textTheme.titleMedium),
+          ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 6, 10, 8),
+            child: Text("Nếu bạn nhận thấy bài viết có vấn đề, đừng chần chừ mà hãy báo cáo ngay cho đội ngữ Cosmetica của chúng tôi xem xét"),
+          ),
+          Center(
+            child: Text("Vấn đề đang chọn: $subject", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.pinkAccent)),
+          ),
+          SizedBox(height: 8),
+          Expanded(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: subjectArray.length,
+                itemBuilder: (context, index) {
+                    return ReportPostItem(
+                      subject: subjectArray[index],
+                        onTap: () {
+                         setState(() {
+                           this.subject = subjectArray[index];
+                           this.details = subjectArray[index];
+                         });
+                        }
+                   );
+                },
+                separatorBuilder: (context, index) {
+                  return Divider();
+                }
+              )
+          ),
+          Center(
+            child: FilledButton(
+              onPressed: () {
+                BlocProvider.of<PostBloc>(context).add(PostReport(postId: widget.postId, subject: subject, details: details));
+                Navigator.pop(context);
+              },
+              child: const Text('Gửi'),
+            ),
+          ),
+          SizedBox(height: 8)
         ],
       ),
     );
@@ -621,7 +603,7 @@ class ReportPostItem extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 6, 10, 8),
       child: InkWell(
           onTap: onTap,
-          child: Text(subject, style: TextStyle(fontWeight: FontWeight.w500, fontSize: 20))),
+          child: Text(subject)),
     );
   }
 }

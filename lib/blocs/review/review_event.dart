@@ -117,3 +117,10 @@ class InstructionReviewEdit extends ReviewEvent {
     required this.content
   });
 }
+
+class ReviewReport extends ReviewEvent {
+  final String reviewId;
+  final String subject;
+  final String details;
+  ReviewReport({required this.reviewId, required this.subject, required this.details});
+}
