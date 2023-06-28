@@ -37,3 +37,4 @@ export 'viewed_product_model.dart';
 export 'bookmarked_product_model.dart';
 export 'reported_post_model.dart';
 export 'reported_review_model.dart';
+export 'followed_brand.dart';

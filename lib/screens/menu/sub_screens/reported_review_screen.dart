@@ -1,10 +1,11 @@
-import 'package:cosmetic_frontend/models/models.dart';
+import 'package:cosmetic_frontend/models/models.dart' hide Image;
 import 'package:flutter/material.dart';
 
 import 'dart:io';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 
+import '../../../common/widgets/star_list.dart';
 import '../../../configuration.dart';
 import '../../../routes.dart';
 import '../../../utils/token.dart';
@@ -61,28 +62,57 @@ class ReportedReviewScreen extends StatelessWidget {
                             children: [
                               Flexible(
                                 flex: 1,
-                                child: RichText(
-                                  text: TextSpan(
-                                      children: <TextSpan>[
-                                        TextSpan(
-                                            text: "Bạn đã chia sẻ một bài viết\n",
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        "Bạn đã đánh giá một sản phẩm",
+                                        style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .titleMedium),
+                                    SizedBox(height: 4),
+                                    Row(
+                                      children: [
+                                        Container(
+                                            width: 60,
+                                            height: 60,
+                                            child: ClipRRect(
+                                              borderRadius: BorderRadius.circular(50),
+                                              child: Image.network(review.productImage),
+                                            )
+                                        ),
+                                        SizedBox(width: 10),
+                                        Expanded(
+                                          child: Text(review.productName,
+                                            style: Theme.of(context).textTheme.titleMedium,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 4),
+                                    Wrap(
+                                      alignment: WrapAlignment.center,
+                                      spacing: 8,
+                                      children: [
+                                        StarList(rating: review.reviewRating?.toDouble() ?? 0, color: Colors.orangeAccent),
+                                        if(review.reviewTitle != null) Text(
+                                            "${review.reviewTitle}",
                                             style: Theme
                                                 .of(context)
                                                 .textTheme
                                                 .titleMedium),
-                                        TextSpan(
-                                            text: "${review.reviewContent}",
-                                            style: Theme
-                                                .of(context)
-                                                .textTheme
-                                                .bodyMedium
-                                                ?.copyWith(
-                                              overflow: TextOverflow.clip,)
-                                        )
-                                      ]
-                                  ),
-                                  maxLines: 4,
-                                  overflow: TextOverflow.ellipsis,
+                                      ],
+                                    ),
+                                    if(review.reviewContent!= null) Text(
+                                        "${review.reviewContent}",
+                                        style: Theme
+                                            .of(context)
+                                            .textTheme
+                                            .bodyMedium),
+                                  ],
                                 ),
                               ),
                               PopupMenuButton<String>(

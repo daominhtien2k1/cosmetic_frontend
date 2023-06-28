@@ -34,6 +34,7 @@ import './blocs/event_detail/event_detail_bloc.dart';
 import './blocs/product/product_bloc.dart';
 import './blocs/product_carousel/product_carousel_bloc.dart';
 
+import 'blocs/followed_brand/followed_brand_bloc.dart';
 import 'blocs/product_detail/product_detail_bloc.dart';
 import 'screens/nav_screen.dart';
 import 'screens/screens.dart';
@@ -172,6 +173,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<ProductBookmarkBloc>(
           lazy: false,
           create: (_) => ProductBookmarkBloc()
+        ),
+        BlocProvider<FollowedBrandBloc>(
+          lazy: false,
+          create: (_) => FollowedBrandBloc()
         )
       ],
       child: MaterialApp(

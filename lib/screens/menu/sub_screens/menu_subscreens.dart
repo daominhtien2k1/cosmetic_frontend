@@ -4,3 +4,4 @@ export 'test_baumann_screen.dart';
 export 'history_point_screen.dart';
 export 'reported_post_screen.dart';
 export 'reported_review_screen.dart';
+export 'followed_brand_screen.dart';

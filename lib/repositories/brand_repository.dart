@@ -59,4 +59,26 @@ class BrandRepository {
     );
   }
 
+  Future<List<FollowedBrand>?> fetchFollowedBrand() async {
+    try {
+      final url = Uri.http(Configuration.baseUrlConnect, '/brand/get_followed_brands');
+
+      var token = await Token.getToken();
+      final response = await http.get(url, headers: {
+        HttpHeaders.authorizationHeader: token,
+      });
+
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body) as Map<String, dynamic>;
+        final followedBrands = List<FollowedBrand>.from(body['data'].map((x) => FollowedBrand.fromJson(x)));
+        return followedBrands;
+      } else if (response.statusCode == 400) {
+        return null;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw Exception('Error fetching followed brands');
+    }
+  }
 }
