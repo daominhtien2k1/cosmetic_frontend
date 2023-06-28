@@ -54,7 +54,7 @@ class SettingScreen extends StatelessWidget {
                     padding: const EdgeInsets.symmetric(vertical: 12),
                     child: InkWell(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ReportedPostScreen()));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => DeletedBannedPostScreen()));
                       },
                       child: Row(
                         children: [
