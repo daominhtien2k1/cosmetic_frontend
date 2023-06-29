@@ -1074,6 +1074,7 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
   }
 }
 
+// chưa làm phần đánh giá chi tiết đặc trưng, gây ra lỗi diện rộng, nó biến thành review product của cái khác
 class CharacteristicReviewScreen extends StatelessWidget {
   CharacteristicReviewScreen({Key? key}) : super(key: key);
 
