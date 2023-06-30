@@ -7,6 +7,7 @@ class Configuration {
   static const String baseUrlWeb = 'localhost:5001'; //web
   static const String baseUrlPhysicalDevice = '192.168.1.4:5001'; //mobile
   static const String baseUrlPhysicalDevice2 = '10.0.2.2:5001'; //mobile
+  static const String baseUrlDeployWebService = 'cosmetic-backend-io.onrender.com';
   // để nguyên 3 cái trên, nếu muốn đổi thiết bị thì đổi cái dưới
   static const String baseUrlConnect = baseUrlPhysicalDevice;
   // accountId: 63bbff18fc13ae649300082a - Chris Vater - token fix cứng nếu chẳng may gặp một lỗi nào đó

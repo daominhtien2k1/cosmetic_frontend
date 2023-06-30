@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:device_info_plus/device_info_plus.dart';
@@ -8,6 +9,7 @@ import '../../blocs/auth/auth_event.dart';
 import '../../routes.dart';
 
 import '../signup/signup_screen.dart';
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
   final bool fail ;
@@ -195,7 +197,74 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                               ),
                               TextButton(
-                                  onPressed: () {
+                                  onPressed: () async {
+                                    // get thì được với tất cả Uri.http
+                                    // final result = await http.get(Uri.parse('http://cosmetic-backend-io.onrender.com/settings'));
+                                    // final result2 = await http.get(Uri.parse('https://cosmetic-backend-io.onrender.com/settings'));
+                                    // final result3 = await http.get(Uri.http('cosmetic-backend-io.onrender.com', '/settings'));
+                                    // print(result.body);
+
+                                    // Không có kết quả trả về
+                                    final response = await http.post(Uri.http('cosmetic-backend-io.onrender.com', 'settings'),
+                                        headers: <String, String>{
+                                          'Content-Type': 'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, dynamic>{
+                                          'value': '5',
+                                        })
+                                    );
+
+                                    // OK
+                                    final response2 = await http.post(Uri.https('cosmetic-backend-io.onrender.com', 'settings'),
+                                        headers: <String, String>{
+                                          'Content-Type': 'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, dynamic>{
+                                          'value': '5',
+                                        })
+                                    );
+
+                                    // OK
+                                    final response5 = await http.post(Uri.http('jsonplaceholder.typicode.com', 'posts'),
+                                        headers: <String, String>{
+                                          'Content-Type': 'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, dynamic>{
+                                          'value': '5',
+                                        })
+                                    );
+
+                                    // OK
+                                    final response6 = await http.post(Uri.https('jsonplaceholder.typicode.com', 'posts'),
+                                        headers: <String, String>{
+                                          'Content-Type': 'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, dynamic>{
+                                          'value': '5',
+                                        })
+                                    );
+
+                                    // OK
+                                    final response7 = await http.post(Uri.parse('http://jsonplaceholder.typicode.com/posts'),
+                                        headers: <String, String>{
+                                          'Content-Type': 'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, dynamic>{
+                                          'value': '5',
+                                        })
+                                    );
+
+                                    // OK
+                                    final response8 = await http.post(Uri.parse('https://jsonplaceholder.typicode.com/posts'),
+                                        headers: <String, String>{
+                                          'Content-Type': 'application/json; charset=UTF-8',
+                                        },
+                                        body: jsonEncode(<String, dynamic>{
+                                          'value': '5',
+                                        })
+                                    );
+
+                                    print(response.body);
                                     print(deviceInfo);
                                   },
                                   child: Text('Quên mật khẩu?')),

@@ -21,7 +21,8 @@ class AuthRepository {
     //     })
     // );
     // print(response2.body);
-    final url = Uri.http(Configuration.baseUrlConnect, 'account/login');
+    final url = Uri.http(Configuration.baseUrlConnect, 'account/login'); // chạy local được thôi
+    // final url = Uri.https(Configuration.baseUrlConnect, 'account/login'); // triển khai trên deploy render
     final response = await http.post(url,
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
