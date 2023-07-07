@@ -1,6 +1,6 @@
 import '../../models/models.dart';
 
-enum CommentStatus {initial, loading, success, failure }
+enum CommentStatus {initial, loading, success, failure}
 
 class CommentState{
   CommentStatus commentStatus;

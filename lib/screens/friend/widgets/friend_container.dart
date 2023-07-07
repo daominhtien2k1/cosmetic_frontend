@@ -49,14 +49,16 @@ class FriendContainer extends StatelessWidget {
                             flex: 5,
                             child: Text(friend.name,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 18))),
+                                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18)
+                            )
+                        ),
                         Flexible(
                             flex: 2,
                             child: Text(timeAgo,
                                 overflow: TextOverflow.clip,
-                                style: const TextStyle(
-                                    fontSize: 13, color: Colors.grey)))
+                                style: const TextStyle(fontSize: 13, color: Colors.grey)
+                            )
+                        )
                       ],
                     ),
                   ),
@@ -72,7 +74,9 @@ class FriendContainer extends StatelessWidget {
                                   acceptConfirmation(context);
                                 },
                                 child: Text('Hủy kết bạn'),
-                              ))),
+                              )
+                          )
+                      ),
                     ],
                   )
                 ],

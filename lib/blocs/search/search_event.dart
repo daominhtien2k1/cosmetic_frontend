@@ -40,3 +40,5 @@ class IsFollowedInSearchBrandUpdated extends SearchEvent {
   IsFollowedInSearchBrandUpdated({required this.searchBrand, required this.newIsFollowed});
 
 }
+
+class TopSearchFetched extends SearchEvent {}

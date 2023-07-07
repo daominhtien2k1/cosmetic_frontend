@@ -39,3 +39,6 @@ export 'reported_post_model.dart';
 export 'reported_review_model.dart';
 export 'followed_brand.dart';
 export 'deleted_banned_post.dart';
+export 'deleted_banned_review.dart';
+export 'blocked_account_model.dart';
+export 'top_search_model.dart';

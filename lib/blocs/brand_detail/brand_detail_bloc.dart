@@ -1,7 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:cosmetic_frontend/blocs/brand/brand_detail_event.dart';
-import 'package:cosmetic_frontend/blocs/brand/brand_detail_state.dart';
+import 'package:cosmetic_frontend/blocs/brand_detail/brand_detail_event.dart';
+import 'package:cosmetic_frontend/blocs/brand_detail/brand_detail_state.dart';
 
 import '../../models/models.dart';
 import '../../repositories/repositories.dart';

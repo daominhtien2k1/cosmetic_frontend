@@ -1,7 +1,5 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../models/models.dart';
 import '../../repositories/repositories.dart';
 import 'event_detail_event.dart';
 import 'event_detail_state.dart';

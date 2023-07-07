@@ -28,11 +28,11 @@ class UserInfoRepository {
       case 400:
         return UserInfo.initial();
       default:
-        throw Exception('Error fetchRequestReceivedFriends');
+        throw Exception('Error fetchPersonalInfo');
     }
   }
 
-  Future<UserInfo> fetchPersonalInfoOfAnotherUser(String id) async {
+  Future<UserInfo?> fetchPersonalInfoOfAnotherUser(String id) async {
     final url = Uri.http(Configuration.baseUrlConnect, '/account/get_user_info', {
       'user_id': id,
     });
@@ -51,8 +51,10 @@ class UserInfoRepository {
       }
       case 400:
         return UserInfo.initial();
+      case 401:
+        return null;
       default:
-        throw Exception('Error fetchRequestReceivedFriends');
+        throw Exception('Error fetchPersonalInfo');
     }
   }
 

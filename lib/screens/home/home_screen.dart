@@ -1,4 +1,5 @@
 import 'package:cosmetic_frontend/blocs/product/product_bloc.dart';
+import 'package:cosmetic_frontend/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cosmetic_frontend/models/models.dart' hide Image;
@@ -10,6 +11,11 @@ import '../../blocs/product_carousel/product_carousel_bloc.dart';
 import '../../blocs/product_carousel/product_carousel_event.dart';
 import '../../blocs/product_carousel/product_carousel_state.dart';
 
+import '../../configuration.dart';
+import '../../utils/token.dart';
+import 'dart:io';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
 
 import '../../routes.dart';
@@ -39,14 +45,18 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               title: Text("Cosmetic"),
               actions: [
-                IconButton(onPressed: (){}, icon: Icon(Icons.search)),
+                IconButton(onPressed: (){
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchScreen()));
+                },
+                    icon: Icon(Icons.search)
+                ),
               ],
             ),
             SliverToBoxAdapter(child: ProductCarousel()),
             SliverPadding(
               padding: EdgeInsets.symmetric(horizontal: 16),
               sliver: SliverToBoxAdapter(
-                child: Category()
+                child: BrandList()
               ),
             ),
             AllTypeProductContainer()
@@ -86,138 +96,76 @@ class ProductCarousel extends StatelessWidget {
   }
 }
 
-class Category extends StatelessWidget {
-  const Category({Key? key}) : super(key: key);
+class BrandList extends StatelessWidget {
+  const BrandList({Key? key}) : super(key: key);
+
+  Future<List<dynamic>?> fetchListBrands() async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/brand/get_list_brands');
+
+    var token = await Token.getToken();
+
+    try {
+      final response = await http.get(url, headers: {
+        HttpHeaders.authorizationHeader: token,
+      });
+      if (response.statusCode == 200) {
+        final body = json.decode(response.body) as List<dynamic>;
+        return body;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print(e);
+    }
+
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Wrap(
-        spacing: 16,
-        children: [
-          Container(
-            width: 72,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                  padding: EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(8)),
-                    color: Colors.grey[200]
-                  ),
-                  child: Image.asset("assets/images/skincare.png", width: 48, height: 48)
-                ),
-                Text("Chăm sóc da", textAlign: TextAlign.center),
-              ],
-            ),
-          ),
-          Container(
-            width: 72,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        color: Colors.grey[200]
-                    ),
-                    child: Image.asset("assets/images/skincare.png", width: 48, height: 48)
-                ),
-                Text("Mỹ phẩm chức năng", textAlign: TextAlign.center),
-              ],
-            ),
-          ),
-          Container(
-            width: 72,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        color: Colors.grey[200]
-                    ),
-                    child: Image.asset("assets/images/skincare.png", width: 48, height: 48)
-                ),
-                Text("Chống nắng", textAlign: TextAlign.center),
-              ],
-            ),
-          ),
-          Container(
-            width: 72,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        color: Colors.grey[200]
-                    ),
-                    child: Image.asset("assets/images/skincare.png", width: 48, height: 48)
-                ),
-                Text("Trang điểm", textAlign: TextAlign.center),
-              ],
-            ),
-          ),
-          Container(
-            width: 72,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        color: Colors.grey[200]
-                    ),
-                    child: Image.asset("assets/images/skincare.png", width: 48, height: 48)
-                ),
-                Text("Chăm sóc da", textAlign: TextAlign.center),
-              ],
-            ),
-          ),
-          Container(
-            width: 72,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        color: Colors.grey[200]
-                    ),
-                    child: Image.asset("assets/images/skincare.png", width: 48, height: 48)
-                ),
-                Text("Chăm sóc tóc", textAlign: TextAlign.center),
-              ],
-            ),
-          ),
-          Container(
-            width: 72,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Container(
-                    padding: EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                        color: Colors.grey[200]
-                    ),
-                    child: Image.asset("assets/images/skincare.png", width: 48, height: 48)
-                ),
-                Text("Chăm sóc cơ thể", textAlign: TextAlign.center),
-              ],
-            ),
-          ),
-
-        ],
-      )
+    return Column(
+      children: [
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text("Nhãn hàng", style: Theme.of(context).textTheme.titleMedium)
+          ],
+        ),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: FutureBuilder(
+            future: fetchListBrands(),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
+              if (snapshot.hasData) {
+                final brandListData = snapshot.data;
+                return Wrap(
+                  children: brandListData.map<Widget>((brand) {
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => BrandDetailScreen(brandId: brand["_id"])));
+                        },
+                        child: Container(
+                          width: 72,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Image.network("${brand['image']}", width: 48, height: 48),
+                              Text("${brand['name']}", textAlign: TextAlign.center),
+                            ],
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                );
+              } else {
+                return Text("Không có kết nối mạng");
+              }
+            }
+          )
+        ),
+      ],
     );
   }
 }
@@ -233,8 +181,7 @@ class PopularProductList extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text("Nhiều người quan tâm", style: Theme.of(context).textTheme.titleMedium),
-            Icon(Icons.navigate_next)
+            Text("Nhiều người quan tâm", style: Theme.of(context).textTheme.titleMedium)
           ],
         ),
         ListView.separated(

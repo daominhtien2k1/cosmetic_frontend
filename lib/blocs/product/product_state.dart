@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../models/models.dart';
 
-enum ProductStatus {initial, loading, success, failure }
+enum ProductStatus {initial, loading, success, failure}
 
 class ProductState {
   ProductStatus productStatus;

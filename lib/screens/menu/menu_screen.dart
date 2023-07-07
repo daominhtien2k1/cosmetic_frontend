@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cosmetic_frontend/screens/menu/sub_screens/setting_screen.dart';
+import 'package:cosmetic_frontend/screens/menu/sub_screens/security_screen.dart';
 import 'package:cosmetic_frontend/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -67,7 +67,7 @@ class MenuScreen extends StatelessWidget {
                                     future: statisticOverall(),
                                     builder: (BuildContext context, AsyncSnapshot snapshot) {
                                     if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return CircularProgressIndicator();
+                                      return Center(child: CircularProgressIndicator());
                                     }
                                     if (snapshot.hasData) {
                                       final postCount = snapshot.data["data"]["postCount"];
@@ -256,7 +256,7 @@ class MenuScreen extends StatelessWidget {
                         Divider(),
                         InkWell(
                           onTap: () {
-                            Navigator.of(context).push(MaterialPageRoute(builder: (_) => SettingScreen()));
+                            Navigator.of(context).push(MaterialPageRoute(builder: (_) => SecurityScreen()));
                           },
                           child: Padding(
                             padding: const EdgeInsets.symmetric(vertical: 8),

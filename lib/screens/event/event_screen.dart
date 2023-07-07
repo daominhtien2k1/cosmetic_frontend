@@ -1,7 +1,8 @@
 import 'package:cosmetic_frontend/blocs/event/event_bloc.dart';
 import 'package:cosmetic_frontend/blocs/event/event_event.dart';
 import 'package:cosmetic_frontend/blocs/event/event_state.dart';
-import 'package:cosmetic_frontend/screens/event/widgets/event_widgets.dart';
+import 'package:cosmetic_frontend/screens/screens.dart';
+import './widgets/event_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:cosmetic_frontend/models/models.dart';
@@ -39,6 +40,13 @@ class _EventScreenState extends State<EventScreen> with TickerProviderStateMixin
           icon: Icon(Icons.menu),
         ),
         title: Text("Ưu đãi"),
+        actions: [
+          IconButton(onPressed: (){
+            Navigator.of(context).push(MaterialPageRoute(builder: (context) => SearchScreen()));
+          },
+              icon: Icon(Icons.search)
+          ),
+        ],
         bottom: TabBar(
           controller: _eventTabController,
           tabs: const <Widget>[

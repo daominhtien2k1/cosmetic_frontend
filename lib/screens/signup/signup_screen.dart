@@ -19,12 +19,6 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  static final DeviceInfoPlugin deviceInfoPlugin = DeviceInfoPlugin();
-  var deviceInfo = {
-    'devtype': 1,
-    'devtoken': '',
-  };
-
   bool passToggle = true;
   bool passToggle1 = true;
 
@@ -32,24 +26,6 @@ class _SignupScreenState extends State<SignupScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    initPlatformState();
-  }
-
-  Future<void> initPlatformState() async {
-    if (Platform.isAndroid) {
-      AndroidDeviceInfo androidInfo = await deviceInfoPlugin.androidInfo;
-      setState(() {
-        deviceInfo = {'devtype': 1, 'devtoken': androidInfo.id};
-      });
-    } else if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfoPlugin.iosInfo;
-      setState(() {
-        deviceInfo = {
-          'devtype': 1,
-          'devtoken': iosInfo.identifierForVendor ?? ''
-        };
-      });
-    }
   }
 
   String? phone;
@@ -205,96 +181,78 @@ class _SignupScreenState extends State<SignupScreen> {
                                   switch (state.status) {
                                     case SignupStatus.initial: {
                                       return Container(
-                                        child:
-                                        SizedBox(width: 10,),
+                                        child: SizedBox(width: 10),
                                         alignment: Alignment.bottomCenter,
                                         height: 25,);
                                     }
                                     case SignupStatus.success: {
-
                                       return Column(
                                         children: [
                                           Container(
-                                            child:
-                                            Row(
+                                            child: Row(
                                               children: [
-                                                Icon(Icons.download_done_outlined,
-                                                  color: Colors.green,
-                                                  size: 18,),
-                                                SizedBox(width: 5,),
-                                                Text(
-                                                    "Đăng kí thành công, nhấn tiếp tục để hoàn tất",
-                                                    style: TextStyle(color: Colors.green)
-                                                ),
+                                                Icon(Icons.download_done_outlined, color: Colors.green, size: 18),
+                                                SizedBox(width: 4),
+                                                Text("Đăng kí thành công, nhấn tiếp tục để hoàn tất", style: TextStyle(color: Colors.green)),
                                               ],
                                               mainAxisAlignment: MainAxisAlignment.center,
                                             ),
                                             alignment: Alignment.bottomCenter,
-                                            height: 25,),
+                                            height: 24
+                                          ),
                                           Container(
                                             margin: EdgeInsets.only(top: 20),
                                             height: 40, //height of button
                                             width: 150, //width of button
-                                            child: ElevatedButton(
+                                            child: FilledButton(
                                               onPressed: () {
                                                 BlocProvider.of<AuthBloc>(context).add(Logout());
-                                                BlocProvider.of<SignupBloc>(context).add(afterSignUp());
+                                                BlocProvider.of<SignupBloc>(context).add(AfterSignUp());
                                                 Navigator.pop(context);
                                               },
-                                              child: Text('Tiếp tục'),
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.blue,
-                                                textStyle:
-                                                TextStyle(fontWeight: FontWeight.bold),
-                                                shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(30)),
-                                              ),
+                                              child: Text('Tiếp tục')
                                             ),
                                           ),
                                         ],
                                       );
                                     }
-                                    case SignupStatus.userExist: return Container(
-                                      child:
-                                        Row(
+                                    case SignupStatus.userExist: {
+                                      return Container(
+                                        child: Row(
                                           children: [
-                                            Icon(Icons.error,
-                                              color: Colors.red,
-                                              size: 18,),
+                                            Icon(Icons.error, color: Colors.red, size: 18),
                                             SizedBox(width: 5,),
-                                            Text(
-                                                "Số điện thoại đã được người dùng khác sử dụng",
-                                                style: TextStyle(color: Colors.red)
+                                            Text("Số điện thoại đã được đăng kí trên hệ thống", style: TextStyle(color: Colors.red)
                                             ),
                                           ],
                                         ),
-                                      alignment: Alignment.bottomCenter,
-                                      height: 25,);
-                                    case SignupStatus.failure: return Container(
-                                      child:
-                                      Row(
-                                        children: [
-                                          Icon(Icons.error,
-                                            color: Colors.red,
-                                            size: 18,),
-                                          SizedBox(width: 5,),
-                                          Text(
-                                              "Tạo tài khoản không thành công, hãy thử lại",
-                                              style: TextStyle(color: Colors.red)
-                                          ),
-                                        ],
-                                      ),
-                                      alignment: Alignment.bottomCenter,
-                                      height: 25,);
-                                    default: return Container(
-                                      child:
-                                      SizedBox(width: 10,),
-                                      alignment: Alignment.bottomCenter,
-                                      height: 25,);
+                                        alignment: Alignment.bottomCenter,
+                                        height: 24
+                                      );
+                                    }
+                                    case SignupStatus.failure: {
+                                        return Container(
+                                            child: Row(
+                                              children: [
+                                                Icon(Icons.error, color: Colors.red, size: 18),
+                                                SizedBox(width: 5,),
+                                                Text("Tạo tài khoản không thành công, hãy thử lại", style: TextStyle(color: Colors.red)
+                                                ),
+                                              ],
+                                            ),
+                                            alignment: Alignment.bottomCenter,
+                                            height: 24
+                                        );
+                                      }
+                                    default:
+                                      return Container(
+                                        child: SizedBox(width: 10),
+                                        alignment: Alignment.bottomCenter,
+                                        height: 24
+                                      );
                                   }
-                                } ),
-
+                                }
+                            ),
                             Container(
                               margin: EdgeInsets.only(top: 50),
                               width: 150, //width of button

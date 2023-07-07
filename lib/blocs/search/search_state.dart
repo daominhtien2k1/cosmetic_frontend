@@ -1,6 +1,6 @@
 import '../../models/models.dart';
 
-enum SearchStatus { initial, loading, success, failure }
+enum SearchStatus {initial, loading, success, failure}
 
 class SearchState {
   SearchStatus searchStatus;
@@ -11,6 +11,7 @@ class SearchState {
   SearchPostList? searchPostList;
   SearchReviewList? searchReviewList;
   SearchAccountList? searchAccountList;
+  List<TopSearch> topSearches;
 
   SearchState({
     required this.searchStatus,
@@ -20,7 +21,8 @@ class SearchState {
     this.searchBrandList,
     this.searchPostList,
     this.searchReviewList,
-    this.searchAccountList
+    this.searchAccountList,
+    required this.topSearches
   });
 
   SearchState.initial()
@@ -31,7 +33,8 @@ class SearchState {
         searchBrandList = SearchBrandList.init(),
         searchPostList = SearchPostList.init(),
         searchReviewList = SearchReviewList.init(),
-        searchAccountList = SearchAccountList.init()
+        searchAccountList = SearchAccountList.init(),
+        topSearches = List<TopSearch>.empty(growable: true)
   ;
 
   SearchState copyWith(
@@ -42,7 +45,8 @@ class SearchState {
         SearchBrandList? searchBrandList,
         SearchPostList? searchPostList,
         SearchReviewList? searchReviewList,
-        SearchAccountList? searchAccountList
+        SearchAccountList? searchAccountList,
+        List<TopSearch>? topSearches
       }) {
     return SearchState(
         searchStatus: searchStatus ?? this.searchStatus,
@@ -52,7 +56,8 @@ class SearchState {
         searchBrandList: searchBrandList ?? this.searchBrandList,
         searchPostList: searchPostList ?? this.searchPostList,
         searchReviewList: searchReviewList ?? this.searchReviewList,
-        searchAccountList: searchAccountList ?? this.searchAccountList
+        searchAccountList: searchAccountList ?? this.searchAccountList,
+        topSearches: topSearches ?? this.topSearches
     );
   }
 }

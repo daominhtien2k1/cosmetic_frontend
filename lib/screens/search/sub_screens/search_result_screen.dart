@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cosmetic_frontend/blocs/search/search_event.dart';
 import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
+import 'package:cosmetic_frontend/routes.dart';
 import 'package:cosmetic_frontend/screens/newsfeed/widgets/newsfeed_widgets.dart';
 import 'package:cosmetic_frontend/screens/search/widgets/search_review_container.dart';
 import 'package:flutter/material.dart';
@@ -332,29 +333,33 @@ class AccountSearchListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        leading: Stack(
-          children: [
-            CircleAvatar(
-                radius: 32.0,
-                backgroundColor: Colors.black12,
-                child: CircleAvatar(
-                    radius: 32.0,
-                    backgroundColor: Colors.grey[200],
-                    backgroundImage: CachedNetworkImageProvider(searchAccount.avatar)
-                )
-            ),
-          ],
-        ),
-        title: Text(searchAccount.name, style: Theme.of(context).textTheme.titleMedium),
-        subtitle: Text("Level ${searchAccount.level}"),
-        trailing: buildStatusFriendButton(context)
-
+      onTap: () {
+        Navigator.of(context).pushNamed(Routes.personal_screen, arguments: searchAccount.id);
+      },
+      leading: Stack(
+        children: [
+          CircleAvatar(
+              radius: 32.0,
+              backgroundColor: Colors.black12,
+              child: CircleAvatar(
+                  radius: 32.0,
+                  backgroundColor: Colors.grey[200],
+                  backgroundImage: CachedNetworkImageProvider(searchAccount.avatar)
+              )
+          ),
+        ],
+      ),
+      title: Text(searchAccount.name, style: Theme.of(context).textTheme.titleMedium),
+      subtitle: Text("Level ${searchAccount.level}"),
+      trailing: buildStatusFriendButton(context)
     );
   }
 
   // Ở đây không có chặn
   Widget buildStatusFriendButton(BuildContext context) {
-    if (searchAccount.statusFriend == "Unknown") {
+    if (searchAccount.statusFriend == "Me" || searchAccount.statusFriend == "Block") {
+      return SizedBox();
+    } else if (searchAccount.statusFriend == "Unknown") {
       return OutlinedButton(
         onPressed: () {
           // setState(() {
@@ -445,41 +450,8 @@ class AccountSearchListTile extends StatelessWidget {
         child: Text("Bạn bè"),
       );
     } else {
-      return FilledButton.tonal(
-        onPressed: () {
-          showDialog<String>(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: const Text('Xác nhận hủy kết bạn?'),
-              content: const Text('Thao tác này không thể hoàn tác'),
-              actions: <Widget>[
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'Hủy'),
-                  child: const Text('Hủy'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context, 'Xác nhận'),
-                  child: const Text('Xác nhận'),
-                ),
-              ],
-            ),
-          ).then((value) {
-            if (value == "Hủy") {
-
-            } else if (value == "Xác nhận") {
-              // setState(() {
-              //   statusFriend = "Unknown";
-              // });
-              BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Unknown"));
-            }
-          });
-
-        },
-        child: Text("Bạn bè"),
-      );
+      return SizedBox();
     }
-
-
   }
 }
 

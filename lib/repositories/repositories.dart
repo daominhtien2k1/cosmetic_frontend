@@ -12,3 +12,4 @@ export 'product_repository.dart';
 export 'event_repository.dart';
 export 'review_repository.dart';
 export 'brand_repository.dart';
+export 'block_repository.dart';

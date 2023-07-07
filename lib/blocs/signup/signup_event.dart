@@ -14,7 +14,7 @@ class Signup extends SignupEvent {
   List<Object> get props => [phone, password];
 }
 
-class afterSignUp extends SignupEvent {
+class AfterSignUp extends SignupEvent {
   @override
   List<Object> get props => [];
 }

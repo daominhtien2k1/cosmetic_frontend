@@ -49,7 +49,7 @@ class Friend extends Equatable{
   final String avatar;
   final String createdAt;
 
-  Friend copyWith({String? friend, String? name, String? avatar, String? createdAt,}) {
+  Friend copyWith({String? friend, String? name, String? avatar, String? createdAt}) {
     return Friend(
       friend: friend ?? this.friend,
       name: name ?? this.name,

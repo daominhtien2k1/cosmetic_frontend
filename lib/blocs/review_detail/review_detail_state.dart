@@ -1,6 +1,6 @@
 import '../../models/models.dart';
 
-enum ReviewDetailStatus {initial, loading, success, failure }
+enum ReviewDetailStatus {initial, loading, success, failure}
 
 class ReviewDetailState {
   ReviewDetailStatus reviewDetailStatus;

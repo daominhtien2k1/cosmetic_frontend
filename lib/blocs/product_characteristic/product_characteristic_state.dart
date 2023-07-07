@@ -1,6 +1,6 @@
 import 'package:cosmetic_frontend/models/models.dart';
 
-enum ProductCharacteristicStatus {initial, loading, success, failure }
+enum ProductCharacteristicStatus {initial, loading, success, failure}
 
 class ProductCharacteristicState {
   ProductCharacteristicStatus productCharacteristicStatus;

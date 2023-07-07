@@ -1,13 +1,13 @@
 import 'package:cosmetic_frontend/screens/menu/sub_screens/menu_subscreens.dart';
 import 'package:flutter/material.dart';
 
-class SettingScreen extends StatelessWidget {
+class SecurityScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(),
-        title: Text('Cài đặt'),
+        title: Text('Bảo mật'),
       ),
       body: SingleChildScrollView(
           child: Padding(
@@ -17,22 +17,32 @@ class SettingScreen extends StatelessWidget {
               children: [
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      children: [
-                        Icon(Icons.password),
-                        SizedBox(width: 16),
-                        Text("Thay đổi mật khẩu", style: Theme.of(context).textTheme.titleMedium),
-                      ],
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ChangePasswordScreen()));
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.password),
+                          SizedBox(width: 16),
+                          Text("Thay đổi mật khẩu", style: Theme.of(context).textTheme.titleMedium),
+                        ],
+                      ),
                     )
                 ),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      children: [
-                        Icon(Icons.block),
-                        SizedBox(width: 16),
-                        Text("Danh sách chặn", style: Theme.of(context).textTheme.titleMedium),
-                      ],
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => BlockScreen()));
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.block),
+                          SizedBox(width: 16),
+                          Text("Danh sách chặn", style: Theme.of(context).textTheme.titleMedium),
+                        ],
+                      ),
                     )
                 ),
                 Padding(
@@ -82,12 +92,17 @@ class SettingScreen extends StatelessWidget {
                 ),
                 Padding(
                     padding: const EdgeInsets.symmetric(vertical: 12),
-                    child: Row(
-                      children: [
-                        Icon(Icons.playlist_remove_rounded),
-                        SizedBox(width: 16),
-                        Text("Đánh giá bị xóa", style: Theme.of(context).textTheme.titleMedium),
-                      ],
+                    child: InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => DeletedBannedReviewScreen()));
+                      },
+                      child: Row(
+                        children: [
+                          Icon(Icons.playlist_remove_rounded),
+                          SizedBox(width: 16),
+                          Text("Đánh giá bị xóa", style: Theme.of(context).textTheme.titleMedium),
+                        ],
+                      ),
                     )
                 ),
                 Padding(

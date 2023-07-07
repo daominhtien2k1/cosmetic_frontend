@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../models/models.dart';
 
-enum FriendRequestReceivedStatus {initial, loading, success, failure }
+enum FriendRequestReceivedStatus {initial, loading, success, failure}
 
 class FriendRequestReceivedState extends Equatable {
   final FriendRequestReceivedList friendRequestReceivedList;

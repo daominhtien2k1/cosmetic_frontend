@@ -21,17 +21,15 @@ class BottomSheetButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             Container(
-                width: 45.0,
-                height: 45.0,
+                width: 44.0,
+                height: 44.0,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: Colors.grey[300],
+                  color: Theme.of(context).colorScheme.inversePrimary,
                 ),
-                child: Icon(
-                  icon,
-                  size: 20.0,
-                )),
-            SizedBox(width: 15.0),
+                child: Icon(icon, color: Theme.of(context).colorScheme.surfaceTint)
+            ),
+            SizedBox(width: 16.0),
             Text(buttonText, style: Theme.of(context).textTheme.titleMedium),
           ],
         ),

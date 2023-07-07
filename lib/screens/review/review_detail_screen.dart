@@ -269,7 +269,7 @@ class _ReviewDetailStats extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: const BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.pink,
                     shape: BoxShape.circle
                 ),
                 child: const Icon(
@@ -301,7 +301,7 @@ class _ReviewDetailStats extends StatelessWidget {
           children: [
             Expanded(
               child: _ReviewDetailButton(
-                icon: isSettedUseful? Icon(Icons.thumb_up, color: Colors.blue, size: 20) : Icon(Icons.thumb_up_outlined, color: Colors.grey[600], size: 20),
+                icon: isSettedUseful? Icon(Icons.thumb_up, color: Colors.pink, size: 20) : Icon(Icons.thumb_up_outlined, color: Colors.grey[600], size: 20),
                 label: 'Hữu ích',
                 onTap: (){
                   onSetUsefulReview();
@@ -471,7 +471,7 @@ class ReplyContainer extends StatelessWidget {
                       SizedBox(height: 4),
                       Text(reply, style: TextStyle(color: Colors.black, overflow: TextOverflow.clip)),
                       SizedBox(height: 4),
-                      Text(timeAgo, style: TextStyle(color: Colors.blue, fontStyle: FontStyle.italic, overflow: TextOverflow.clip)),
+                      Text(timeAgo, style: TextStyle(color: Colors.pink, fontStyle: FontStyle.italic, overflow: TextOverflow.clip)),
                       Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Divider(height: 4, thickness: 1),
@@ -554,7 +554,7 @@ class _SendReplyState extends State<SendReply> {
             children: <Widget>[
               isMinimize ?
               GestureDetector(
-                child: Icon(Icons.arrow_forward_ios, size: 35, color: Colors.blue),
+                child: Icon(Icons.arrow_forward_ios, size: 35, color: Colors.pink),
                 onTap: () {
                   setState(() {
                     isMinimize = false;
@@ -564,11 +564,11 @@ class _SendReplyState extends State<SendReply> {
               Container(
                 child: Row(
                   children: const <Widget>[
-                    Icon(Icons.add_circle, size: 35,color: Colors.blue),
+                    Icon(Icons.add_circle, size: 35,color: Colors.pink),
                     SizedBox(width: 5),
-                    Icon(Icons.camera_alt,size: 35,color: Colors.blue),
+                    Icon(Icons.camera_alt,size: 35,color: Colors.pink),
                     SizedBox(width: 5),
-                    Icon(Icons.photo,size: 35,color: Colors.blue)
+                    Icon(Icons.photo,size: 35,color: Colors.pink)
                   ],
                 ),
               ),
@@ -629,10 +629,10 @@ class _SendReplyState extends State<SendReply> {
                     },
                     iconSize: 32,
                     padding: EdgeInsets.all(0),
-                    icon: const Icon(Icons.send,color: Colors.blue)
+                    icon: const Icon(Icons.send,color: Colors.pink)
                 ),
               ) :
-              const Icon(Icons.sms,size: 32,color: Colors.blue),
+              const Icon(Icons.sms,size: 32,color: Colors.pink),
             ],
           )
       ),

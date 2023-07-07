@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import 'package:cosmetic_frontend/routes.dart';
 import '../../blocs/auth/auth_bloc.dart';
 import '../../blocs/friend/friend_bloc.dart';
 import '../../blocs/friend/friend_event.dart';
@@ -74,19 +75,8 @@ class _PersonalScreenState extends State<PersonalScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print("#!#0PersonalScreen: Rebuild");
-    context.read<PersonalPostBloc>().add(PersonalPostReload(accountId: userId));
-    context.read<PersonalPostBloc>().add(PersonalPostFetched(accountId: userId));
-    if (isMe) {
-      print("#!#1Bắt đầu gọi bất đồng bộ");
-      context.read<PersonalInfoBloc>().add(PersonalInfoFetched());
-      print("#!#2Chưa thực hiện xong PersonalInfoFetched() mà gọi tiếp FriendFetched()");
-      context.read<FriendBloc>().add(FriendsFetched());
-    } else {
-      context.read<PersonalInfoBloc>().add(PersonalInfoOfAnotherUserFetched(id: accountId.toString()));
-      context.read<FriendBloc>().add(FriendsOfAnotherUserFetched(id: accountId.toString()));
-    }
-    print("#!#3Bắt đầu render UI");
+    fetchData(context);
+
     return Scaffold(
       appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -102,123 +92,169 @@ class _PersonalScreenState extends State<PersonalScreen> {
             },
           ),
           title: UserNameHeader(),
-          centerTitle: true),
-      body: RefreshIndicator(
-        color: Colors.blue,
-        backgroundColor: Colors.white,
-        onRefresh: () async {
-          context
-              .read<PersonalPostBloc>()
-              .add(PersonalPostReload(accountId: userId));
-          context
-              .read<PersonalPostBloc>()
-              .add(PersonalPostFetched(accountId: userId));
-          return Future<void>.delayed(const Duration(seconds: 2));
-        },
-        child: CustomScrollView(
-          slivers: [
-            SliverToBoxAdapter(
-              child: Stack(
+          centerTitle: true
+      ),
+      body: BlocBuilder<PersonalInfoBloc, PersonalInfoState>(
+          builder: (context, state) {
+            switch (state.personalInfoStatus) {
+              case PersonalInfoStatus.initial:
+                return Center(child: CircularProgressIndicator());
+              case PersonalInfoStatus.loading:
+                return Center(child: CircularProgressIndicator());
+              case PersonalInfoStatus.failure:
+                return Center(child: Text("Không thể truy cập người dùng này"));
+              case PersonalInfoStatus.success:
+                return getSuccessUserInfo(context);
+              default:
+                return getSuccessUserInfo(context);
+            }
+        }
+      ),
+    );
+  }
+
+  void fetchData(BuildContext context) {
+    print("#!#0PersonalScreen: Rebuild");
+    context.read<PersonalPostBloc>().add(PersonalPostReload(accountId: userId));
+    context.read<PersonalPostBloc>().add(PersonalPostFetched(accountId: userId));
+    if (isMe) {
+      print("#!#1Bắt đầu gọi bất đồng bộ");
+      context.read<PersonalInfoBloc>().add(PersonalInfoFetched());
+      print("#!#2Chưa thực hiện xong PersonalInfoFetched() mà gọi tiếp FriendFetched()");
+      context.read<FriendBloc>().add(FriendsFetched());
+    } else {
+      context.read<PersonalInfoBloc>().add(PersonalInfoOfAnotherUserFetched(id: accountId.toString()));
+      context.read<FriendBloc>().add(FriendsOfAnotherUserFetched(id: accountId.toString()));
+    }
+    print("#!#3Bắt đầu render UI");
+  }
+
+  RefreshIndicator getSuccessUserInfo(BuildContext context) {
+    return RefreshIndicator(
+      color: Colors.pink,
+      onRefresh: () async {
+        context
+            .read<PersonalPostBloc>()
+            .add(PersonalPostReload(accountId: userId));
+        context
+            .read<PersonalPostBloc>()
+            .add(PersonalPostFetched(accountId: userId));
+        return Future<void>.delayed(const Duration(seconds: 2));
+      },
+      child: CustomScrollView(
+        slivers: [
+          SliverToBoxAdapter(
+            child: Stack(
+              children: [
+                Container(
+                  width: double.infinity,
+                  height: 250.0,
+                  color: Colors.white,
+                ),
+                CoverImage(),
+                Positioned(top: 160, left: 360, child: CameraButton()),
+                Positioned(top: 80.0, left: 20.0, child: Avatar()),
+                Positioned(top: 200, left: 135, child: CameraButton())
+              ],
+            ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 13.0, vertical: 8.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  UserName(),
+                  Description(),
+                  const SizedBox(height: 15.0),
+                  if (isMe) SizedBox(
                     width: double.infinity,
-                    height: 250.0,
-                    color: Colors.white,
+                    child: FilledButton.tonal(
+                      onPressed: () {
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
+                      },
+                      child: Text("Chỉnh sửa trang cá nhân"),
+                    ),
                   ),
-                  CoverImage(),
-                  Positioned(top: 160, left: 360, child: CameraButton()),
-                  Positioned(top: 80.0, left: 20.0, child: Avatar()),
-                  Positioned(top: 200, left: 135, child: CameraButton())
+                  if (!isMe) Row(
+                    children: [
+                      FilledButton.tonalIcon(
+                          onPressed: () {},
+                          icon: Icon(Icons.person_2),
+                          label: Text("Bạn bè")
+                      ),
+                      SizedBox(width: 8),
+                      FilledButton.tonalIcon(
+                          onPressed: () {},
+                          icon: Icon(Icons.send),
+                          label: Text("Nhắn tin")
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 5.0),
+                  const Divider(height: 10.0, thickness: 2),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    children: [
+                      const Icon(Icons.cases_sharp),
+                      const SizedBox(width: 10.0),
+                      LocationText()
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  const Divider(height: 10.0, thickness: 2),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    children: [
+                      Expanded(
+                          child: Text("Bạn bè", style: Theme.of(context).textTheme.titleLarge)
+                      ),
+                      if (isMe) TextButton(
+                          onPressed: () {
+                            Navigator.of(context).pushNamed(Routes.friend_screen);
+                          },
+                          child: Wrap(
+                            children: [
+                              Text("Xem thêm"),
+                              SizedBox(width: 4), // Khoảng cách giữa label và icon
+                              Icon(Icons.navigate_next),
+                            ],
+                          ),
+                      )
+                    ],
+                  ),
+                  NumberOfFriend(),
+                  const SizedBox(
+                    height: 8.0,
+                  ),
+                  ListFriendCompact(fetchData: () => fetchData(context)),
+                  SizedBox(height: 6),
+                  const Divider(height: 10.0, thickness: 2),
                 ],
               ),
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 13.0, vertical: 8.0),
-                color: Colors.white,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    UserName(),
-                    Description(),
-                    const SizedBox(height: 15.0),
-                    if (isMe) SizedBox(
-                      width: double.infinity,
-                      child: FilledButton.tonal(
-                        onPressed: () {
-                          Navigator.push(context, MaterialPageRoute(builder: (context) => EditProfileScreen()));
-                        },
-                        child: Text("Chỉnh sửa trang cá nhân"),
-                      ),
-                    ),
-                    if (!isMe) Row(
-                      children: [
-                        FilledButton.tonalIcon(
-                            onPressed: () {},
-                            icon: Icon(Icons.person_2),
-                            label: Text("Bạn bè")
-                        ),
-                        SizedBox(width: 8),
-                        FilledButton.tonalIcon(
-                            onPressed: () {},
-                            icon: Icon(Icons.send),
-                            label: Text("Nhắn tin")
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 5.0),
-                    const Divider(height: 10.0, thickness: 2),
-                    const SizedBox(height: 10.0),
-                    Row(
-                      children: [
-                        const Icon(Icons.cases_sharp),
-                        const SizedBox(width: 10.0),
-                        LocationText()
-                      ],
-                    ),
-                    const SizedBox(height: 10.0),
-                    const Divider(height: 10.0, thickness: 2),
-                    const SizedBox(height: 10.0),
-                    Row(
-                      children: const [
-                        Expanded(
-                            child: Text(
-                          "Bạn bè",
-                          style: TextStyle(
-                              fontSize: 22.0, fontWeight: FontWeight.bold),
-                        )),
-                        Text("Xem thêm>>"),
-                      ],
-                    ),
-                    NumberOfFriend(),
-                    const SizedBox(
-                      height: 8.0,
-                    ),
-                    Container(
-                        height: 150.0,
-                        child: ListFriendCompact()
-                    )
-                  ],
-                ),
-              ),
+          ),
+          SliverToBoxAdapter(
+            child: Container(
+              padding: EdgeInsets.symmetric(horizontal: 13),
+              child: isMe ? Text(
+                "Bài viết của bạn", style: Theme.of(context).textTheme.titleLarge,
+              ) : Text("Bài viết", style: Theme.of(context).textTheme.titleLarge)
             ),
-            SliverToBoxAdapter(
-              child: Container(
-                color: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 13),
-                child: isMe ? Text(
-                  "Bài viết của bạn", style: Theme.of(context).textTheme.titleLarge,
-                ) : Text("Bài viết", style: Theme.of(context).textTheme.titleLarge)
-              ),
-            ),
-            if(isMe) SliverToBoxAdapter(
-                child: CreatePostContainer()
-            ),
-            PersonalPostList()
-          ],
-          controller: _scrollController,
-        ),
+          ),
+          if(isMe) SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
+                child: CreatePostContainer(),
+              )
+          ),
+          PersonalPostList(),
+          SliverToBoxAdapter(
+              child: SizedBox(height: 8)
+          )
+        ],
+        controller: _scrollController,
       ),
     );
   }
@@ -229,14 +265,39 @@ class UserNameHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<PersonalInfoBloc, PersonalInfoState>(
         builder: (context, state) {
-      final userInfo = state.userInfo;
-      return Text(userInfo.name,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-              color: Colors.black,
-              fontWeight: FontWeight.bold,
-              fontSize: 18.0));
-    });
+          switch (state.personalInfoStatus) {
+            case PersonalInfoStatus.initial:
+              return Center(child: CircularProgressIndicator());
+            case PersonalInfoStatus.loading:
+              return Center(child: CircularProgressIndicator());
+            case PersonalInfoStatus.failure:
+              return Center(child: Text("Không thể truy cập"));
+            case PersonalInfoStatus.success: {
+              final userInfo = state.userInfo;
+              return Text(
+                  userInfo.name,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0
+                  )
+              );
+            }
+            default: {
+              return Text(
+                  "UserName",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18.0
+                  )
+              );
+            }
+          }
+        }
+    );
   }
 }
 
@@ -265,7 +326,6 @@ class Description extends StatelessWidget {
         });
   }
 }
-
 
 class Avatar extends StatelessWidget {
   @override
@@ -353,28 +413,57 @@ class NumberOfFriend extends StatelessWidget {
 }
 
 class ListFriendCompact extends StatelessWidget {
+  void Function()? fetchData;
+  ListFriendCompact({this.fetchData});
+
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<FriendBloc, FriendState>(builder: (context, state) {
+    return BlocBuilder<FriendBloc, FriendState>(
+      builder: (context, state) {
       final friendList = state.friendList;
-      return GridView.builder(
-        itemCount: 3,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 4,
-            childAspectRatio: MediaQuery.of(context).size.width /
-                (MediaQuery.of(context).size.height / 1.5)),
-        itemBuilder: (context, index) {
-          return index >= friendList.friends.length
-              ? SizedBox()
-              : GridTile(
-                  child: Friend(
-                    friendName: friendList.friends[index].name,
-                    imageUrl: friendList.friends[index].avatar,
-                  ),
-                );
-        },
-      );
+      if (state.friendList.friends.isEmpty) {
+        return Container(
+          padding: EdgeInsets.symmetric(vertical: 12),
+          child: Text("Hiện chưa có bạn bè nào"),
+        );
+      } else {
+        return Container(
+          height: 150.0,
+          child: GridView.builder(
+            itemCount: 3,
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 3,
+                crossAxisSpacing: 4,
+                childAspectRatio: MediaQuery.of(context).size.width /
+                    (MediaQuery.of(context).size.height / 1.5)
+            ),
+            itemBuilder: (context, index) {
+              return index >= friendList.friends.length
+                  ? SizedBox()
+                  : GridTile(
+                      child: InkWell(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(Routes.personal_screen, arguments: friendList.friends[index].friend)
+                            .then((value) {
+                              // Navigator.pop(context);
+                              // Navigator.of(context).pushNamed(Routes.personal_screen);
+                              if (fetchData != null) {
+                                fetchData?.call();
+                              }
+                            }
+                          );
+                        },
+                        child: FriendTile(
+                          friendName: friendList.friends[index].name,
+                          imageUrl: friendList.friends[index].avatar,
+                        ),
+                      ),
+              );
+            },
+          ),
+        );
+      }
+
     });
   }
 }
@@ -403,7 +492,7 @@ class _PersonalPostListState extends State<PersonalPostList> {
               child: Center(child: CircularProgressIndicator()));
         case PersonalPostStatus.failure:
           return const SliverToBoxAdapter(
-              child: Center(child: Text('Failed to fetch posts')));
+              child: Center(child: Text('Không có bài viết nào')));
         case PersonalPostStatus.success:
           return SliverList(
               delegate: SliverChildBuilderDelegate((context, index) {

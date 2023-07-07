@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../models/models.dart';
 
-enum ListVideoStatus {initial, loading, success, failure }
+enum ListVideoStatus {initial, loading, success, failure}
 
 class ListVideoState extends Equatable{
   final ListVideoStatus status;

@@ -8,39 +8,32 @@ class SignupBloc extends Bloc<SignupEvent, SignupState> {
   late final SignupRepository signupRepository;
 
   SignupBloc({required this.signupRepository}) : super(SignupState.initial()) {
-    on<Signup>(
-      _onSignup
-    );
-    on<afterSignUp>(
-        _onAfterSignup
-    );
+    on<Signup>(_onSignup);
+    on<AfterSignUp>(_onAfterSignup);
   }
 
-  Future<void> _onAfterSignup(afterSignUp event, Emitter<SignupState> emit) async {
+  Future<void> _onAfterSignup(AfterSignUp event, Emitter<SignupState> emit) async {
     emit (state.copyWith(status: SignupStatus.initial));
   }
-  Future<void> _onSignup(
-      Signup event,
-      Emitter<SignupState> emit) async {
 
+  Future<void> _onSignup(Signup event, Emitter<SignupState> emit) async {
     final phone = event.phone;
     final password = event.password;
     try {
       final signUpRes = await signupRepository.signup(phoneNumber: phone, password: password);
-      if( signUpRes.code == "1000")
-        emit(state.copyWith(
-          status: SignupStatus.success));
-      else if( signUpRes.code == "9996")
-        emit(state.copyWith(
-            status: SignupStatus.userExist));
-      else
-        emit(state.copyWith(
-            status: SignupStatus.failure));
+      if( signUpRes.code == "1000") {
+        emit(state.copyWith(status: SignupStatus.success));
+      } else if( signUpRes.code == "9996") {
+        emit(state.copyWith(status: SignupStatus.userExist));
+      } else {
+        emit(state.copyWith(status: SignupStatus.failure));
+      }
     } catch (error) {
       print('#SIGN UP catch: $error');
       emit(state.copyWith(status: SignupStatus.failure));
     }
   }
+
   @override
   void onError(Object error, StackTrace stackTrace) {
     super.onError(error, stackTrace);

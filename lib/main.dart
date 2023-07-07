@@ -1,39 +1,37 @@
-import 'package:cosmetic_frontend/blocs/brand/brand_detail_bloc.dart';
-import 'package:cosmetic_frontend/blocs/my_storage_product/my_storage_product_bloc.dart';
-import 'package:cosmetic_frontend/blocs/product_bookmark/product_bookmark_bloc.dart';
-import 'package:cosmetic_frontend/blocs/product_characteristic/product_characteristic_bloc.dart';
-import 'package:cosmetic_frontend/blocs/reply/reply_bloc.dart';
-import 'package:cosmetic_frontend/blocs/retrieve_review/retrieve_review_bloc.dart';
-import 'package:cosmetic_frontend/blocs/review/review_bloc.dart';
-import 'package:cosmetic_frontend/blocs/review_detail/review_detail_bloc.dart';
-import 'package:cosmetic_frontend/models/models.dart';
 import 'package:cosmetic_frontend/screens/onboard/onboard_screen.dart';
-import 'package:cosmetic_frontend/screens/review/create_review_screen.dart';
 import 'package:cosmetic_frontend/screens/review/review_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
-import '../blocs/auth/auth_bloc.dart';
-import '../blocs/auth/auth_event.dart';
-import './blocs/auth/auth_state.dart';
-import './blocs/comment/comment_bloc.dart';
-import './blocs/list_video/list_video_bloc.dart';
-import './blocs/personal_info/personal_info_bloc.dart';
-import './blocs/personal_post/personal_post_bloc.dart';
-import './blocs/post/post_bloc.dart';
-import './blocs/post_detail/post_detail_bloc.dart';
-import './blocs/search/search_bloc.dart';
-import './blocs/signup/signup_bloc.dart';
-import './blocs/friend/friend_bloc.dart';
-import './blocs/unknown_people/unknown_people_bloc.dart';
-import './blocs/friend_request_received/friend_request_received_bloc.dart';
-import './blocs/event/event_bloc.dart';
-import './blocs/event_detail/event_detail_bloc.dart';
-import './blocs/product/product_bloc.dart';
-import './blocs/product_carousel/product_carousel_bloc.dart';
-
+import 'blocs/auth/auth_bloc.dart';
+import 'blocs/auth/auth_event.dart';
+import 'blocs/auth/auth_state.dart';
+import 'blocs/comment/comment_bloc.dart';
+import 'blocs/list_video/list_video_bloc.dart';
+import 'blocs/personal_info/personal_info_bloc.dart';
+import 'blocs/personal_post/personal_post_bloc.dart';
+import 'blocs/post/post_bloc.dart';
+import 'blocs/post_detail/post_detail_bloc.dart';
+import 'blocs/search/search_bloc.dart';
+import 'blocs/signup/signup_bloc.dart';
+import 'blocs/friend/friend_bloc.dart';
+import 'blocs/unknown_people/unknown_people_bloc.dart';
+import 'blocs/friend_request_received/friend_request_received_bloc.dart';
+import 'blocs/event/event_bloc.dart';
+import 'blocs/event_detail/event_detail_bloc.dart';
+import 'blocs/product/product_bloc.dart';
+import 'blocs/product_carousel/product_carousel_bloc.dart';
+import 'blocs/block/block_bloc.dart';
+import 'blocs/brand_detail/brand_detail_bloc.dart';
+import 'blocs/my_storage_product/my_storage_product_bloc.dart';
+import 'blocs/product_bookmark/product_bookmark_bloc.dart';
+import 'blocs/product_characteristic/product_characteristic_bloc.dart';
+import 'blocs/reply/reply_bloc.dart';
+import 'blocs/retrieve_review/retrieve_review_bloc.dart';
+import 'blocs/review/review_bloc.dart';
+import 'blocs/review_detail/review_detail_bloc.dart';
 import 'blocs/followed_brand/followed_brand_bloc.dart';
 import 'blocs/product_detail/product_detail_bloc.dart';
 import 'screens/nav_screen.dart';
@@ -177,6 +175,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<FollowedBrandBloc>(
           lazy: false,
           create: (_) => FollowedBrandBloc()
+        ),
+        BlocProvider<BlockBloc>(
+          lazy: false,
+          create: (_) => BlockBloc(),
         )
       ],
       child: MaterialApp(

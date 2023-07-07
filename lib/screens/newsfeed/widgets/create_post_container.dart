@@ -14,8 +14,13 @@ class CreatePostContainer extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 8),
-      color: Colors.white,
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Colors.pinkAccent,
+          width: 1.0,
+          style: BorderStyle.solid,
+        ),
+      ),
       // height: 200,
       child: Column(
         children: [
@@ -35,7 +40,7 @@ class CreatePostContainer extends StatelessWidget {
               TextButton. icon(
                   onPressed: () {print("image");},
                   icon: Icon(Icons.photo_library, color: Colors.green),
-                  label: Text('Photos'),
+                  label: Text('Ảnh'),
               )
             ]
           )

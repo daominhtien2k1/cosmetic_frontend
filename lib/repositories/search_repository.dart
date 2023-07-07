@@ -208,4 +208,24 @@ class SearchRepository {
     }
   }
 
+  Future<List<TopSearch>> fetchTopSearches() async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/search/get_list_top_searches');
+
+    var token = await Token.getToken();
+
+    final response = await http.get(url, headers: {
+      HttpHeaders.authorizationHeader: token,
+    });
+
+    if (response.statusCode == 200) {
+      final body = json.decode(response.body) as Map<String, dynamic>;
+      final searchData = body["data"] as List<dynamic>?;
+      List<TopSearch> topSearches = searchData != null ? searchData.map((ts) => TopSearch.fromJson(ts)).toList() : <TopSearch>[];
+      return topSearches;
+    } else if (response.statusCode == 400) {
+      return <TopSearch>[];
+    } else {
+      return <TopSearch>[];
+    }
+  }
 }

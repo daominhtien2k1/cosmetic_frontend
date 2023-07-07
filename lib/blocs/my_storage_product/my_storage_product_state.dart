@@ -1,6 +1,6 @@
 import '../../models/models.dart';
 
-enum StorageProductStatus { initial, loading, success, failure }
+enum StorageProductStatus {initial, loading, success, failure}
 
 class StorageProductState {
   StorageProductStatus storageProductStatus;

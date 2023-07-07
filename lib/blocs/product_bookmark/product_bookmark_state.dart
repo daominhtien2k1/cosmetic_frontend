@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 
 import '../../models/models.dart';
 
-enum ProductBookmarkStatus { initial, loading, success, failure }
+enum ProductBookmarkStatus {initial, loading, success, failure}
 
 // không rebuild lại list khi extends Equatable (hình như vậy)
 class ProductBookmarkState extends Equatable {

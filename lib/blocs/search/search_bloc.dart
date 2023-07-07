@@ -22,6 +22,8 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     on<StatusFriendInSearchAccountUpdated>(_onStatusFriendInSearchAccountUpdated);
     on<IsFollowedInSearchBrandUpdated>(_onIsFollowedInSearchBrandUpdated);
+
+    on<TopSearchFetched>(_onTopSearchFetched);
   }
 
   void _startCancelFuture() {
@@ -140,6 +142,15 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     } catch (err) {
       emit(state.copyWith(searchStatus: SearchStatus.failure));
+    }
+  }
+
+  Future<void> _onTopSearchFetched(TopSearchFetched event, Emitter<SearchState> emit) async {
+    try {
+      final topSearches = await searchRepository.fetchTopSearches();
+      emit(state.copyWith(searchStatus: SearchStatus.success, topSearches: topSearches));
+    } catch (_) {
+      emit(state.copyWith());
     }
   }
 

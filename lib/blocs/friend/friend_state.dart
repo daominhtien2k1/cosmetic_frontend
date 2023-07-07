@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../models/models.dart';
 
-enum FriendStatus {initial, loading, success, failure }
+enum FriendStatus {initial, loading, success, failure}
 
 class FriendState extends Equatable {
   final FriendList friendList;

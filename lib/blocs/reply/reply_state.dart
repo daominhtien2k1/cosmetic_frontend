@@ -1,8 +1,8 @@
 import '../../models/models.dart';
 
-enum ReplyStatus {initial, loading, success, failure }
+enum ReplyStatus {initial, loading, success, failure}
 
-class ReplyState{
+class ReplyState {
   ReplyStatus replyStatus;
   List<Reply>? replies;
 

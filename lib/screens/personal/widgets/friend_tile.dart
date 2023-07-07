@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 
-class Friend extends StatelessWidget {
+class FriendTile extends StatelessWidget {
   final String friendName;
   final String imageUrl;
 
-  const Friend({Key? key, required this.friendName, required this.imageUrl})
+  const FriendTile({Key? key, required this.friendName, required this.imageUrl})
       : super(key: key);
 
   @override
@@ -28,18 +27,18 @@ class Friend extends StatelessWidget {
         ],
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ClipRRect(
-              borderRadius: BorderRadius.circular(12.0),
-              child: Image(
-                  image: CachedNetworkImageProvider(imageUrl),
-                  fit: BoxFit.fitWidth
-                ),
-          ),
           Padding(
-              padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: ClipRRect(
+                borderRadius: BorderRadius.circular(12.0),
+                child: Image.network(imageUrl, width: 84, height: 84)
+            ),
+          ),
+          SizedBox(height: 8),
+          Padding(
+              padding: const EdgeInsets.all(4.0),
               child: Text(friendName,
                   textAlign: TextAlign.center,
                   style: const TextStyle(fontWeight: FontWeight.bold)))

@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:cosmetic_frontend/screens/menu/sub_screens/skin_info_screen.dart';
+import 'package:cosmetic_frontend/screens/menu/sub_screens/menu_subscreens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -48,21 +48,21 @@ class ChangeProfileScreen extends StatelessWidget {
         context: context,
         builder: (context) {
           return GenderChoiceDialog(gender: gender);
-    }).then((newGender) {
+    }).then((newGender) { // trước đây là chuyển từ tiếng việt sang tiếng anh
       if (newGender != null) {
         final String newGenderText;
         switch (newGender) {
           case "Bí mật":
-            newGenderText = "Secret";
+            newGenderText = "Bí mật";
             break;
           case "Nam":
-            newGenderText = "Male";
+            newGenderText = "Nam";
             break;
           case "Nữ":
-            newGenderText = "Female";
+            newGenderText = "Nữ";
             break;
           default:
-            newGenderText = "Secret";
+            newGenderText = "Bí mật";
             break;
         }
         BlocProvider.of<PersonalInfoBloc>(context).add(SetGenderUser(gender: newGenderText));
@@ -248,13 +248,13 @@ class ChangeProfileScreen extends StatelessWidget {
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           child: InkWell(
                             onTap: () {
-                              setGender(context, gender: userInfo.gender != "Secret" ? (userInfo.gender == "Male" ? "Nam" : "Nữ"): "Bí mật");
+                              setGender(context, gender: userInfo.gender);
                             },
                             child: Row(
                               children: [
                                 Text("Giới tính", style: Theme.of(context).textTheme.titleMedium),
                                 Spacer(),
-                                Text(userInfo.gender != "Secret" ? (userInfo.gender == "Male" ? "Nam" : "Nữ"): "Bí mật"),
+                                Text(userInfo.gender),
                                 Icon(Icons.navigate_next)
                               ],
                             ),

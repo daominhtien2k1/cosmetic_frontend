@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../models/models.dart';
 
-enum PersonalPostStatus {initial, loading, success, failure }
+enum PersonalPostStatus {initial, loading, success, failure}
 
 class PersonalPostState extends Equatable {
   PersonalPostState.initial(): status = PersonalPostStatus.initial, postList = PostList.initial(), hasReachedMax = false;

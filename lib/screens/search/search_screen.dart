@@ -32,6 +32,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchController = SearchController();
     // _searchFocusNode = FocusNode();
     BlocProvider.of<SearchBloc>(context).add(SavedSearchFetched());
+    BlocProvider.of<SearchBloc>(context).add(TopSearchFetched());
   }
 
   @override
@@ -54,15 +55,16 @@ class _SearchScreenState extends State<SearchScreen> {
       leading: const Icon(Icons.history),
       title: Text(s.keyword),
       trailing: IconButton(
-          icon: const Icon(Icons.call_missed),
-          onPressed: () {
-            controller.text = s.keyword;
-            // print(controller.selection.baseOffset);
+        icon: const Icon(Icons.call_missed),
+        onPressed: () {
+          controller.text = s.keyword;
+          // print(controller.selection.baseOffset);
 
-            controller.selection = TextSelection.collapsed(offset: controller.text.length);
-            // lạ quá, không tác dụng
-            // controller.selection = TextSelection.collapsed(offset: controller.selection.baseOffset);
-          }),
+          controller.selection = TextSelection.collapsed(offset: controller.text.length);
+          // lạ quá, không tác dụng
+          // controller.selection = TextSelection.collapsed(offset: controller.selection.baseOffset);
+        }
+      ),
       onTap: () {
         // controller.closeView(color.label);
         // handleSelection(color);
@@ -76,22 +78,21 @@ class _SearchScreenState extends State<SearchScreen> {
     final List<String> searchSuggestions = BlocProvider.of<SearchBloc>(context).state.searchSuggestions;
 
     return searchSuggestions.map((s) => ListTile(
-              leading: const Icon(Icons.pan_tool_alt_outlined),
-              title: Html(data: s),
-              trailing: IconButton(
-                  icon: const Icon(Icons.call_missed),
-                  onPressed: () {
-                    controller.text = removeHtmlTags(s);
-                    controller.selection =
-                        TextSelection.collapsed(offset: controller.text.length);
-
-                  }),
-              onTap: () {
-                // controller.closeView(filteredColor.label);
-                // controller.text = filteredColor.label;
-                // handleSelection(filteredColor);
-              },
-            ));
+      leading: const Icon(Icons.pan_tool_alt_outlined),
+      title: Html(data: s),
+      trailing: IconButton(
+          icon: const Icon(Icons.call_missed),
+          onPressed: () {
+            controller.text = removeHtmlTags(s);
+            controller.selection = TextSelection.collapsed(offset: controller.text.length);
+          }
+      ),
+      onTap: () {
+        // controller.closeView(filteredColor.label);
+        // controller.text = filteredColor.label;
+        // handleSelection(filteredColor);
+      },
+    ));
   }
 
   // void handleSelection(ColorItem color) {
@@ -120,21 +121,28 @@ class _SearchScreenState extends State<SearchScreen> {
           viewHintText: "Tìm kiếm sản phẩm, bài viết, đánh giá...",
           viewElevation: 1,
           viewTrailing: [
-            IconButton(onPressed: (){
-              _searchController.clear();
-            }, icon: Icon(Icons.close)),
-            IconButton(onPressed: (){
-              Navigator.of(context).push(MaterialPageRoute(
-                  builder: (_) => SearchResultScreen(),
-                settings: RouteSettings(
-                  name: Routes.search_result_screen,
-                  arguments: {
-                    "keyword": _searchController.text
-                  }
-                )
-              ));
-            }, icon: Icon(Icons.search))
-
+            IconButton(
+              onPressed: () {
+                _searchController.clear();
+              },
+              icon: Icon(Icons.close)
+            ),
+            IconButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) => SearchResultScreen(),
+                    settings: RouteSettings(
+                      name: Routes.search_result_screen,
+                      arguments: {
+                        "keyword": _searchController.text
+                      }
+                    )
+                  )
+                );
+              },
+              icon: Icon(Icons.search)
+            )
           ],
           suggestionsBuilder: (context, controller) {
             if (controller.text.isEmpty) {
@@ -184,6 +192,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       return Center(child: Text("Internet không khả dụng"));
                     case SearchStatus.success: {
                       final List<SavedSearch> savedSearches = state.savedSearches;
+                      if (savedSearches.isEmpty) {
+                        return Center(child: Text("Hiện chưa có dữ liệu"));
+                      } else {
                         return ListView.separated(
                             separatorBuilder: (context, index) {
                               return Divider(indent: 44);
@@ -199,7 +210,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                   title: Text(savedSearches[index].keyword),
                                   onTap: () {
                                     _searchController.openView();
-                                    _searchController.text = savedSearches[index].keyword;
+                                    _searchController.text =
+                                        savedSearches[index].keyword;
                                   },
                                   // selected: false,
                                   splashColor: Colors.pinkAccent,
@@ -217,6 +229,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               );
                             }
                         );
+                      }
                     }
                   }
 
@@ -226,33 +239,39 @@ class _SearchScreenState extends State<SearchScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 8),
                 child: Text("Tìm kiếm phổ biến", style: Theme.of(context).textTheme.titleMedium),
               ),
-              Wrap(
-                spacing: 8,
-                children: [
-                  FilledButton.tonal(
-                      onPressed: (){
-                        _searchController.openView();
-                      },
-                      child: Text("halio")
-                  ),
-                  FilledButton.tonal(
-                      onPressed: (){},
-                      child: Text("halio")
-                  ),
-                  FilledButton.tonal(
-                      onPressed: (){},
-                      child: Text("halio")
-                  ),
-                  FilledButton.tonal(
-                      onPressed: (){},
-                      child: Text("halio")
-                  ),
-                  FilledButton.tonal(
-                      onPressed: (){},
-                      child: Text("halio")
-                  )
-                ],
-              )
+              BlocBuilder<SearchBloc, SearchState>(
+                  builder: (context, state) {
+                    switch (state.searchStatus) {
+                      case SearchStatus.initial:
+                        return Center(child: Text("Hiện chưa có dữ liệu"));
+                      case SearchStatus.loading:
+                        return Center(child: Text("Đang tải dữ liệu"));
+                      case SearchStatus.failure:
+                        return Center(child: Text("Internet không khả dụng"));
+                      case SearchStatus.success: {
+                        final List<TopSearch> topSearches = state.topSearches;
+                        if (topSearches.isEmpty) {
+                          return Center(child: Text("Hiện chưa có dữ liệu"));
+                        } else {
+                          return Wrap(
+                            spacing: 6,
+                            children: topSearches.map((ts) {
+                              return FilledButton.tonal(
+                                onPressed: () {
+                                  _searchController.openView();
+                                  _searchController.text =
+                                      ts.keyword;
+                                },
+                                child: Text(ts.keyword)
+                              );
+                            }).toList()
+                          );
+                        }
+                      }
+                    }
+
+                  }
+              ),
             ],
           ),
         ),

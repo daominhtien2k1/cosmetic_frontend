@@ -1,6 +1,6 @@
 import '../../models/models.dart';
 
-enum FollowedBrandStatus { initial, loading, success, failure }
+enum FollowedBrandStatus {initial, loading, success, failure}
 
 class FollowedBrandState {
   FollowedBrandStatus followedBrandStatus;

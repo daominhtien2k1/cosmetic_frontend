@@ -1,6 +1,6 @@
-import 'package:cosmetic_frontend/blocs/brand/brand_detail_bloc.dart';
-import 'package:cosmetic_frontend/blocs/brand/brand_detail_event.dart';
-import 'package:cosmetic_frontend/blocs/brand/brand_detail_state.dart';
+import 'package:cosmetic_frontend/blocs/brand_detail/brand_detail_bloc.dart';
+import 'package:cosmetic_frontend/blocs/brand_detail/brand_detail_event.dart';
+import 'package:cosmetic_frontend/blocs/brand_detail/brand_detail_state.dart';
 import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

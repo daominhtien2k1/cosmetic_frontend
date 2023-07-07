@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 
 import '../../models/list_unknown_people_model.dart';
 
-enum UnknownPeopleStatus {initial, loading, success, failure }
+enum UnknownPeopleStatus {initial, loading, success, failure}
 
 class UnknownPeopleState extends Equatable {
   final UnknownPeopleStatus status;

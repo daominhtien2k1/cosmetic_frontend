@@ -1,6 +1,6 @@
 import 'package:cosmetic_frontend/models/models.dart';
 
-enum ProductDetailStatus {initial, loading, success, failure }
+enum ProductDetailStatus {initial, loading, success, failure}
 
 class ProductDetailState {
   ProductDetailStatus productDetailStatus;

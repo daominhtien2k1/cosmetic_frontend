@@ -1,3 +1,6 @@
+import 'package:cosmetic_frontend/blocs/personal_info/personal_info_bloc.dart';
+import 'package:cosmetic_frontend/blocs/personal_info/personal_info_event.dart';
+import 'package:cosmetic_frontend/routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -42,17 +45,17 @@ class _UnknowPeopleScreenContent extends State<UnknowPeopleScreenContent> {
           ),
           SliverToBoxAdapter(
             child: Container(
-                color: Colors.white,
                 child: Padding(
                     padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.center,
-                      children: const [
-                        Text("Danh sách người bạn có thể biết:",
-                            style: TextStyle(fontSize: 20)),
+                      children: [
+                        Text("Danh sách người bạn có thể biết:", style: Theme.of(context).textTheme.titleLarge),
                       ],
-                    ))),
+                    )
+                )
+            ),
           ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
@@ -75,13 +78,23 @@ class UnknownPeopleList extends StatelessWidget {
           case UnknownPeopleStatus.loading:
             return const SliverToBoxAdapter(child: Center(child: CircularProgressIndicator()));
           case UnknownPeopleStatus.failure:
-            return SliverToBoxAdapter(child: Text("Failed"));
+            return SliverToBoxAdapter(child: Text("Không có kết nối mạng"));
           case UnknownPeopleStatus.success: {
               final unknownPeopleList = state.unknownPeopleList;
               return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      return UnknownPersonContainer(unknownPerson: unknownPeopleList.unknownPeople[index]);
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(Routes.personal_screen, arguments: unknownPeopleList.unknownPeople[index].id)
+                              .then((value) {
+                            // để an toàn thì cứ fetch lại PersonalInfo xem
+                            BlocProvider.of<PersonalInfoBloc>(context).add(PersonalInfoFetched());
+                            BlocProvider.of<UnknownPeopleBloc>(context).add(ListUnknownPeopleFetched());
+                          });
+                        },
+                        child: UnknownPersonContainer(unknownPerson: unknownPeopleList.unknownPeople[index])
+                      );
                     },
                     childCount: unknownPeopleList.unknownPeople.length
                   )

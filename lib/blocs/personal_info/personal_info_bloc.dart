@@ -1,7 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:bloc_concurrency/bloc_concurrency.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:stream_transform/stream_transform.dart';
 
 import '../../repositories/repositories.dart';
 import 'personal_info_event.dart';
@@ -29,9 +27,9 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
   Future<void> _onPersonalInfoFetched(PersonalInfoFetched event, Emitter<PersonalInfoState> emit) async {
     try {
       final userInfoData = await userInfoRepository.fetchPersonalInfo();
-      emit(PersonalInfoState(userInfo: userInfoData));
+      emit(PersonalInfoState(personalInfoStatus: PersonalInfoStatus.success, userInfo: userInfoData));
     } catch (_) {
-      emit(state.copyWith());
+      emit(state.copyWith(personalInfoStatus: PersonalInfoStatus.failure));
     }
   }
 
@@ -39,9 +37,15 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     try {
       final String id = event.id;
       final userInfoData = await userInfoRepository.fetchPersonalInfoOfAnotherUser(id);
-      emit(PersonalInfoState(userInfo: userInfoData));
+      if (userInfoData != null) {
+        emit(PersonalInfoState(personalInfoStatus: PersonalInfoStatus.success, userInfo: userInfoData));
+      } else {
+        // hình như do Equatable nên không emit cái mới
+        emit(state.copyWith(personalInfoStatus: PersonalInfoStatus.failure));
+      }
+
     } catch (_) {
-      emit(state.copyWith());
+      emit(state.copyWith(personalInfoStatus: PersonalInfoStatus.failure));
     }
   }
 
@@ -121,9 +125,10 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
   //   super.onEvent(event);
   // }
   //
-  // @override
-  // void onChange(Change<PersonalInfoState> change) {
-  //   super.onChange(change);
-  // }
+  @override
+  void onChange(Change<PersonalInfoState> change) {
+    print("#Block: ${change.currentState.personalInfoStatus}");
+    super.onChange(change);
+  }
 
 }

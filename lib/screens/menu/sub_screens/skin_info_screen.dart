@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cosmetic_frontend/blocs/personal_info/personal_info_event.dart';
 import 'package:cosmetic_frontend/models/models.dart';
-import 'package:cosmetic_frontend/screens/menu/sub_screens/test_baumann_screen.dart';
+import 'package:cosmetic_frontend/screens/menu/sub_screens/menu_subscreens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

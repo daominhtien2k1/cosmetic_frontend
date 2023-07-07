@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-enum SignupStatus {initial, success, failure , userExist }
+enum SignupStatus {initial, success, failure, userExist}
 
 class SignupState extends Equatable {
   SignupState.initial(): status = SignupStatus.initial;

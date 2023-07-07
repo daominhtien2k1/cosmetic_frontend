@@ -1,6 +1,6 @@
 import 'package:cosmetic_frontend/models/models.dart';
 
-enum RetrieveReviewStatus {initial, loading, success, failure }
+enum RetrieveReviewStatus {initial, loading, success, failure}
 
 class RetrieveReviewState {
   RetrieveReviewStatus retrieveReviewStatus;

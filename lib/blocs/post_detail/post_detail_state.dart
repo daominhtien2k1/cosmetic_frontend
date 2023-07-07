@@ -1,6 +1,6 @@
 import '../../models/models.dart';
 
-enum PostDetailStatus {initial, loading, success, failure }
+enum PostDetailStatus {initial, loading, success, failure}
 
 class PostDetailState{
   PostDetailStatus postDetailStatus;

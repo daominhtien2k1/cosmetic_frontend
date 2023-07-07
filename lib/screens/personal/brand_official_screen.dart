@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../blocs/brand/brand_detail_bloc.dart';
-import '../../blocs/brand/brand_detail_event.dart';
-import '../../blocs/brand/brand_detail_state.dart';
+import '../../blocs/brand_detail/brand_detail_bloc.dart';
+import '../../blocs/brand_detail/brand_detail_event.dart';
+import '../../blocs/brand_detail/brand_detail_state.dart';
 import '../../blocs/friend/friend_bloc.dart';
 import '../../blocs/friend/friend_event.dart';
 import '../../blocs/friend/friend_state.dart';
@@ -338,7 +338,7 @@ class _ListFriendCompact extends StatelessWidget {
           return index >= friendList.friends.length
               ? SizedBox()
               : GridTile(
-            child: Friend(
+            child: FriendTile(
               friendName: friendList.friends[index].name,
               imageUrl: friendList.friends[index].avatar,
             ),
