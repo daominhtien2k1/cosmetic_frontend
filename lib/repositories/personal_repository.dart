@@ -150,4 +150,32 @@ class UserInfoRepository {
         },
         body: jsonEncode(<String, dynamic>{'point': point}));
   }
+
+  Future<String?> getRelationshipWithPerson(String personId) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/get_relationship_with_person', {
+      'person_id': personId,
+    });
+
+    var token = await Token.getToken();
+
+    final response = await http.get(url, headers: <String, String>{
+      HttpHeaders.authorizationHeader: token,
+      'Content-Type': 'application/json; charset=UTF-8',
+    });
+
+    switch (response.statusCode) {
+      case 200: {
+        final body = json.decode(response.body) as Map<String, dynamic>;
+        final relationship = body["data"]["relationship"];
+        return relationship;
+      }
+      case 400:
+        return null;
+      case 401:
+        return null;
+      default:
+        throw Exception('Error fetch relationship');
+    }
+  }
+
 }

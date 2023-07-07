@@ -387,7 +387,7 @@ class AccountSearchListTile extends StatelessWidget {
           showDialog<String>(
             context: context,
             builder: (BuildContext context) => AlertDialog(
-              title: const Text('Xóa lời mời đã nhận?'),
+              title: const Text('Phản hồi lời mời đã nhận?'),
               content: const Text('Thao tác này không thể hoàn tác'),
               actions: <Widget>[
                 TextButton(
@@ -395,8 +395,8 @@ class AccountSearchListTile extends StatelessWidget {
                   child: const Text('Xóa'),
                 ),
                 TextButton(
-                  onPressed: () => Navigator.pop(context, 'Xác nhận'),
-                  child: const Text('Xác nhận'),
+                  onPressed: () => Navigator.pop(context, 'Chấp nhận'),
+                  child: const Text('Chấp nhận'),
                 ),
               ],
             ),
@@ -406,7 +406,7 @@ class AccountSearchListTile extends StatelessWidget {
               //   statusFriend = "Unknown";
               // });
               BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Unknown"));
-            } else if (value == "Xác nhận") {
+            } else if (value == "Chấp nhận") {
               // setState(() {
               //   statusFriend = "Friend";
               // });

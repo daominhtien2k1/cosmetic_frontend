@@ -125,6 +125,8 @@ class _PersonalScreenState extends State<PersonalScreen> {
     } else {
       context.read<PersonalInfoBloc>().add(PersonalInfoOfAnotherUserFetched(id: accountId.toString()));
       context.read<FriendBloc>().add(FriendsOfAnotherUserFetched(id: accountId.toString()));
+
+      BlocProvider.of<PersonalInfoBloc>(context).add(RelationshipWithPersonFetched(personId: accountId.toString()));
     }
     print("#!#3Bắt đầu render UI");
   }
@@ -177,21 +179,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                       child: Text("Chỉnh sửa trang cá nhân"),
                     ),
                   ),
-                  if (!isMe) Row(
-                    children: [
-                      FilledButton.tonalIcon(
-                          onPressed: () {},
-                          icon: Icon(Icons.person_2),
-                          label: Text("Bạn bè")
-                      ),
-                      SizedBox(width: 8),
-                      FilledButton.tonalIcon(
-                          onPressed: () {},
-                          icon: Icon(Icons.send),
-                          label: Text("Nhắn tin")
-                      )
-                    ],
-                  ),
+                  if (!isMe) buildRelationshipContainer(personId: accountId.toString()),
                   const SizedBox(height: 5.0),
                   const Divider(height: 10.0, thickness: 2),
                   const SizedBox(height: 10.0),
@@ -257,6 +245,147 @@ class _PersonalScreenState extends State<PersonalScreen> {
         controller: _scrollController,
       ),
     );
+  }
+
+  Widget buildRelationshipContainer({required String personId}) {
+    return Builder(
+      builder: (context) {
+        return BlocBuilder<PersonalInfoBloc, PersonalInfoState>(
+            builder: (context, state) {
+            final relationship = state.relationship;
+            return Row(
+              children: [
+                buildStatusFriendButton(context, relationship: relationship ?? "Unknown", personId: personId),
+                SizedBox(width: 8),
+                FilledButton.tonalIcon(
+                    onPressed: () {},
+                    icon: Icon(Icons.send),
+                    label: Text("Nhắn tin")
+                ),
+                SizedBox(width: 8),
+                FilledButton.tonalIcon(
+                    onPressed: () {
+                      showDialog<String>(
+                        context: context,
+                        builder: (BuildContext context) => AlertDialog(
+                          title: const Text('Chặn người dùng này?'),
+                          content: const Text('Thao tác này không thể hoàn tác'),
+                          actions: <Widget>[
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Hủy'),
+                              child: const Text('Hủy'),
+                            ),
+                            TextButton(
+                              onPressed: () => Navigator.pop(context, 'Chặn'),
+                              child: const Text('Chặn'),
+                            ),
+                          ],
+                        ),
+                      ).then((value) {
+                        if (value == "Hủy") {
+
+                        } else if (value == "Chặn") {
+                          // BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Friend"));
+                        }
+                      });
+                    },
+                    icon: Icon(Icons.block),
+                    label: Text("Chặn")
+                )
+              ],
+            );
+          }
+        );
+      }
+    );
+  }
+
+  // Ở đây không có chặn
+  Widget buildStatusFriendButton(BuildContext context, {String relationship = "Unknown", required String personId}) {
+    if (relationship == "Me" || relationship == "Block") {
+      return SizedBox();
+    } else if (relationship == "Unknown") {
+      return OutlinedButton(
+        onPressed: () {
+         BlocProvider.of<PersonalInfoBloc>(context).add(RelationshipWithPersonUpdate(newRelationship: "Sent friend request"));
+         BlocProvider.of<PersonalInfoBloc>(context).add(FriendRequestSend(receiverId: personId));
+        },
+        child: Text("Thêm bạn bè"),
+      );
+    } else if (relationship == "Sent friend request") {
+      return FilledButton.tonal(
+        style: FilledButton.styleFrom(backgroundColor: Colors.amber),
+        onPressed: () {
+          BlocProvider.of<PersonalInfoBloc>(context).add(RelationshipWithPersonUpdate(newRelationship: "Unknown"));
+        },
+        child: Text("Hủy lời mời"),
+      );
+    } else if (relationship == "Received friend request") {
+      return FilledButton.tonal(
+        style: FilledButton.styleFrom(backgroundColor: Colors.amber),
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Phản hồi lời mời đã nhận?'),
+              content: const Text('Thao tác này không thể hoàn tác'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Xóa'),
+                  child: const Text('Xóa'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Chấp nhận'),
+                  child: const Text('Chấp nhận'),
+                ),
+              ],
+            ),
+          ).then((value) {
+            if (value == "Xóa") {
+              BlocProvider.of<PersonalInfoBloc>(context).add(RelationshipWithPersonUpdate(newRelationship: "Unknown"));
+              BlocProvider.of<PersonalInfoBloc>(context).add(FriendRequestDeleted(senderId: personId));
+            } else if (value == "Chấp nhận") {
+              BlocProvider.of<PersonalInfoBloc>(context).add(RelationshipWithPersonUpdate(newRelationship: "Friend"));
+              BlocProvider.of<PersonalInfoBloc>(context).add(FriendAccept(personId: personId));
+            }
+          });
+        },
+        child: Text("Có lời mời"),
+      );
+    } else if(relationship == "Friend") {
+      return FilledButton.tonal(
+        onPressed: () {
+          showDialog<String>(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              title: const Text('Xác nhận hủy kết bạn?'),
+              content: const Text('Thao tác này không thể hoàn tác'),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Hủy'),
+                  child: const Text('Hủy'),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(context, 'Xác nhận'),
+                  child: const Text('Xác nhận'),
+                ),
+              ],
+            ),
+          ).then((value) {
+            if (value == "Hủy") {
+
+            } else if (value == "Xác nhận") {
+              BlocProvider.of<PersonalInfoBloc>(context).add(RelationshipWithPersonUpdate(newRelationship: "Unknown"));
+              BlocProvider.of<PersonalInfoBloc>(context).add(FriendDeleted(personId: personId));
+            }
+          });
+
+        },
+        child: Text("Bạn bè"),
+      );
+    } else {
+      return SizedBox();
+    }
   }
 }
 

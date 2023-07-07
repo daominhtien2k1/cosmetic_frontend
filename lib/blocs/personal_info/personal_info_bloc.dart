@@ -8,12 +8,18 @@ import 'personal_info_state.dart';
 
 class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
   late final UserInfoRepository userInfoRepository;
+  late final FriendRepository friendRepository;
+  late final FriendRequestReceivedRepository friendRequestReceivedRepository;
+  late final UnknownPeopleRepository unknownPeopleRepository;
 
   PersonalInfoBloc() : super(PersonalInfoState.initial()) {
     userInfoRepository = UserInfoRepository();
+    friendRepository = FriendRepository();
+    friendRequestReceivedRepository = FriendRequestReceivedRepository();
+    unknownPeopleRepository = UnknownPeopleRepository();
     on<PersonalInfoFetched>(_onPersonalInfoFetched);
 
-    on<PersonalInfoOfAnotherUserFetched>(_onPersonalInfoOfAnotherUserFerched);
+    on<PersonalInfoOfAnotherUserFetched>(_onPersonalInfoOfAnotherUserFetched);
 
     on<SetNameUser>(_onSetNameUser);
     on<SetGenderUser>(_onSetGenderUser);
@@ -22,6 +28,14 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     on<SetCountryUser>(_onSetCountryUser);
     on<SetSkinUser>(_onSetSkinUser);
     on<PointIncrease>(_onPointIncrease);
+
+    on<RelationshipWithPersonFetched>(_onRelationshipWithPersonFetched);
+    on<RelationshipWithPersonUpdate>(_onRelationshipWithPersonUpdate);
+
+    on<FriendDeleted>(_onFriendDeleted);
+    on<FriendAccept>(_onFriendAccept);
+    on<FriendRequestDeleted>(_onFriendRequestDeleted);
+    on<FriendRequestSend>(_onFriendRequestSend);
   }
 
   Future<void> _onPersonalInfoFetched(PersonalInfoFetched event, Emitter<PersonalInfoState> emit) async {
@@ -33,12 +47,13 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     }
   }
 
-  Future<void> _onPersonalInfoOfAnotherUserFerched(PersonalInfoOfAnotherUserFetched event, Emitter<PersonalInfoState> emit) async {
+  Future<void> _onPersonalInfoOfAnotherUserFetched(PersonalInfoOfAnotherUserFetched event, Emitter<PersonalInfoState> emit) async {
     try {
       final String id = event.id;
       final userInfoData = await userInfoRepository.fetchPersonalInfoOfAnotherUser(id);
       if (userInfoData != null) {
-        emit(PersonalInfoState(personalInfoStatus: PersonalInfoStatus.success, userInfo: userInfoData));
+        // emit(PersonalInfoState(personalInfoStatus: PersonalInfoStatus.success, userInfo: userInfoData));
+        emit(state.copyWith(personalInfoStatus: PersonalInfoStatus.success, userInfo: userInfoData));
       } else {
         // hình như do Equatable nên không emit cái mới
         emit(state.copyWith(personalInfoStatus: PersonalInfoStatus.failure));
@@ -105,7 +120,6 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     }
   }
 
-
   Future<void> _onPointIncrease(PointIncrease event, Emitter<PersonalInfoState> emit) async {
     try {
       final point = event.point;
@@ -115,6 +129,69 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
 
     }
   }
+
+  Future<void> _onRelationshipWithPersonFetched(RelationshipWithPersonFetched event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final String personId = event.personId;
+      final relationship = await userInfoRepository.getRelationshipWithPerson(personId);
+      if (relationship != null) {
+        emit(state.copyWith(relationship: relationship));
+      } else {
+        emit(state.copyWith());
+      }
+
+    } catch (_) {
+      emit(state.copyWith());
+    }
+  }
+
+  Future<void> _onRelationshipWithPersonUpdate(RelationshipWithPersonUpdate event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final newRelationship = event.newRelationship;
+      emit(state.copyWith(relationship: newRelationship));
+    } catch (_) {
+      emit(state.copyWith());
+    }
+  }
+
+  Future<void> _onFriendDeleted(FriendDeleted event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final personId = event.personId;
+      await friendRepository.deleteFriend(personId: personId);
+    } catch (_) {
+      emit(state.copyWith());
+    }
+  }
+
+  Future<void> _onFriendAccept(FriendAccept event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final personId = event.personId;
+      await friendRequestReceivedRepository.setAcceptFriend(senderId: personId);
+    } catch (_) {
+      emit(state.copyWith());
+    }
+  }
+
+  Future<void> _onFriendRequestDeleted(FriendRequestDeleted event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final senderId = event.senderId;
+      await friendRequestReceivedRepository.delRequestFriend(senderId: senderId);
+    } catch (_) {
+      emit(state.copyWith());
+    }
+  }
+
+  Future<void> _onFriendRequestSend(FriendRequestSend event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final receiverId = event.receiverId;
+      await unknownPeopleRepository.setRequestFriend(receiverId: receiverId);
+    } catch (_) {
+      emit(state.copyWith());
+    }
+  }
+
+
+
   // @override
   // void onError(Object error, StackTrace stackTrace) {
   //   super.onError(error, stackTrace);
@@ -125,10 +202,10 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
   //   super.onEvent(event);
   // }
   //
-  @override
-  void onChange(Change<PersonalInfoState> change) {
-    print("#Block: ${change.currentState.personalInfoStatus}");
-    super.onChange(change);
-  }
+  // @override
+  // void onChange(Change<PersonalInfoState> change) {
+  //   // print("#Block: ${change.currentState.personalInfoStatus}");
+  //   super.onChange(change);
+  // }
 
 }
