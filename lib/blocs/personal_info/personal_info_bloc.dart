@@ -11,12 +11,15 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
   late final FriendRepository friendRepository;
   late final FriendRequestReceivedRepository friendRequestReceivedRepository;
   late final UnknownPeopleRepository unknownPeopleRepository;
+  late final BlockRepository blockRepository;
 
   PersonalInfoBloc() : super(PersonalInfoState.initial()) {
     userInfoRepository = UserInfoRepository();
     friendRepository = FriendRepository();
     friendRequestReceivedRepository = FriendRequestReceivedRepository();
     unknownPeopleRepository = UnknownPeopleRepository();
+    blockRepository = BlockRepository();
+
     on<PersonalInfoFetched>(_onPersonalInfoFetched);
 
     on<PersonalInfoOfAnotherUserFetched>(_onPersonalInfoOfAnotherUserFetched);
@@ -36,6 +39,7 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     on<FriendAccept>(_onFriendAccept);
     on<FriendRequestDeleted>(_onFriendRequestDeleted);
     on<FriendRequestSend>(_onFriendRequestSend);
+    on<PersonBlocked>(_onPersonBlocked);
   }
 
   Future<void> _onPersonalInfoFetched(PersonalInfoFetched event, Emitter<PersonalInfoState> emit) async {
@@ -185,6 +189,15 @@ class PersonalInfoBloc extends Bloc<PersonalInfoEvent, PersonalInfoState> {
     try {
       final receiverId = event.receiverId;
       await unknownPeopleRepository.setRequestFriend(receiverId: receiverId);
+    } catch (_) {
+      emit(state.copyWith());
+    }
+  }
+
+  Future<void> _onPersonBlocked(PersonBlocked event, Emitter<PersonalInfoState> emit) async {
+    try {
+      final personId = event.personId;
+      await blockRepository.blockPerson(personId: personId);
     } catch (_) {
       emit(state.copyWith());
     }

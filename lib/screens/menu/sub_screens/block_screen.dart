@@ -1,7 +1,10 @@
 import 'package:cosmetic_frontend/blocs/block/block_bloc.dart';
 import 'package:cosmetic_frontend/blocs/block/block_event.dart';
 import 'package:cosmetic_frontend/blocs/block/block_state.dart';
+import 'package:cosmetic_frontend/blocs/personal_info/personal_info_bloc.dart';
+import 'package:cosmetic_frontend/blocs/personal_info/personal_info_event.dart';
 import 'package:cosmetic_frontend/models/blocked_account_model.dart';
+import 'package:cosmetic_frontend/routes.dart';
 import 'package:cosmetic_frontend/screens/screens.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -76,7 +79,17 @@ class BlockedAccountList extends StatelessWidget {
               return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      return BlockedAccountContainer(blockedAccount: blockedAccounts[index]);
+                      return InkWell(
+                        onTap: () {
+                          Navigator.of(context).pushNamed(Routes.personal_screen, arguments: blockedAccounts[index].account)
+                              .then((value) {
+                            // để an toàn thì cứ fetch lại PersonalInfo xem
+                            BlocProvider.of<PersonalInfoBloc>(context).add(PersonalInfoFetched());
+                            BlocProvider.of<BlockBloc>(context).add(BlockedAccountFetched());
+                          });
+                        },
+                        child: BlockedAccountContainer(blockedAccount: blockedAccounts[index])
+                      );
                     },
                     childCount: count
                   )

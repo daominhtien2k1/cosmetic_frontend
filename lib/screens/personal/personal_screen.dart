@@ -285,7 +285,11 @@ class _PersonalScreenState extends State<PersonalScreen> {
                         if (value == "Hủy") {
 
                         } else if (value == "Chặn") {
-                          // BlocProvider.of<SearchBloc>(context).add(StatusFriendInSearchAccountUpdated(searchAccount: searchAccount, newStatusFriend: "Friend"));
+                          BlocProvider.of<PersonalInfoBloc>(context).add(PersonBlocked(personId: personId));
+                          Future.delayed(const Duration(seconds: 1), () {
+                            BlocProvider.of<PersonalInfoBloc>(context).add(PersonalInfoOfAnotherUserFetched(id: personId)); // Prints after 1 second.
+                          });
+
                         }
                       });
                     },

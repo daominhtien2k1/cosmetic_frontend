@@ -81,3 +81,8 @@ class FriendRequestSend extends PersonalInfoEvent {
   final String receiverId;
   FriendRequestSend({required this.receiverId});
 }
+
+class PersonBlocked extends PersonalInfoEvent {
+  final String personId;
+  PersonBlocked({required this.personId});
+}

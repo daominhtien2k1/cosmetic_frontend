@@ -52,4 +52,22 @@ class BlockRepository {
       throw Exception('${error} - Error to remove blocked account');
     }
   }
+
+  Future<void> blockPerson({required String personId}) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/account/block_person');
+
+    var token = await Token.getToken();
+
+    try {
+      final response = await http.post(url,
+          headers: <String, String>{
+            HttpHeaders.authorizationHeader: token,
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{'person_id': personId}));
+
+    } catch(error) {
+      throw Exception('${error} - Error to block person');
+    }
+  }
 }
