@@ -35,6 +35,7 @@ class _NewsFeedScreenState extends State<NewsFeedScreen> {
               ],
             ),
           ),
+          backgroundColor: Theme.of(context).colorScheme.onInverseSurface,
           body: TabBarView(
             // physics: NeverScrollableScrollPhysics(),
             children: <Widget>[

@@ -157,9 +157,10 @@ class PostBloc extends Bloc<PostEvent, PostState> {
     final String described = event.described;
     final String? status = event.status;
     final List<XFile>? imageFileList = event.imageFileList;
+    final String? classification = event.classification;
     try {
       emit(state.copyWith(status: PostStatus.loading));
-      final newPost = await postRepository.addPost(described: described, status: status, imageFileList: imageFileList);
+      final newPost = await postRepository.addPost(described: described, status: status, imageFileList: imageFileList, classification: classification);
       if (newPost != null){
         // final AttachedVideo? videoInPost;
         // if (newPost.video != null) {

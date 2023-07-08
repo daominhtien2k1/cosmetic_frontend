@@ -74,7 +74,7 @@ class PostContainer extends StatelessWidget {
                 children: post.images!.map((image) {
                   return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 0),
-                      child: CachedNetworkImage(
+                      child: CachedNetworkImage( // dùng cache network nên link cũ lỗi là vẫn hiện thì phải
                           placeholder: (context, url) => CircularProgressIndicator(),
                           imageUrl: image.url ?? ImagePlaceHolder.imagePlaceHolderOnline,
                           errorWidget: (context, url, error) => Icon(Icons.error)
@@ -375,27 +375,19 @@ class OptionContainerBottomSheet extends StatelessWidget {
             title: const Text('Xác nhân xóa bài viết?'),
             actions: [
               OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.redAccent)
-                ),
+                onPressed: () {
+                  //TODO: Xử lý sau
+                  Navigator.pop(context);
+                },
+                child: Text('Hủy'),
+              ),
+              FilledButton(
                 onPressed: () {
                   BlocProvider.of<PostBloc>(context).add(PostDelete(postId: postId));
                   Navigator.pop(context);
                 },
                 child: Text('Xác nhận',
                     style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade200)
-                ),
-                onPressed: () {
-                  //TODO: Xử lý sau
-                  Navigator.pop(context);
-                },
-                child: Text('Hủy'),
               )
             ],
           );

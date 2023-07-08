@@ -27,6 +27,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   // In any case, when you are using a TextEditingController (or maintaining any mutable state), then you should use a StatefulWidget and keep the state in the State class.
   final TextEditingController textEditingController = TextEditingController();
   String? status;
+  String? classification;
   List<ProductSearchItem>? attachedProducts;
 
   //isMinimizeDraggableScrollableSheet
@@ -189,7 +190,24 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
   handleCreatePost() {
     final described = textEditingController.text;
     // print(_imageFileList?[0]);
-    context.read<PostBloc>().add(PostAdd(described: described, status: status, imageFileList: _imageFileList));
+
+    // print(classification);
+    String classificationGroup;
+    switch (classification) {
+      case "Chung":
+        classificationGroup = "General";
+        break;
+      case "Góc hỏi đáp":
+        classificationGroup = "Question";
+        break;
+      case "Chia sẻ kinh nghiệm":
+        classificationGroup = "Share experience";
+        break;
+      default:
+        classificationGroup = "General";
+        break;
+    }
+    context.read<PostBloc>().add(PostAdd(described: described, status: status, imageFileList: _imageFileList, classification: classificationGroup));
   }
 
   void handleUnattachedProductItem(ProductSearchItem productSearchItem) {
@@ -202,7 +220,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // print("#Create_post_screen: Rebuild");
+    print("#Create_post_screen: Rebuild");
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PostAppbar(
@@ -218,7 +236,11 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
           children: [
             Padding(
                 padding: EdgeInsets.fromLTRB(16, 12, 16, 12),
-                child: PostInfo(avtUrl: currentUser.imageUrl, name: currentUser.name, status: status),
+                child: PostInfo(status: status, onHandleSetClassification: (newClassification) {
+                  setState(() {
+                    classification = newClassification;
+                  });
+                }),
             ),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 16),
@@ -727,3 +749,4 @@ class AttachedProductItemContainer extends StatelessWidget {
     );
   }
 }
+

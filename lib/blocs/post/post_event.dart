@@ -22,7 +22,8 @@ class PostAdd extends PostEvent {
   final String described;
   final String? status;
   final List<XFile>? imageFileList;
-  PostAdd({required this.described, this.status, this.imageFileList});
+  final String? classification;
+  PostAdd({required this.described, this.status, this.imageFileList, this.classification});
 }
 
 class PostReport extends PostEvent {

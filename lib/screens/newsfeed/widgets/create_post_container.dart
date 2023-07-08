@@ -37,10 +37,10 @@ class CreatePostContainer extends StatelessWidget {
                   ),
                 ),
               ),
-              TextButton. icon(
+              TextButton.icon(
                   onPressed: () {print("image");},
                   icon: Icon(Icons.photo_library, color: Colors.green),
-                  label: Text('Ảnh'),
+                  label: Text('Ảnh', style: TextStyle(color: Colors.black87)),
               )
             ]
           )

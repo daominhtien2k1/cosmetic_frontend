@@ -52,8 +52,7 @@ class _NewsfeedQuestionScreenContentState extends State<NewsfeedQuestionScreenCo
   Widget build(BuildContext context) {
     print("#HomeScreen: Rebuild");
     return RefreshIndicator(
-      color: Colors.blue,
-      backgroundColor: Colors.white,
+      color: Colors.pink,
       onRefresh: () async {
         context.read<PostBloc>().add(PostsReload());
         context.read<PostBloc>().add(PostsFetched());
@@ -62,7 +61,11 @@ class _NewsfeedQuestionScreenContentState extends State<NewsfeedQuestionScreenCo
       child: CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
-              child: CreatePostContainer()
+              child: Container(
+                  color: Colors.white,
+                  padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                  child: CreatePostContainer()
+              )
           ),
           // SliverPadding(
           //   padding: const EdgeInsets.fromLTRB(0, 10, 0, 5),

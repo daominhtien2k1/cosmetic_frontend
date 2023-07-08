@@ -178,7 +178,7 @@ class PostRepository {
 
   }
 
-  Future<PostDetail?> addPost({required String described, String? status, List<XFile>? imageFileList}) async {
+  Future<PostDetail?> addPost({required String described, String? status, List<XFile>? imageFileList, String? classification}) async {
     try {
       var token = await Token.getToken();
       final url = Uri.http(Configuration.baseUrlConnect, 'post/add_post');
@@ -211,6 +211,7 @@ class PostRepository {
       request.headers.addAll(headers);
       request.fields["described"] = described;
       if(status != null) request.fields["status"] = status;
+      if(classification != null) request.fields["classification"] = classification;
 
       if(imageList != null && imageList.length == 1) {
         // print(imageList[0].path);

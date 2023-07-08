@@ -46,7 +46,8 @@ class _PersonalScreenState extends State<PersonalScreen> {
     authUser = BlocProvider.of<AuthBloc>(context).state.authUser;
     accountId = widget.accountId;
     userId = accountId ?? authUser.id;
-    isMe = accountId != null ? false : true;
+    isMe = accountId == null ? true : (accountId != authUser.id ? false : true);
+    print("Check isMe: $isMe");
   }
 
   @override
@@ -82,13 +83,10 @@ class _PersonalScreenState extends State<PersonalScreen> {
           automaticallyImplyLeading: false,
           leading: Builder(
             builder: (context) {
-              return isMe
+              bool canPop = Navigator.canPop(context);
+              return isMe && !canPop
                   ? Icon(Icons.menu, color: Colors.black, size: 30)
-                  : IconButton(
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                      icon: Icon(Icons.arrow_back_ios, color: Colors.black));
+                  : BackButton();
             },
           ),
           title: UserNameHeader(),

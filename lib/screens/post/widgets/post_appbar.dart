@@ -63,7 +63,7 @@ class _PostAppbarState extends State<PostAppbar> {
           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
           child: ElevatedButton(
             style: allowedToAct ? ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue,
+                backgroundColor: Color(0xFF50ACD7),
                 foregroundColor: Colors.white,
                 textStyle: const TextStyle(
                     fontWeight: FontWeight.w400,
@@ -72,7 +72,7 @@ class _PostAppbarState extends State<PostAppbar> {
                 splashFactory: NoSplash.splashFactory)
             :
             ElevatedButton.styleFrom(
-                disabledBackgroundColor: Colors.grey[200],
+                disabledBackgroundColor: Colors.grey[300],
                 disabledForegroundColor: Colors.black38,
                 textStyle: const TextStyle(fontSize: 20),
                 splashFactory: NoSplash.splashFactory
