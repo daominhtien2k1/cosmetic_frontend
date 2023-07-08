@@ -109,12 +109,18 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
 
                 },
                 child: GridTile(
-                    child: Semantics(
-                        label: 'image_picker_example_picked_image',
-                        child: kIsWeb
-                            ? Image.network(_imageFileList![index].path)
-                            : Image.file(File(_imageFileList![index].path)),
-                      )
+                    child: Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(4.0),
+                      ),
+                      child: Semantics(
+                          label: 'image_picker_example_picked_image',
+                          child: kIsWeb
+                              ? Image.network(_imageFileList![index].path)
+                              : Image.file(File(_imageFileList![index].path)),
+                        ),
+                    )
                 ),
               );
             },

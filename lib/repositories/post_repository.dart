@@ -218,7 +218,16 @@ class PostRepository {
         var ext = imageList[0].path.split('.').last;
         var pic = await http.MultipartFile.fromPath("image", imageList[0].path, contentType: MediaType('image', ext));
         request.files.add(pic);
+      } else {
+        if (imageList != null && imageList.isNotEmpty) {
+          for (int i = 0; i < imageList.length; i++) {
+            var ext = imageList[i].path.split('.').last;
+            var pic = await http.MultipartFile.fromPath("image", imageList[i].path, contentType: MediaType('image', ext));
+            request.files.add(pic);
+          }
+        }
       }
+
 
       var responseStreamedResponse = await request.send();
       var responseData = await responseStreamedResponse.stream.toBytes();
