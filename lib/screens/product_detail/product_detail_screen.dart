@@ -228,7 +228,7 @@ class FavouriteAndReviewContainer extends StatelessWidget {
                 isLoved ?
                 IconButton.filledTonal(onPressed: (){
                   BlocProvider.of<ProductDetailBloc>(context).add(ProductLove(productId: state.productDetail!.id));
-                }, icon: Icon(Icons.favorite_outlined))
+                }, icon: Icon(Icons.favorite_outlined, color: Colors.pink))
                 :
                 IconButton.filledTonal(onPressed: (){
                   BlocProvider.of<ProductDetailBloc>(context).add(ProductLove(productId: state.productDetail!.id));
@@ -344,7 +344,7 @@ class BrandAndInfoChip extends StatelessWidget {
                     child: Row(
                       children: [
                         Container(
-                          width: 124,
+                          width: 160,
                           height: 48,
                           padding: EdgeInsets.all(8),
                           decoration: BoxDecoration(
@@ -354,10 +354,13 @@ class BrandAndInfoChip extends StatelessWidget {
                           child: Row(
                             children: [
                               Image.network(
-                                  product?.brand.image.url ?? ImagePlaceHolder.imagePlaceHolderOnline,
-                                  width: 32, height: 32),
+                                product?.brand.image.url ?? ImagePlaceHolder.imagePlaceHolderOnline,
+                                width: 32, height: 32),
                               SizedBox(width: 6),
-                              Text(product?.brand.name ?? "Brand"),
+                              Container(
+                                width: 80,
+                                child: Text(product?.brand.name ?? "Brand", overflow: TextOverflow.ellipsis)
+                              ),
                               Spacer(),
                               Icon(Icons.navigate_next_outlined)
                             ],
@@ -405,7 +408,7 @@ class ProductInfo extends StatelessWidget {
                   SizedBox(width: 8),
                   Text("|"),
                   SizedBox(width: 8),
-                  Icon(Icons.favorite),
+                  Icon(Icons.favorite, color: Colors.pinkAccent),
                   SizedBox(width: 4),
                   Text("${product?.loves} yêu thích")
                 ],
@@ -600,7 +603,7 @@ class ProductDetailDescription extends StatelessWidget {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Xem tất cả", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.blueAccent)),
+                    Text("Xem tất cả", style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.pinkAccent)),
                     Icon(Icons.navigate_next)
                   ],
                 ),
@@ -785,7 +788,7 @@ class RelateProductList extends StatelessWidget {
                                     ),
                                     Row(
                                       children: [
-                                        Icon(Icons.favorite_outlined),
+                                        Icon(Icons.favorite_outlined, color: Colors.pinkAccent.shade200),
                                         SizedBox(width: 4),
                                         Text("${relateProducts?[index].loves} yêu thích"),
                                       ],

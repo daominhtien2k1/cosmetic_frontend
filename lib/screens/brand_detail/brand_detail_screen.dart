@@ -2,6 +2,8 @@ import 'package:cosmetic_frontend/blocs/brand_detail/brand_detail_bloc.dart';
 import 'package:cosmetic_frontend/blocs/brand_detail/brand_detail_event.dart';
 import 'package:cosmetic_frontend/blocs/brand_detail/brand_detail_state.dart';
 import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
+import 'package:cosmetic_frontend/routes.dart';
+import 'package:cosmetic_frontend/screens/product_detail/product_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -110,6 +112,16 @@ class BrandDetailScreen extends StatelessWidget {
                       itemCount: productList.length,
                         itemBuilder: (BuildContext context, int index) {
                           return ListTile(
+                            onTap: () {
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) => ProductDetailScreen(productId: productList[index].id),
+                                  settings: RouteSettings(
+                                    name: Routes.product_detail_screen,
+                                  ),
+                                ),
+                              );
+                            },
                             leading: Wrap(
                               spacing: 6,
                               children: [

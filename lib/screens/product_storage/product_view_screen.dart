@@ -1,5 +1,7 @@
 import 'package:cosmetic_frontend/blocs/my_storage_product/my_storage_product_bloc.dart';
 import 'package:cosmetic_frontend/blocs/my_storage_product/my_storage_product_event.dart';
+import 'package:cosmetic_frontend/routes.dart';
+import 'package:cosmetic_frontend/screens/product_detail/product_detail_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -35,6 +37,16 @@ class ProductViewScreen extends StatelessWidget {
                       itemCount: viewedProducts.length ?? 0,
                       itemBuilder: (context, index) {
                         return ListTile(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (_) => ProductDetailScreen(productId: viewedProducts[index].id),
+                                settings: RouteSettings(
+                                  name: Routes.product_detail_screen,
+                                ),
+                              ),
+                            );
+                          },
                           leading: Stack(
                             children: [
                               CircleAvatar(

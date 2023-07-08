@@ -123,6 +123,7 @@ class BrandList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -140,7 +141,9 @@ class BrandList extends StatelessWidget {
               }
               if (snapshot.hasData) {
                 final brandListData = snapshot.data;
-                return Wrap(
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: brandListData.map<Widget>((brand) {
                       return InkWell(
                         onTap: () {
@@ -211,9 +214,9 @@ class PopularProductList extends StatelessWidget {
               title: Text(product.name, style: Theme.of(context).textTheme.bodyMedium, overflow: TextOverflow.ellipsis, maxLines: 2),
               subtitle: StarList(rating: product.rating),
               trailing: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Icon(Icons.favorite_border),
+                  SizedBox(height: 4),
                   Text("${product.loves}")
                 ],
               ),
