@@ -8,14 +8,14 @@ class ProductCharacteristicBloc extends Bloc<ProductCharacteristicEvent, Product
   late final ReviewRepository reviewRepository;
 
   ProductCharacteristicBloc({required this.reviewRepository}): super(ProductCharacteristicState.init()) {
-    on<ProductCharacteristicFetched>(_onProductCharacteristicFetched);
+    on<ProductCharacteristicStatistic>(_onProductCharacteristicStatistic);
   }
 
-  Future<void> _onProductCharacteristicFetched(ProductCharacteristicFetched event, Emitter<ProductCharacteristicState> emit) async {
+  Future<void> _onProductCharacteristicStatistic(ProductCharacteristicStatistic event, Emitter<ProductCharacteristicState> emit) async {
     try {
       final productId = event.productId;
       emit(state.copyWith(productCharacteristicStatus: ProductCharacteristicStatus.loading));
-      final productCharacteristic = await reviewRepository.fetchProductCharacteristicStatistics(productId: productId);
+      final productCharacteristic = await reviewRepository.statisticProductCharacteristic(productId: productId);
       emit(state.copyWith(productCharacteristicStatus: ProductCharacteristicStatus.success, productCharacteristic: productCharacteristic));
     } catch (err) {
       emit(state.copyWith(productCharacteristicStatus: ProductCharacteristicStatus.failure));

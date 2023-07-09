@@ -30,7 +30,7 @@ class ReviewRepository {
     }
   }
 
-  Future<ProductCharacteristic?> fetchProductCharacteristicStatistics({required String productId}) async {
+  Future<ProductCharacteristic?> statisticProductCharacteristic({required String productId}) async {
     final url = Uri.http(Configuration.baseUrlConnect, '/review/product_characteristic_statistics', {'product_id': productId});
 
     var token = await Token.getToken();

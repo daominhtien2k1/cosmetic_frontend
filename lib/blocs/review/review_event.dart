@@ -71,7 +71,7 @@ class DetailReviewAdd extends ReviewAdd {
   final int rating;
   final String title;
   final String content;
-  final List<CharacteristicReviewCriteria> characteristicReviews;
+  final List<CharacteristicReviewCriteria>? characteristicReviews;
 
   DetailReviewAdd({
     required String productId,
@@ -80,7 +80,7 @@ class DetailReviewAdd extends ReviewAdd {
     required this.rating,
     required this.title,
     required this.content,
-    required this.characteristicReviews
+    required this.characteristicReviews // bắt buộc chấp nhận null
   }): super(
     productId: productId,
     classification: classification,

@@ -13,7 +13,7 @@ class ProductCharacteristicScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    BlocProvider.of<ProductCharacteristicBloc>(context).add(ProductCharacteristicFetched(productId: productId));
+    BlocProvider.of<ProductCharacteristicBloc>(context).add(ProductCharacteristicStatistic(productId: productId));
     return Scaffold(
       appBar: AppBar(
         leading: BackButton(),
@@ -39,6 +39,7 @@ class ProductCharacteristicScreen extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      CharacteristicStatistics(features: features, data: data),
                       Padding(
                         padding: const EdgeInsets.symmetric(
                             horizontal: 16, vertical: 8),
@@ -94,8 +95,7 @@ class ProductCharacteristicScreen extends StatelessWidget {
                             }
                           ),
                         ),
-                      // ),
-                      CharacteristicStatistics(features: features, data: data)
+                      SizedBox(height: 8)
                     ],
                   ),
                 );

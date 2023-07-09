@@ -407,27 +407,19 @@ class OptionContainerBottomSheet extends StatelessWidget {
             title: const Text('Xác nhân xóa bài viết?'),
             actions: [
               OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.white),
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.redAccent)
-                ),
+                onPressed: () {
+                  //TODO: Xử lý sau
+                  Navigator.pop(context);
+                },
+                child: Text('Hủy'),
+              ),
+              FilledButton(
                 onPressed: () {
                   // todo
                   Navigator.pop(context);
                 },
                 child: Text('Xác nhận',
                     style: TextStyle(fontWeight: FontWeight.bold)),
-              ),
-              OutlinedButton(
-                style: ButtonStyle(
-                    foregroundColor: MaterialStateProperty.all<Color>(Colors.black),
-                    backgroundColor: MaterialStateProperty.all<Color>(Colors.grey.shade200)
-                ),
-                onPressed: () {
-                  //TODO: Xử lý sau
-                  Navigator.pop(context);
-                },
-                child: Text('Hủy'),
               )
             ],
           );

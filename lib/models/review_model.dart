@@ -183,6 +183,7 @@ class AuthorReview extends Equatable {
 
 }
 
+// dùng chung trong product detail: get_list_characteristics và detail review và get list reviews
 class CharacteristicReviewCriteria {
   final String characteristic_id;
   final String criteria;

@@ -5,8 +5,8 @@ abstract class ProductCharacteristicEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class ProductCharacteristicFetched extends ProductCharacteristicEvent {
+class ProductCharacteristicStatistic extends ProductCharacteristicEvent {
   final String productId;
 
-  ProductCharacteristicFetched({required this.productId});
+  ProductCharacteristicStatistic({required this.productId});
 }

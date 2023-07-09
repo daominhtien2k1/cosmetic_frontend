@@ -1,21 +1,22 @@
-import '../../blocs/retrieve_review/retrieve_review_bloc.dart';
-import '../../blocs/retrieve_review/retrieve_review_event.dart';
-import '../../models/models.dart' hide Image;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/foundation.dart';
-
-import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
-import 'package:cosmetic_frontend/constants/assets/placeholder.dart';
-import 'package:cosmetic_frontend/routes.dart';
 import 'package:quill_html_editor/quill_html_editor.dart';
 
+import '../../blocs/retrieve_review/retrieve_review_bloc.dart';
+import '../../blocs/retrieve_review/retrieve_review_event.dart';
 import '../../blocs/product_characteristic/product_characteristic_event.dart';
 import '../../blocs/product_detail/product_detail_bloc.dart';
 import '../../blocs/product_detail/product_detail_event.dart';
 import '../../blocs/product_detail/product_detail_state.dart';
 import '../../blocs/review/review_bloc.dart';
 import '../../blocs/review/review_event.dart';
+import '../../models/models.dart' hide Image;
+
+import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
+import 'package:cosmetic_frontend/constants/assets/placeholder.dart';
+import 'package:cosmetic_frontend/routes.dart';
+
 
 class StandardCreateReviewScreen extends StatefulWidget {
   const StandardCreateReviewScreen({
@@ -262,7 +263,7 @@ class _QuickCreateReviewScreenState extends State<QuickCreateReviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // là ? vì push 2 kiểu từ 2 nơi, nên tham số khác nhau
+    // là ? vì push 2 kiểu từ 2 nơi, nên tham số khác nhau - Bởi vì push từ Fab không có arguments nên là Map?
     final Map<String, dynamic>? data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
     final bool? isEditReceive = data?["isEdit"];
     final int? oldRatingReceive = data?["oldRating"];
@@ -1078,68 +1079,42 @@ class _DetailCreateReviewScreenState extends State<DetailCreateReviewScreen> {
 class CharacteristicReviewScreen extends StatelessWidget {
   CharacteristicReviewScreen({Key? key}) : super(key: key);
 
-  List<CharacteristicReviewCriteria> characteristicReviewCriterias = [];
+  // có thể sản phẩm không có tiêu chí nào --> trong code admin là mỗi khi tạo 1 sản phẩm thì nên có 4 tiêu chí mặc định
+  List<CharacteristicReviewCriteria>? characteristicReviewCriterias = [];
 
-  initOrRestoreScoredCharacteristicReviews({List<CharacteristicReviewCriteria>? oldCharacteristicReviews}) {
+  initOrRestoreScoredCharacteristicReviews(BuildContext context, {List<CharacteristicReviewCriteria>? oldCharacteristicReviews}) {
     if (oldCharacteristicReviews != null) {
+      print("Được chuyển data retrieve từ Quick sang");
+      print(oldCharacteristicReviews);
+      // logic là retrieve, nhưng không cần gọi lại, vì retrieve từ quick rồi và chuyển đến đây. Cần thiết gọi lại cũng được nếu setState xảy ra vấn đề
       characteristicReviewCriterias = oldCharacteristicReviews;
     } else {
-      characteristicReviewCriterias = [
-        CharacteristicReviewCriteria(
-            characteristic_id: "6475d20319f32362c05956ec",
-            criteria: "Làm sáng da",
-            point: 1
-        ),
-        CharacteristicReviewCriteria(
-            characteristic_id: "6475d20319f32362c05956ed",
-            criteria: "Kháng khuẩn",
-            point: 1
-        ),
-        CharacteristicReviewCriteria(
-            characteristic_id: "6475d20319f32362c05956ed",
-            criteria: "Kháng khuẩn",
-            point: 1
-        ),
-        CharacteristicReviewCriteria(
-            characteristic_id: "6475d20319f32362c05956ee",
-            criteria: "Chống tia UV",
-            point: 1
-        ),
-        CharacteristicReviewCriteria(
-            characteristic_id: "6475d20319f32362c05956ef",
-            criteria: "Không gây kích ứng",
-            point: 1
-        ),
-        CharacteristicReviewCriteria(
-            characteristic_id: "6475d20319f32362c05956f0",
-            criteria: "Chất liệu",
-            point: 1
-        ),
-        CharacteristicReviewCriteria(
-            characteristic_id: "6475d20319f32362c05956f1",
-            criteria: "Giá cả",
-            point: 1
-        ),
-        CharacteristicReviewCriteria(
-            characteristic_id: "6475d20319f32362c05956f2",
-            criteria: "Hiệu quả",
-            point: 1
-        ),
-        CharacteristicReviewCriteria(
-            characteristic_id: "6475d20319f32362c05956f3",
-            criteria: "An toàn",
-            point: 1
-        ),
-      ];
+      print("Khởi tạo giá trị nếu như không có data retrieve");
+      // nên gọi get_list_characteristics ở đây để khởi tạo danh sách thuộc tính
+      final productDetailState = BlocProvider.of<ProductDetailBloc>(context).state;
+      final characteristicCriterias = productDetailState.characteristicReviewCriterias as List<CharacteristicReviewCriteria>?;
+      print(characteristicCriterias);
+
+      characteristicReviewCriterias = characteristicCriterias?.map((cc) {
+        return CharacteristicReviewCriteria(
+          characteristic_id: cc.characteristic_id,
+          criteria: cc.criteria,
+          point: 1
+        );
+      }).toList();
+
+      print(characteristicReviewCriterias?.first.criteria);
+      print(characteristicReviewCriterias?.first.point);
     }
     // print(List<dynamic>.from(characteristicReviewCriterias.map((c) => c.toJson())));
 
   }
 
   updateCharacteristicReviews (String criteria, int newScore) {
-    int index = characteristicReviewCriterias.indexWhere((c) => c.criteria == criteria);
-    final String characteristic_id_temp = characteristicReviewCriterias.elementAt(index).characteristic_id;
-    characteristicReviewCriterias
+    print("Update $criteria thành $newScore");
+    int index = characteristicReviewCriterias!.indexWhere((c) => c.criteria == criteria);
+    final String characteristic_id_temp = characteristicReviewCriterias!.elementAt(index).characteristic_id;
+    characteristicReviewCriterias!
       ..removeAt(index)
       ..insert(index, CharacteristicReviewCriteria(
           characteristic_id: characteristic_id_temp,
@@ -1151,6 +1126,7 @@ class CharacteristicReviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // push từ 1 nơi chắc chắn có argument nên Map là không có ?
     final Map<String, dynamic> data = ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>;
     final String productId = data["productId"];
     final int rating = data['rating'];
@@ -1158,9 +1134,9 @@ class CharacteristicReviewScreen extends StatelessWidget {
     final String content = data["content"];
     final List<CharacteristicReviewCriteria>? oldCharacteristicReviews = data["oldCharacteristicReviews"];
 
-    initOrRestoreScoredCharacteristicReviews(oldCharacteristicReviews: oldCharacteristicReviews);
+    initOrRestoreScoredCharacteristicReviews(context, oldCharacteristicReviews: oldCharacteristicReviews);
 
-    // print("Rebuild");
+    print("Rebuild");
 
     return Scaffold(
       appBar: AppBar(
@@ -1182,55 +1158,56 @@ class CharacteristicReviewScreen extends StatelessWidget {
                         .textTheme
                         .titleLarge),
                   ),
-                  ListView.separated(
+                  characteristicReviewCriterias != null && characteristicReviewCriterias?.length != 0
+                  ? ListView.separated(
                       physics: NeverScrollableScrollPhysics(),
                       separatorBuilder: (ctx, index) {
                         return SizedBox(height: 12);
                       },
                       shrinkWrap: true,
-                      itemCount: characteristicReviewCriterias.length,
+                      itemCount: characteristicReviewCriterias?.length ?? 0,
                       itemBuilder: (ctx, index) {
                         return CharacteristicProductTile(
-                          characteristicReviewCriteria: characteristicReviewCriterias[index],
+                          characteristicReviewCriteria: characteristicReviewCriterias![index],
                           onScoringCriteria: updateCharacteristicReviews
                         );
                       }
-                  ),
-                SizedBox(height: 16),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 16),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: OutlinedButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            ),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: Text("Quay lại", style: TextStyle(fontSize: 18))
+                  ) : Center(child: Text("Hiện chưa có tiêu chí nào")),
+                  SizedBox(height: 16),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: OutlinedButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              ),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              child: Text("Quay lại", style: TextStyle(fontSize: 18))
+                          ),
                         ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        flex: 1,
-                        child: FilledButton(
-                            style: TextButton.styleFrom(
-                              padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
-                            ),
-                            onPressed: () {
-                              BlocProvider.of<ReviewBloc>(context).add(DetailReviewAdd(productId: productId, classification: "Detail", rating: rating, title: title, content: content, characteristicReviews: characteristicReviewCriterias));
-                              Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
-                            },
-                            child: Text("Hoàn thành", style: TextStyle(fontSize: 18))
+                        SizedBox(width: 12),
+                        Expanded(
+                          flex: 1,
+                          child: FilledButton(
+                              style: TextButton.styleFrom(
+                                padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
+                              ),
+                              onPressed: () {
+                                BlocProvider.of<ReviewBloc>(context).add(DetailReviewAdd(productId: productId, classification: "Detail", rating: rating, title: title, content: content, characteristicReviews: characteristicReviewCriterias));
+                                Navigator.popUntil(context, ModalRoute.withName(Routes.product_detail_screen));
+                              },
+                              child: Text("Hoàn thành", style: TextStyle(fontSize: 18))
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                SizedBox(height: 16),
+                  SizedBox(height: 16),
 
               ],
             ),
