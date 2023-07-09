@@ -17,6 +17,9 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     on<DetailReviewAdd>(_onDetailReviewAdd);
     on<InstructionReviewEdit>(_onInstructionReviewEdit);
     on<ReviewReport>(_onReviewReport);
+
+    on<ReviewSettedUseful>(_onReviewSettedUseful);
+
   }
 
   Future<void> _onStatisticStarReviewFetched(StatisticStarReviewFetched event, Emitter<ReviewState> emit) async {
@@ -140,4 +143,40 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     }
   }
 
+  Future<void> _onReviewSettedUseful(ReviewSettedUseful event, Emitter<ReviewState> emit) async {
+    final mustUpdateReview = event.review;
+    final reviews = state.reviews; // standard, detail
+    final instructionReviews = state.instructionReviews;
+
+    int? indexOfMustUpdateReview;
+
+    if (mustUpdateReview.classification != "Instruction") {
+      indexOfMustUpdateReview = reviews?.indexOf(mustUpdateReview);
+    } else {
+      indexOfMustUpdateReview = instructionReviews?.indexOf(mustUpdateReview);
+    }
+
+    if(indexOfMustUpdateReview == null || indexOfMustUpdateReview == -1) {
+      return;
+    }
+
+    int usefuls = mustUpdateReview.isSettedUseful ? mustUpdateReview.usefuls - 1 : mustUpdateReview.usefuls + 1;
+    final newUpdateReview = mustUpdateReview.copyWith(usefuls: usefuls, isSettedUseful: !mustUpdateReview.isSettedUseful);
+
+    if (mustUpdateReview.classification != "Instruction") {
+      reviews?..remove(mustUpdateReview)..insert(indexOfMustUpdateReview, newUpdateReview);
+      emit(state.copyWith(reviews: reviews));
+    } else {
+      instructionReviews?..remove(mustUpdateReview)..insert(indexOfMustUpdateReview, newUpdateReview);
+      emit(state.copyWith(instructionReviews: instructionReviews));
+    }
+
+    if(mustUpdateReview.isSettedUseful) {
+      await reviewRepository.unsettedUseful(id: mustUpdateReview.id);
+    }
+    if(!mustUpdateReview.isSettedUseful) {
+      await reviewRepository.settedUseful(id: mustUpdateReview.id);
+    }
+
+  }
 }

@@ -39,7 +39,7 @@ class ReviewContainer extends StatelessWidget {
     final String timeAgo = diff.inDays == 0 ? "${diff.inHours}h" : "${diff.inDays}d";
 
     Future<void> handleSetUsefulReview() async {
-
+      BlocProvider.of<ReviewBloc>(context).add(ReviewSettedUseful(review: review));
     }
 
     void handleOtherReviewEvent(Map event) {
@@ -283,7 +283,7 @@ class _ReviewStats extends StatelessWidget {
           children: [
             Expanded(
               child: _ReviewButton(
-                icon: isSettedUseful? Icon(Icons.thumb_up, color: Colors.blue, size: 20) : Icon(Icons.thumb_up_outlined, color: Colors.grey[600], size: 20),
+                icon: isSettedUseful? Icon(Icons.thumb_up, color: Colors.pink, size: 20) : Icon(Icons.thumb_up_outlined, color: Colors.grey[600], size: 20),
                 label: 'Hữu ích',
                 onTap: (){
                   onSetUsefulReview();

@@ -124,3 +124,8 @@ class ReviewReport extends ReviewEvent {
   final String details;
   ReviewReport({required this.reviewId, required this.subject, required this.details});
 }
+
+class ReviewSettedUseful extends ReviewEvent {
+  final Review review;
+  ReviewSettedUseful({required this.review});
+}

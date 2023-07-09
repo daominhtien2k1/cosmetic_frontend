@@ -11,7 +11,7 @@ class ReviewDetail2 {
   final String? content;
   final String createdAt;
   final String updatedAt;
-  final List<SettedUsefulAccount> settedUsefulAccounts;
+  final List<SettedUsefulAccount> settedUsefulAccounts; // chưa dùng ở UI
   final int usefuls;
   final int replies;
   final AuthorReview author;

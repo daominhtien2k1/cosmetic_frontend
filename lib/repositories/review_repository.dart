@@ -309,4 +309,40 @@ class ReviewRepository {
     }
   }
 
+  Future<void> settedUseful({required String id}) async {
+    try {
+      var token = await Token.getToken();
+      final url = Uri.http(Configuration.baseUrlConnect, 'review/setted_useful_review');
+      await http.post(url,
+          headers: <String, String>{
+            HttpHeaders.authorizationHeader: token,
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'id': id
+          })
+      );
+    } catch(error) {
+      throw Exception('${error} - Error to setted useful');
+    }
+  }
+
+  Future<void> unsettedUseful({required String id}) async {
+    try {
+      var token = await Token.getToken();
+      final url = Uri.http(Configuration.baseUrlConnect, 'review/unsetted_useful_review');
+      await http.post(url,
+          headers: <String, String>{
+            HttpHeaders.authorizationHeader: token,
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, dynamic>{
+            'id': id
+          })
+      );
+    } catch(error) {
+      throw Exception('${error} - Error to unsetted useful');
+    }
+  }
+
 }

@@ -4,7 +4,7 @@ enum ReviewStatus {initial, loading, success, failure}
 
 class ReviewState {
   ReviewStatus reviewStatus;
-  List<Review>? reviews;
+  List<Review>? reviews; // Standard & Detail
   List<Review>? instructionReviews;
   StatisticStar? statisticStar;
   ReviewState({required this.reviewStatus, this.reviews, this.instructionReviews, this.statisticStar});

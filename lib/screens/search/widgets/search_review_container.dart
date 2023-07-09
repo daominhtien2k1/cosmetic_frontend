@@ -272,7 +272,7 @@ class _SearchReviewStats extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(4),
                 decoration: const BoxDecoration(
-                    color: Colors.blue,
+                    color: Colors.pink,
                     shape: BoxShape.circle
                 ),
                 child: const Icon(

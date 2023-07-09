@@ -43,8 +43,8 @@ class ReviewDetailContent extends StatelessWidget {
 
   const ReviewDetailContent({Key? key}) : super(key: key);
 
-  Future<void> handleSetUsefulReview() async {
-
+  Future<void> handleSetUsefulReview(BuildContext context, String id) async {
+    BlocProvider.of<ReviewDetailBloc>(context).add(ReviewDetailSettedUseful(reviewId: id));
   }
 
   @override
@@ -178,7 +178,7 @@ class ReviewDetailContent extends StatelessWidget {
                         usefuls: reviewDetail.usefuls,
                         replies: reviewDetail.replies,
                         isSettedUseful: reviewDetail.isSettedUseful,
-                        onSetUsefulReview: handleSetUsefulReview
+                        onSetUsefulReview: () => handleSetUsefulReview(context, reviewDetail.id)
                     ),
                   ),
                   Expanded(child: ReplyList()),

@@ -17,8 +17,8 @@ class ReviewDetailReload extends ReviewDetailEvent {
   ReviewDetailReload({required this.reviewId});
 }
 
-class ReviewDetailReloadSettedUseful extends ReviewDetailEvent {
+class ReviewDetailSettedUseful extends ReviewDetailEvent {
   final String reviewId;
 
-  ReviewDetailReloadSettedUseful({required this.reviewId});
+  ReviewDetailSettedUseful({required this.reviewId});
 }
