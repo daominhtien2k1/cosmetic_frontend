@@ -345,4 +345,24 @@ class ReviewRepository {
     }
   }
 
+  Future<bool> deleteReview({required String reviewId}) async {
+    final url = Uri.http(Configuration.baseUrlConnect, '/review/delete_review/$reviewId');
+
+    var token = await Token.getToken();
+    try {
+      final response = await http.delete(url, headers: {
+        HttpHeaders.authorizationHeader: token,
+      });
+      if (response.statusCode == 200) {
+        return true;
+      } else if (response.statusCode == 400) {
+        return false;
+      } else {
+        return false;
+      }
+    } catch(error) {
+      throw Exception('${error} - Error to delete review');
+    }
+  }
+
 }

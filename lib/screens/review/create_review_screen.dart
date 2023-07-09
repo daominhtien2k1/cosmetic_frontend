@@ -1110,7 +1110,7 @@ class CharacteristicReviewScreen extends StatelessWidget {
 
   }
 
-  updateCharacteristicReviews (String criteria, int newScore) {
+  updateCharacteristicReviews(String criteria, int newScore) {
     print("Update $criteria thành $newScore");
     int index = characteristicReviewCriterias!.indexWhere((c) => c.criteria == criteria);
     final String characteristic_id_temp = characteristicReviewCriterias!.elementAt(index).characteristic_id;

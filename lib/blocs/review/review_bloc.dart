@@ -1,3 +1,4 @@
+import 'package:cosmetic_frontend/models/models.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:cosmetic_frontend/blocs/review/review_event.dart';
@@ -19,6 +20,7 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     on<ReviewReport>(_onReviewReport);
 
     on<ReviewSettedUseful>(_onReviewSettedUseful);
+    on<ReviewDelete>(_onReviewDelete);
 
   }
 
@@ -179,4 +181,42 @@ class ReviewBloc extends Bloc<ReviewEvent, ReviewState> {
     }
 
   }
+
+  Future<void> _onReviewDelete(ReviewDelete event, Emitter<ReviewState> emit) async {
+    try {
+      final String reviewId = event.reviewId;
+
+      final reviews = state.reviews; // standard, detail
+      final instructionReviews = state.instructionReviews;
+
+     int? indexOfMustDeleteReviewInStandardDetail;
+     int? indexOfMustDeleteReviewInInstruction;
+     indexOfMustDeleteReviewInStandardDetail = reviews?.indexWhere((element) {
+       return element.id == reviewId;
+     });
+
+     indexOfMustDeleteReviewInInstruction = instructionReviews?.indexWhere((element) {
+       return element.id == reviewId;
+     });
+
+     if (indexOfMustDeleteReviewInStandardDetail != null && indexOfMustDeleteReviewInStandardDetail != -1 && indexOfMustDeleteReviewInInstruction == -1) {
+       // tìm thấy trong list standart, detail
+       reviews?.removeWhere((element) => element.id == reviewId);
+       emit(state.copyWith(reviews: reviews));
+     } else if (indexOfMustDeleteReviewInInstruction != null && indexOfMustDeleteReviewInInstruction != -1 && indexOfMustDeleteReviewInStandardDetail == -1) {
+       // tìm thấy trong instruction
+       instructionReviews?.removeWhere((element) => element.id == reviewId);
+       emit(state.copyWith(instructionReviews: instructionReviews));
+     }
+
+      final isDeleted = await reviewRepository.deleteReview(reviewId: reviewId);
+      // làm thế này thì phải đợi có mạng mới thấy state biến mất --> ngược
+      if (isDeleted) {
+        // update UI
+      }
+    } catch (err) {
+
+    }
+  }
+
 }

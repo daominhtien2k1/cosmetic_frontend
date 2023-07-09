@@ -129,3 +129,8 @@ class ReviewSettedUseful extends ReviewEvent {
   final Review review;
   ReviewSettedUseful({required this.review});
 }
+
+class ReviewDelete extends ReviewEvent {
+  final String reviewId;
+  ReviewDelete({required this.reviewId});
+}

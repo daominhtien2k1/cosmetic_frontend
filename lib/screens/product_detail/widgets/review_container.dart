@@ -404,7 +404,7 @@ class OptionContainerBottomSheet extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Xác nhân xóa bài viết?'),
+            title: const Text('Xác nhận xoá bài review?'),
             actions: [
               OutlinedButton(
                 onPressed: () {
@@ -415,7 +415,7 @@ class OptionContainerBottomSheet extends StatelessWidget {
               ),
               FilledButton(
                 onPressed: () {
-                  // todo
+                  BlocProvider.of<ReviewBloc>(context).add(ReviewDelete(reviewId: reviewId));
                   Navigator.pop(context);
                 },
                 child: Text('Xác nhận',

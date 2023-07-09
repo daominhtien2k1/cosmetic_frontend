@@ -372,7 +372,7 @@ class OptionContainerBottomSheet extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Xác nhân xóa bài viết?'),
+            title: const Text('Xác nhận xoá bài viết?'),
             actions: [
               OutlinedButton(
                 onPressed: () {
