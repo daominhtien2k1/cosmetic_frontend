@@ -1,11 +1,14 @@
 import 'dart:convert';
 import 'package:cosmetic_frontend/common/widgets/common_widgets.dart';
 import 'package:cosmetic_frontend/models/models.dart' hide Image;
+import 'package:cosmetic_frontend/screens/post/edit_image/edit_image_bloc.dart';
+import 'package:cosmetic_frontend/screens/post/photo_edit_screen.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
 
 import '../../blocs/post/post_bloc.dart';
@@ -114,12 +117,107 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
                         border: Border.all(color: Colors.grey),
                         borderRadius: BorderRadius.circular(4.0),
                       ),
-                      child: Semantics(
-                          label: 'image_picker_example_picked_image',
-                          child: kIsWeb
-                              ? Image.network(_imageFileList![index].path)
-                              : Image.file(File(_imageFileList![index].path)),
-                        ),
+                      child: Stack(
+                        // fit: StackFit.expand, --> lỗi button kích cỡ bằng container
+                        children: [
+                          Positioned.fill(
+                            child: Semantics(
+                                label: 'image_picker_example_picked_image',
+                                child: kIsWeb
+                                    ? Image.network(_imageFileList![index].path)
+                                    : (_imageFileList![index].path != '' ?
+                                          Image.file(File(_imageFileList![index].path), fit: BoxFit.cover)
+                                        : Builder(
+                                            builder: (context) {
+                                              Future<Uint8List> getSnapshotImage() async {
+                                                final bytesImage = await _imageFileList![index].readAsBytes();
+                                                return bytesImage;
+                                              }
+                                              return FutureBuilder<Uint8List>(
+                                                  future: getSnapshotImage(),
+                                                  builder: (BuildContext context, AsyncSnapshot<dynamic> snapshot) {
+                                                   if (snapshot.hasData) {
+                                                      final Uint8List bytesImage = snapshot.data;
+                                                      return Image.memory(bytesImage, fit: BoxFit.cover);
+                                                   } else {
+                                                     return Center(child: CircularProgressIndicator());
+                                                   }
+                                                  },
+                                              );
+                                          }
+                                        )
+                                    ),
+                            ),
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              FilledButton.tonalIcon(
+                                  style: FilledButton.styleFrom(
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    minimumSize: Size.zero,
+                                    padding: EdgeInsets.all(8),
+                                    backgroundColor: Colors.white54, // Đổi màu nền thành xám nhạt
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(4), // Bỏ bo tròn border
+                                    ),
+                                  ),
+                                  onPressed: () {
+                                    if (_imageFileList![index].path != '') {
+                                      Navigator.of(context)
+                                          .push(MaterialPageRoute(
+                                              builder: (context) {
+                                                return BlocProvider(
+                                                  create: (_) => EditImageBloc(),
+                                                  child: PhotoEditScreen(file: File(_imageFileList![index].path))
+                                                );
+                                              }
+                                          ))
+                                          .then((savedImage) {
+                                            if (savedImage != null) {
+                                              final replaceImage = XFile(savedImage.path);
+
+                                              // lạ quá, chỉ được 1 lần
+                                              // int tempIndex = index;
+                                              // // print(tempIndex);
+                                              // setState(() {
+                                              //   _imageFileList!..removeAt(tempIndex)..insert(tempIndex, replaceImage);
+                                              // });
+
+                                              // lạ quá, UI chỉ được 1 lần --> bug, đăng post thì nó lấy path gốc nên là chỉnh sửa đúng --> chắc phải dùng Key
+                                              List<XFile>? newImageFileList = List<XFile>.from(_imageFileList!);
+                                              newImageFileList.replaceRange(index, index+1, [replaceImage]);
+                                              setState(() {
+                                                _imageFileList = newImageFileList;
+                                              });
+                                            }
+                                          });
+                                    }
+                                  },
+                                  icon: Icon(Icons.handyman),
+                                  label: Text("Chỉnh sửa")
+                              ),
+                              IconButton.filledTonal(
+                                style: FilledButton.styleFrom(
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  minimumSize: Size.zero,
+                                  padding: EdgeInsets.all(8),
+                                  backgroundColor: Colors.white54, // Đổi màu nền thành xám nhạt
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(4), // Bỏ bo tròn border
+                                  ),
+                                ),
+                                onPressed: (){
+                                  setState(() {
+                                    _imageFileList!..removeAt(index);
+                                  });
+                                },
+                                icon: Icon(Icons.close)
+                              )
+                            ],
+                          ),
+                        ],
+                      ),
                     )
                 ),
               );
@@ -308,7 +406,7 @@ class _CreatePostScreenState extends State<CreatePostScreen> {
               child: _imageFileList != null ? _handlePreview() : const SizedBox.shrink(),
             ),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+              padding: EdgeInsets.only(left: 16, right: 16, top: 16),
               child: Text("Gắn sản phẩm",
                 style: Theme.of(context).textTheme.titleMedium,
               ),

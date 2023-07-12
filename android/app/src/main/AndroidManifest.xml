@@ -1,7 +1,33 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="vn.edu.hust.soict.cosmetic_frontend">
+    <!--
+    Internet permissions do not affect the `permission_handler` plugin, but are required if your app needs access to
+    the internet.
+    -->
     <uses-permission android:name="android.permission.INTERNET" />
-   <application
+    <!-- Permissions options for the `storage` group -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <!-- Read storage permission for Android 12 and lower -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <!--
+    Granular media permissions for Android 13 and newer.
+    See https://developer.android.com/about/versions/13/behavior-changes-13#granular-media-permissions
+    for more information.
+
+    Requesting "storage" permissions always returns "denied" on Android 13, what can I do?
+
+    On Android the Permission.storage permission is linked to the Android READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE permissions.
+    Starting from Android SDK 29 (Android 10) the READ_EXTERNAL_STORAGE and WRITE_EXTERNAL_STORAGE permissions have been marked deprecated
+    and have been fully removed/ disabled since Android SDK 33 (Android 13).
+
+    If your application needs access to media files Google recommends using the READ_MEDIA_IMAGES, READ_MEDIA_VIDEOS or READ_MEDIA_AUDIO permissions instead.
+    These can be requested using the Permission.photos, Permission.videos and Permission.audio respectively. To request these permissions make sure the compileSdkVersion in the android/app/build.gradle file is set to 33.
+  -->
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+
+    <application
         android:label="cosmetic_frontend"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
