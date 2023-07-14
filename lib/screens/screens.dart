@@ -23,3 +23,4 @@ export 'brand_detail/brand_detail_screen.dart';
 export 'product_storage/product_love_screen.dart';
 export 'product_storage/product_view_screen.dart';
 export 'product_bookmark/product_bookmark_screen.dart';
+export 'messenger/messenger_screen.dart';

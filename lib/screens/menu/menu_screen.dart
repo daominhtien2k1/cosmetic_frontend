@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:cosmetic_frontend/routes.dart';
 import 'package:cosmetic_frontend/screens/menu/sub_screens/security_screen.dart';
 import 'package:cosmetic_frontend/screens/screens.dart';
 import 'package:flutter/material.dart';
@@ -31,9 +32,12 @@ class MenuScreen extends StatelessWidget {
                 leading: Icon(Icons.menu),
                 title: Text("Cá nhân"),
                 actions: [
-                  IconButton(onPressed: () {
-
-                  }, icon: Icon(Icons.chat_outlined))
+                  IconButton(
+                    onPressed: () {
+                      Navigator.of(context).pushNamed(Routes.messenger_screen);
+                    },
+                    icon: Icon(Icons.chat_outlined)
+                  )
                 ],
               ),
               body: SafeArea(

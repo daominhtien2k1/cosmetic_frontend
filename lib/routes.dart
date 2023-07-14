@@ -6,7 +6,7 @@ class Routes {
   static const String signup_screen = "/signup_screen";
   static const String nav_screen = "/nav_screen";
   static const String post_detail_screen = "/post_detail_screen";
-  static const String messenger_screen = "/home_screen/messenger_screen";
+  static const String messenger_screen = "/messenger_screen";
   static const String personal_screen = "/personal_screen";
   static const String friend_screen = "/friend_screen";
   static const String unknown_people_screen = "/unknown_people_screen";

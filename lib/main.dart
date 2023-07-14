@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:stream_chat_flutter/stream_chat_flutter.dart';
+import 'package:stream_chat_localizations/stream_chat_localizations.dart';
 
 import 'blocs/auth/auth_bloc.dart';
 import 'blocs/auth/auth_event.dart';
@@ -34,6 +36,7 @@ import 'blocs/review/review_bloc.dart';
 import 'blocs/review_detail/review_detail_bloc.dart';
 import 'blocs/followed_brand/followed_brand_bloc.dart';
 import 'blocs/product_detail/product_detail_bloc.dart';
+import 'localization.dart';
 import 'screens/nav_screen.dart';
 import 'screens/screens.dart';
 import 'repositories/repositories.dart';
@@ -44,6 +47,11 @@ import 'constants/material/theme.dart';
 
 
 void main() async {
+  const streamKey = 'r4gwepwebt8y';
+  final client = StreamChatClient(
+    streamKey,
+    logLevel: Level.OFF,
+  );
   // debug global BLOC, suggesting turn off, please override in debug local BLOC
   Bloc.observer = SimpleBlocObserver();
   WidgetsFlutterBinding.ensureInitialized();
@@ -51,11 +59,12 @@ void main() async {
     return ErrorWidget(details.exception);
   };
   HydratedBloc.storage = await HydratedStorage.build(storageDirectory: await getApplicationDocumentsDirectory());
-  runApp(MyApp());
+  runApp(MyApp(client: client));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final StreamChatClient client;
+  const MyApp({super.key, required this.client});
 
   // This widget is the root of your application.
   @override
@@ -182,10 +191,62 @@ class MyApp extends StatelessWidget {
         )
       ],
       child: MaterialApp(
-        title: 'Fakebook',
+        title: 'Cosmetica',
         debugShowCheckedModeBanner: false,
         // theme: ThemeData.light(useMaterial3: true),
         theme: theme.toLightThemeData(),
+        supportedLocales: const [
+          // Add support for additional 'vi' locale
+          Locale('vi'),
+          Locale('en'),
+          Locale('hi'),
+          Locale('fr'),
+          Locale('it'),
+          Locale('es'),
+          Locale('ja'),
+          Locale('ko')
+        ],
+        // locales are the locales of the device
+        // supportedLocales are the app supported locales
+        localeListResolutionCallback: (locales, supportedLocales) {
+          // We map the supported locales to language codes
+          // note that this is completely optional and this logic can be changed as you like
+          // print(supportedLocales); // [vi, en, hi, fr, it, es, ja, ko]
+          final supportedLanguageCodes = supportedLocales.map((e) => e.languageCode);
+          // print(supportedLanguageCodes); // (vi, en, hi, fr, it, es, ja, ko)
+          // print(locales); // [en_US, vi_VN]
+          final localesCodes = locales?.map((e) => e.languageCode);
+          // print(localesCodes); // (en, vi)
+          if (locales != null) {
+            // we iterate over the locales and find the first one that is supported
+            for (final locale in locales) {
+              // print(locale); // en_US
+              if (supportedLanguageCodes.contains(locale.languageCode) && locale.languageCode == 'vi') {
+                return locale;
+              }
+            }
+          }
+          // print("Không nhảy vào đây");
+          // if we didn't find a supported language, we return the English language
+          return const Locale('en');
+        },
+        // Add overridden "NnStreamChatLocalizations.delegate" along with
+        // "GlobalStreamChatLocalizations.delegates"
+        localizationsDelegates: const [
+          NnStreamChatLocalizations.delegate,
+          ...GlobalStreamChatLocalizations.delegates,
+        ],
+        builder: (context, child) {
+          final streamChatTheme = StreamChatThemeData.fromTheme(theme.toLightThemeData());
+          // final customStreamChatTheme = streamChatTheme.copyWith(
+          //
+          // );
+          return StreamChat(
+              streamChatThemeData: streamChatTheme,
+              client: client,
+              child: child
+          );
+        },
         home: BlocBuilder<AuthBloc, AuthState>(
             builder: (context, state) {
               switch (state.status) {
@@ -231,9 +292,9 @@ class MyApp extends StatelessWidget {
                 // return MaterialPageRoute(builder: (_) => PersonalScreen(accountId: accountId));
                 return MaterialPageRoute(builder: (_) => PersonalBrandWrapScreen(accountId: accountId));
               }
-              // case Routes.messenger_screen: {
-              //   return MaterialPageRoute(builder: (_) => MessengerScreen());
-              // }
+              case Routes.messenger_screen: {
+                return MaterialPageRoute(builder: (_) => MessengerScreen());
+              }
               case Routes.friend_screen: {
                 return MaterialPageRoute(builder: (_) => FriendScreen());
               }
